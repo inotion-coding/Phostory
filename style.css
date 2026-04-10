@@ -874,6 +874,25 @@ body {
     background-color: #ffffff;
 }
 
+.input-hint {
+    font-size: 0.8rem;
+    font-weight: 500;
+    display: none; /* Hide when not in use */
+}
+
+.input-hint.error, .input-hint.success {
+    display: block;
+    margin-top: 0.4rem;
+}
+
+.input-hint.error {
+    color: #ef4444;
+}
+
+.input-hint.success {
+    color: #10b981;
+}
+
 .btn-primary {
     width: 100%;
     padding: 1.1rem;

@@ -163,10 +163,6 @@
                         </div>
                     </div>
                     <div class="input-modern" style="margin-bottom: 0;">
-                        <label for="editNameInput">Name / Username</label>
-                        <input type="text" id="editNameInput" placeholder="Enter your username" maxlength="20">
-                    </div>
-                    <div class="input-modern" style="margin-bottom: 0;">
                         <label for="editBioInput">Bio (Max 50 characters)</label>
                         <input type="text" id="editBioInput" placeholder="Write a short bio..." maxlength="50">
                     </div>
@@ -230,11 +226,16 @@
             <h2 id="modalTitle">Welcome Back</h2>
             <p class="modal-subtitle">Log in to your Phostory account</p>
             <form id="authForm">
-                <div class="input-group">
+                <div class="input-group" id="idInputGroup">
+                    <label for="idInput" id="idInputLabel">ID</label>
+                    <input type="text" id="idInput" placeholder="Enter your ID" required>
+                    <div id="idStatus" class="input-hint"></div>
+                </div>
+                <div class="input-group" id="emailInputGroup">
                     <label for="emailInput">Email</label>
                     <input type="email" id="emailInput" placeholder="you@example.com" required>
                 </div>
-                <div class="input-group">
+                <div class="input-group" id="passwordInputGroup">
                     <label for="passwordInput">Password</label>
                     <input type="password" id="passwordInput" placeholder="Enter your password" required>
                 </div>
@@ -337,7 +338,12 @@
         const navLoginBtn = document.getElementById('navLogin');
         
         const authForm = document.getElementById('authForm');
+        const idInput = document.getElementById('idInput');
+        const idStatus = document.getElementById('idStatus');
+        const idInputLabel = document.getElementById('idInputLabel');
+        const idInputGroup = document.getElementById('idInputGroup');
         const emailInput = document.getElementById('emailInput');
+        const emailInputGroup = document.getElementById('emailInputGroup');
         const passwordInput = document.getElementById('passwordInput');
         
         const toggleAuthMode = document.getElementById('toggleAuthMode');
@@ -384,17 +390,81 @@
                 modalSubtitle.textContent = 'Log in to your Phostory account';
                 authSubmitBtn.textContent = 'Login';
                 toggleAuthMode.innerHTML = `Don't have an account? <b>Sign up</b>`;
+                
+                // Login mode UI: ID/Email combined, hide Email input
+                idInputLabel.textContent = 'ID or Email';
+                idInput.placeholder = 'Enter your ID or Email';
+                emailInputGroup.style.display = 'none';
+                emailInput.required = false;
+                idStatus.textContent = ''; // Clear status message
+                idStatus.className = 'input-hint'; // Reset class to hide
             } else {
                 modalTitle.textContent = 'Create an Account';
                 modalSubtitle.textContent = 'Join Phostory to share your moments';
                 authSubmitBtn.textContent = 'Sign Up';
                 toggleAuthMode.innerHTML = `Already have an account? <b>Log in</b>`;
+                
+                // Signup mode UI: Show ID and Email separately
+                idInputLabel.textContent = 'ID';
+                idInput.placeholder = 'Enter your ID';
+                emailInputGroup.style.display = 'block';
+                emailInput.required = true;
+                idStatus.textContent = '';
+                idStatus.className = 'input-hint';
             }
         });
+
+        // 3.5. Real-time ID availability check (Signup mode only)
+        let checkTimeout;
+        idInput.addEventListener('input', () => {
+            if (isLoginMode) return;
+            
+            const username = idInput.value.trim().replace(/^@/, '');
+            idStatus.textContent = '';
+            idStatus.className = 'input-hint';
+
+            if (username.length < 3) {
+                if (username.length > 0) {
+                    idStatus.textContent = 'ID must be at least 3 characters.';
+                    idStatus.classList.add('error');
+                }
+                return;
+            }
+
+            clearTimeout(checkTimeout);
+            checkTimeout = setTimeout(async () => {
+                try {
+                    const { data, error } = await supabase
+                        .from('profiles')
+                        .select('username')
+                        .eq('username', username)
+                        .maybeSingle();
+
+                    if (error) throw error;
+
+                    if (data) {
+                        idStatus.textContent = 'This ID is already taken.';
+                        idStatus.classList.add('error');
+                    } else {
+                        idStatus.textContent = 'This ID is available!';
+                        idStatus.classList.add('success');
+                    }
+                } catch (err) {
+                    console.error('ID check error:', err);
+                }
+            }, 500); // 500ms debounce
+        });
+        
+        // Initial state for login mode
+        emailInputGroup.style.display = 'none';
+        emailInput.required = false;
+        idInputLabel.textContent = 'ID or Email';
+        idInput.placeholder = 'Enter your ID or Email';
 
         // 4. Supabase auth form submission (Join/Login)
         authForm.addEventListener('submit', async (e) => {
             e.preventDefault();
+            const identifier = idInput.value;
             const email = emailInput.value;
             const password = passwordInput.value;
             
@@ -403,21 +473,60 @@
 
             try {
                 if (isLoginMode) {
-                    // Login
+                    // Login: handle ID or Email
+                    let targetEmail = identifier;
+                    
+                    // If doesn't look like email, search profiles by username
+                    if (!identifier.includes('@')) {
+                        const { data: profile, error: profileErr } = await supabase
+                            .from('profiles')
+                            .select('email')
+                            .eq('username', identifier.replace(/^@/, ''))
+                            .single();
+                        
+                        if (profileErr || !profile) {
+                            throw new Error('User not found with that ID.');
+                        }
+                        targetEmail = profile.email;
+                    }
+
                     const { error } = await supabase.auth.signInWithPassword({
-                        email: email,
+                        email: targetEmail,
                         password: password,
                     });
                     if (error) throw error;
                     showToast('Successfully logged in!');
                     
                 } else {
-                    // Signup
-                    const { error } = await supabase.auth.signUp({
+                    // Signup: check ID uniqueness first
+                    const { data: existingUser } = await supabase
+                        .from('profiles')
+                        .select('username')
+                        .eq('username', identifier.replace(/^@/, ''))
+                        .maybeSingle();
+
+                    if (existingUser) {
+                        throw new Error('This ID is already taken.');
+                    }
+
+                    const { data, error } = await supabase.auth.signUp({
                         email: email,
                         password: password,
                     });
                     if (error) throw error;
+                    
+                    if (data.user) {
+                        // Create profile with username and email
+                        const { error: profileError } = await supabase
+                            .from('profiles')
+                            .upsert({
+                                id: data.user.id,
+                                username: identifier.replace(/^@/, ''),
+                                email: email
+                            });
+                        if (profileError) console.error('Profile creation error:', profileError);
+                    }
+                    
                     showToast('Sign up completed successfully!');
                 }
                 
@@ -429,7 +538,7 @@
             } catch (error) {
                 let msg = error.message;
                 if (msg.includes('Invalid login credentials')) {
-                    msg = 'Invalid email or password.';
+                    msg = 'Invalid credentials.';
                 }
                 showToast(msg, 'error');
             } finally {
@@ -710,7 +819,6 @@
 
             if (profileData) {
                 if (profileData.username) {
-                    document.getElementById('editNameInput').value = profileData.username;
                     const displayUsername = profileData.username.startsWith('@') ? profileData.username : `@${profileData.username}`;
                     if (previewUsername) previewUsername.textContent = displayUsername;
                 }
@@ -724,7 +832,6 @@
                 }
             } else {
                 // Set defaults if no info found
-                document.getElementById('editNameInput').value = emailPrefix;
                 document.getElementById('editBioInput').value = 'Capturing the world through my lens.';
                 document.getElementById('previewBioText').textContent = 'Capturing the world through my lens.';
             }
@@ -773,18 +880,8 @@
         const previewAvatarImg = document.getElementById('previewAvatarImg');
         const editBioInput = document.getElementById('editBioInput');
         const previewBioText = document.getElementById('previewBioText');
-        const editNameInput = document.getElementById('editNameInput');
 
         let pendingAvatarBase64 = null;
-
-        if (editNameInput) {
-            editNameInput.addEventListener('input', (e) => {
-                const nameText = e.target.value.trim() === '' ? `@User` : `@${e.target.value.replace(/^@/, '')}`;
-                if (document.getElementById('previewUsername')) {
-                    document.getElementById('previewUsername').textContent = nameText;
-                }
-            });
-        }
 
         editAvatarInput.addEventListener('change', (e) => {
             const file = e.target.files[0];
@@ -822,12 +919,11 @@
                     return;
                 }
 
-                // 1. Update name and bio in DB
+                // 1. Update bio in DB
                 const { error: updateError } = await supabase
                     .from('profiles')
                     .upsert({ 
                         id: session.user.id,
-                        username: editNameInput.value,
                         bio: editBioInput.value 
                     }, { onConflict: 'id' });
                 
