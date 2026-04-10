@@ -639,6 +639,81 @@ body {
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
 }
 
+/* My Uploads Section (in Make View) */
+.my-uploads-section {
+    margin-top: 2rem;
+    padding-top: 1rem;
+}
+
+.section-divider {
+    border: none;
+    border-top: 1px solid #e5e7eb;
+    margin-bottom: 2rem;
+}
+
+.my-uploads-header {
+    margin-bottom: 1.5rem;
+}
+
+.my-uploads-header h3 {
+    font-size: 1.3rem;
+    font-weight: 600;
+    color: var(--text-dark);
+}
+
+.my-uploads-header p {
+    font-size: 0.95rem;
+    color: #6b7280;
+}
+
+.mini-card-title {
+    padding: 0.8rem;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #4b5563;
+    text-align: center;
+    background: #fff;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.mini-card-actions {
+    display: flex;
+    border-top: 1px solid #f3f4f6;
+}
+
+.btn-micro {
+    flex: 1;
+    padding: 0.6rem 0;
+    border: none;
+    background: #fff;
+    cursor: pointer;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: #4b5563;
+    transition: all 0.2s;
+    outline: none;
+}
+
+.btn-micro:hover {
+    background: #f9fafb;
+    color: var(--text-dark);
+}
+
+.edit-btn {
+    border-right: 1px solid #f3f4f6;
+}
+
+.delete-btn {
+    color: #ef4444;
+}
+
+.delete-btn:hover {
+    color: #dc2626;
+    background: #fef2f2;
+}
+
 /* --- Login Modal Styles (Premium Glassmorphism & Dark elements) --- */
 .modal-overlay {
     position: fixed;
@@ -768,6 +843,33 @@ body {
     transform: none;
 }
 
+.btn-secondary {
+    width: 100%;
+    padding: 1.1rem;
+    background-color: #f3f4f6;
+    color: #4b5563;
+    border: none;
+    border-radius: 12px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    font-family: inherit;
+}
+
+.btn-secondary:hover {
+    background-color: #e5e7eb;
+    transform: translateY(-2px);
+}
+
+.btn-danger {
+    background-color: #ef4444 !important;
+}
+
+.btn-danger:hover {
+    background-color: #dc2626 !important;
+}
+
 .modal-footer {
     margin-top: 2rem;
     text-align: center;
@@ -802,7 +904,6 @@ body {
     to {
         opacity: 1;
         transform: translateY(0);
-    }
     }
 }
 

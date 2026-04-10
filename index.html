@@ -103,14 +103,9 @@
                     <img id="photoPreview" alt="Image Preview" style="display: none;">
                 </div>
 
-                <!-- 텍스트 필드 영역 -->
                 <div class="input-modern">
                     <label for="postTitle">Title</label>
                     <input type="text" id="postTitle" placeholder="Give your photo a catchy title" required>
-                </div>
-                <div class="input-modern">
-                    <label for="postDesc">Description</label>
-                    <textarea id="postDesc" rows="4" placeholder="Tell the story behind this photo" required></textarea>
                 </div>
 
                 <!-- 공개/비공개 토글 -->
@@ -127,6 +122,19 @@
 
                 <button type="submit" class="btn-primary btn-submit-post" id="makeSubmitBtn">Publish Post</button>
             </form>
+
+            <!-- 내 업로드 목록 (추가됨) -->
+            <div class="my-uploads-section">
+                <hr class="section-divider">
+                <div class="my-uploads-header">
+                    <h3>My Uploaded Stories</h3>
+                    <p>Posts you have created on Phostory.</p>
+                </div>
+                <!-- 기존 쉐어 뷰의 미니 그리드 스타일 재사용 -->
+                <div class="mini-masonry" id="makeMiniMasonry">
+                    <div style="grid-column: span 2; text-align: center; color: #888; font-size: 14px; padding: 20px;">Fetching your posts...</div>
+                </div>
+            </div>
         </section>
     </main>
 
@@ -198,6 +206,35 @@
             </form>
             <div class="modal-footer">
                 <span id="toggleAuthMode">Don't have an account? <b>Sign up</b></span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Title Modal -->
+    <div class="modal-overlay" id="editModal">
+        <div class="modal-content">
+            <button class="close-btn" id="closeEditModal">&times;</button>
+            <h2>Edit Title</h2>
+            <p class="modal-subtitle">Update the title of your story.</p>
+            <div class="input-modern" style="margin-bottom: 2rem; text-align: left;">
+                <input type="text" id="editTitleInput" placeholder="Enter new title" required>
+            </div>
+            <div style="display: flex; gap: 1rem;">
+                <button class="btn-secondary" id="cancelEditBtn">Cancel</button>
+                <button class="btn-primary" id="saveEditBtn" style="margin-top: 0;">Save</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Delete Confirm Modal -->
+    <div class="modal-overlay" id="deleteModal">
+        <div class="modal-content">
+            <button class="close-btn" id="closeDeleteModal">&times;</button>
+            <h2>Delete Story</h2>
+            <p class="modal-subtitle">Are you sure you want to delete this story? This action cannot be undone.</p>
+            <div style="display: flex; gap: 1rem; margin-top: 2rem;">
+                <button class="btn-secondary" id="cancelDeleteBtn">Cancel</button>
+                <button class="btn-primary btn-danger" id="confirmDeleteBtn" style="margin-top: 0;">Delete</button>
             </div>
         </div>
     </div>
@@ -383,6 +420,59 @@
             }
             
             switchView(makeView);
+
+            // 내가 올린 게시물 불러오기 (Make My Phostory 전용 렌더링)
+            const makeMiniMasonry = document.getElementById('makeMiniMasonry');
+            if (makeMiniMasonry) {
+                makeMiniMasonry.innerHTML = '<div style="grid-column: span 2; text-align: center; color: #888; font-size: 14px; padding: 20px;">Loading...</div>';
+                const myPhotos = await fetchPosts(session.user.id);
+                makeMiniMasonry.innerHTML = '';
+                if (myPhotos.length === 0) {
+                    makeMiniMasonry.innerHTML = '<div style="grid-column: span 2; text-align: center; color: #888; font-size: 14px; padding: 20px;">No posts yet.</div>';
+                } else {
+                    myPhotos.forEach(photo => {
+                        const miniCard = document.createElement('div');
+                        miniCard.className = 'mini-card';
+                        miniCard.innerHTML = `
+                            <img src="${photo.url}" alt="${photo.title}" loading="lazy">
+                            <div class="mini-card-title">${photo.title}</div>
+                            <div class="mini-card-actions">
+                                <button class="btn-micro edit-btn">Edit</button>
+                                <button class="btn-micro delete-btn">Delete</button>
+                            </div>
+                        `;
+
+                        // Edit Title 로직
+                        miniCard.querySelector('.edit-btn').addEventListener('click', async () => {
+                            const newTitle = await showPrompt('수정할 새로운 제목을 입력하세요:', photo.title);
+                            if (newTitle !== null && newTitle.trim() !== '') {
+                                const { error } = await supabase.from('posts').update({ title: newTitle.trim() }).eq('id', photo.id);
+                                if (error) {
+                                    alert('제목 수정 중 오류 발생: ' + error.message);
+                                } else {
+                                    miniCard.querySelector('.mini-card-title').textContent = newTitle.trim();
+                                    photo.title = newTitle.trim();
+                                }
+                            }
+                        });
+
+                        // Delete Post 로직
+                        miniCard.querySelector('.delete-btn').addEventListener('click', async () => {
+                            const isConfirmed = await showConfirm('이 게시물을 정말 삭제하시겠습니까? (삭제 시 복구 불가)');
+                            if (isConfirmed) {
+                                const { error } = await supabase.from('posts').delete().eq('id', photo.id);
+                                if (error) {
+                                    alert('게시물 삭제 중 오류 발생: ' + error.message);
+                                } else {
+                                    miniCard.remove();
+                                }
+                            }
+                        });
+
+                        makeMiniMasonry.appendChild(miniCard);
+                    });
+                }
+            }
         });
 
         navShareBtn.addEventListener('click', async (e) => {
@@ -450,6 +540,80 @@
             e.preventDefault();
             switchView(homeView);
         });
+
+        // 커스텀 프롬프트/컨펌 모달 로직
+        function showPrompt(message, initialText) {
+            return new Promise((resolve) => {
+                const editModal = document.getElementById('editModal');
+                const input = document.getElementById('editTitleInput');
+                const saveBtn = document.getElementById('saveEditBtn');
+                const cancelBtn = document.getElementById('cancelEditBtn');
+                const closeBtn = document.getElementById('closeEditModal');
+                
+                editModal.querySelector('.modal-subtitle').textContent = message;
+                input.value = initialText || '';
+                editModal.classList.add('active');
+                
+                // 모달 뜰때 포커스
+                setTimeout(() => input.focus(), 100);
+
+                const cleanup = () => {
+                    saveBtn.onclick = null;
+                    cancelBtn.onclick = null;
+                    closeBtn.onclick = null;
+                    editModal.classList.remove('active');
+                };
+
+                saveBtn.onclick = () => {
+                    cleanup();
+                    resolve(input.value);
+                };
+
+                cancelBtn.onclick = () => {
+                    cleanup();
+                    resolve(null);
+                };
+
+                closeBtn.onclick = () => {
+                    cleanup();
+                    resolve(null);
+                };
+            });
+        }
+
+        function showConfirm(message) {
+            return new Promise((resolve) => {
+                const deleteModal = document.getElementById('deleteModal');
+                const confirmBtn = document.getElementById('confirmDeleteBtn');
+                const cancelBtn = document.getElementById('cancelDeleteBtn');
+                const closeBtn = document.getElementById('closeDeleteModal');
+                
+                deleteModal.querySelector('.modal-subtitle').textContent = message;
+                deleteModal.classList.add('active');
+
+                const cleanup = () => {
+                    confirmBtn.onclick = null;
+                    cancelBtn.onclick = null;
+                    closeBtn.onclick = null;
+                    deleteModal.classList.remove('active');
+                };
+
+                confirmBtn.onclick = () => {
+                    cleanup();
+                    resolve(true);
+                };
+
+                cancelBtn.onclick = () => {
+                    cleanup();
+                    resolve(false);
+                };
+
+                closeBtn.onclick = () => {
+                    cleanup();
+                    resolve(false);
+                };
+            });
+        }
 
         // 7. 메인 페이지 및 프리뷰 렌더링 로직 (Supabase 연동)
         const masonryGrid = document.getElementById('masonryGrid');
@@ -629,7 +793,6 @@
             }
 
             const title = document.getElementById('postTitle').value;
-            const desc = document.getElementById('postDesc').value;
             const isPublic = document.querySelector('input[name="visibility"]:checked').value === 'public';
             const file = photoInput.files[0];
 
@@ -673,7 +836,6 @@
                         { 
                             user_id: session.user.id,
                             title: title, 
-                            description: desc, 
                             image_url: publicUrl,
                             is_public: isPublic
                         }
