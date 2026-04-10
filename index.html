@@ -154,6 +154,25 @@
                 </div>
             </div>
 
+            <div class="profile-edit-section">
+                <h3>Profile Settings</h3>
+                <div class="profile-edit-form">
+                    <div class="avatar-upload-area">
+                        <img src="https://i.pravatar.cc/150?img=12" id="editAvatarPreview" alt="Avatar Preview" class="edit-avatar">
+                        <div style="flex: 1;">
+                            <label for="editAvatarInput" class="btn-secondary btn-small" style="display: inline-block; cursor: pointer; text-align: center; margin-bottom: 0.5rem;">Change Photo</label>
+                            <input type="file" id="editAvatarInput" accept="image/jpeg, image/png, image/webp" style="display: none;">
+                            <p style="font-size: 0.85rem; color: #9ca3af; margin: 0;">JPG, PNG up to 2MB</p>
+                        </div>
+                    </div>
+                    <div class="input-modern" style="margin-bottom: 0;">
+                        <label for="editBioInput">Bio (Max 50 characters)</label>
+                        <input type="text" id="editBioInput" placeholder="Write a short bio..." maxlength="50">
+                    </div>
+                    <button class="btn-primary" id="saveProfileBtn">Save Profile</button>
+                </div>
+            </div>
+
             <div class="preview-section">
                 <div class="preview-header-wrapper">
                     <h3>Public Page Preview</h3>
@@ -171,10 +190,10 @@
                         <!-- Profile Header -->
                         <div class="profile-hero">
                             <div class="profile-avatar-wrap">
-                                <img src="https://i.pravatar.cc/150?img=12" alt="Profile" class="profile-avatar">
+                                <img src="https://i.pravatar.cc/150?img=12" alt="Profile" class="profile-avatar" id="previewAvatarImg">
                             </div>
                             <h2 class="profile-name" id="previewUsername">@Username</h2>
-                            <p class="profile-bio">Capturing the world through my lens.</p>
+                            <p class="profile-bio" id="previewBioText">Capturing the world through my lens.</p>
                         </div>
                         
                         <!-- Mini Masonry Grid -->
@@ -528,6 +547,23 @@
             if (browserUrl) browserUrl.textContent = fullLink;
             if (previewUsername) previewUsername.textContent = `@${emailPrefix}`;
             
+            // 기존에 설정된 로컬 스토리지 정보가 있으면 불러오기
+            const savedBio = localStorage.getItem('phostory_bio');
+            const savedAvatar = localStorage.getItem('phostory_avatar');
+            
+            if (savedBio) {
+                document.getElementById('editBioInput').value = savedBio;
+                document.getElementById('previewBioText').textContent = savedBio;
+            } else {
+                document.getElementById('editBioInput').value = 'Capturing the world through my lens.';
+                document.getElementById('previewBioText').textContent = 'Capturing the world through my lens.';
+            }
+
+            if (savedAvatar) {
+                document.getElementById('editAvatarPreview').src = savedAvatar;
+                document.getElementById('previewAvatarImg').src = savedAvatar;
+            }
+
             switchView(shareView);
 
             // 미니 그리드(나의 포스트) 실제 데이터 렌더링
@@ -549,7 +585,7 @@
             }
         });
 
-        // 링크 복사 기능
+        // 링복사 기능
         const copyLinkBtn = document.getElementById('copyLinkBtn');
         const profileLink = document.getElementById('profileLink');
         copyLinkBtn.addEventListener('click', async () => {
@@ -564,6 +600,56 @@
                 copyLinkBtn.textContent = 'Copied!';
                 setTimeout(() => copyLinkBtn.textContent = 'Copy', 2000);
             }
+        });
+
+        // 프로필 업데이트 (사진 및 소개글) 기능
+        const editAvatarInput = document.getElementById('editAvatarInput');
+        const editAvatarPreview = document.getElementById('editAvatarPreview');
+        const previewAvatarImg = document.getElementById('previewAvatarImg');
+        const editBioInput = document.getElementById('editBioInput');
+        const previewBioText = document.getElementById('previewBioText');
+
+        let pendingAvatarBase64 = null;
+
+        editAvatarInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                const imageUrl = URL.createObjectURL(file);
+                editAvatarPreview.src = imageUrl;
+                previewAvatarImg.src = imageUrl;
+                
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    pendingAvatarBase64 = e.target.result;
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        editBioInput.addEventListener('input', (e) => {
+            const bioText = e.target.value.trim() === '' ? 'Capturing the world through my lens.' : e.target.value;
+            previewBioText.textContent = bioText;
+        });
+
+        const saveProfileBtn = document.getElementById('saveProfileBtn');
+        saveProfileBtn.addEventListener('click', () => {
+            // 저장 버튼 클릭 시에만 로컬 스토리지에 확정
+            localStorage.setItem('phostory_bio', editBioInput.value);
+            if (pendingAvatarBase64) {
+                localStorage.setItem('phostory_avatar', pendingAvatarBase64);
+                pendingAvatarBase64 = null; // 초기화
+            }
+            
+            // 시각적 성공 피드백
+            const originalText = saveProfileBtn.textContent;
+            saveProfileBtn.textContent = 'Saved Successfully!';
+            saveProfileBtn.style.backgroundColor = '#10b981'; // 초록색 느낌
+            saveProfileBtn.style.color = '#fff';
+            setTimeout(() => {
+                saveProfileBtn.textContent = originalText;
+                saveProfileBtn.style.backgroundColor = '';
+                saveProfileBtn.style.color = '';
+            }, 2000);
         });
 
         navLogoBtn.addEventListener('click', (e) => {

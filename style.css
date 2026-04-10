@@ -1096,3 +1096,48 @@ body {
         column-count: 2;
     }
 }
+
+/* --- Profile Edit Styles --- */
+.profile-edit-section {
+    margin-bottom: 2.5rem;
+    padding-bottom: 2.5rem;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.profile-edit-section h3 {
+    font-size: 1.3rem;
+    font-weight: 600;
+    margin-bottom: 1.5rem;
+    color: var(--text-dark);
+}
+
+.profile-edit-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.avatar-upload-area {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    background: #f9fafb;
+    padding: 1.2rem 1.5rem;
+    border-radius: 12px;
+    border: 1px solid #e5e7eb;
+}
+
+.edit-avatar {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid #fff;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
+
+.btn-small {
+    padding: 0.6rem 1.2rem !important;
+    font-size: 0.9rem !important;
+    width: auto !important;
+}
