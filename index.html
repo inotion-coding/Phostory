@@ -6,28 +6,28 @@
     <title>Phostory</title>
     <meta name="description" content="Phostory - A photo blog for Instagram profiles">
     <link rel="stylesheet" href="style.css">
-    <!-- 세련된 폰트를 위해 Google Fonts의 Outfit 적용 -->
+    <!-- Apply Google Fonts Outfit for a polished look -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;600&display=swap" rel="stylesheet">
 </head>
 <body>
-    <!-- 상단 검정색 툴바 -->
+    <!-- Top navigation toolbar -->
     <header class="top-nav">
-        <!-- 좌측 삼선(햄버거) 메뉴 -->
-        <div class="menu-toggle" id="menuToggle" aria-label="메뉴 열기">
+        <!-- Left hamburger menu -->
+        <div class="menu-toggle" id="menuToggle" aria-label="Open menu">
             <span class="bar"></span>
             <span class="bar"></span>
             <span class="bar"></span>
         </div>
         
-        <!-- 중앙 로고 -->
+        <!-- Center logo -->
         <h1 class="logo" id="navLogo" style="cursor: pointer;">Phostory</h1>
         
-        <!-- 우측 여백 확보용 플레이스홀더 -->
+        <!-- Right side spacer -->
         <div class="nav-placeholder"></div>
 
-        <!-- 메인 드롭다운 메뉴 -->
+        <!-- Main dropdown menu -->
         <nav class="dropdown-menu" id="dropdownMenu">
             <ul>
                 <li><a href="#" id="navLogin">Login</a></li>
@@ -38,27 +38,24 @@
         </nav>
     </header>
 
-    <!-- 메인 컨텐츠 영역 (현재 화면) -->
+    <!-- Main content area -->
     <main class="content-area view-section fade-in" id="homeView">
         <div class="home-header">
             <h2 class="home-title">Discover Stories</h2>
             <p class="home-subtitle">Explore the world through the lens of Phostory creators.</p>
             <div class="filter-chips">
-                <button class="chip active">All</button>
-                <button class="chip">Nature</button>
-                <button class="chip">Portrait</button>
-                <button class="chip">Architecture</button>
-                <button class="chip">Street</button>
+                <button class="chip active" data-filter="All">All Stories</button>
+                <button class="chip" data-filter="Likes">My Likes</button>
             </div>
         </div>
         
-        <!-- Masonry Photo Grid -->
+        <!-- Photo cards populated via JavaScript -->
         <div class="masonry-grid" id="masonryGrid">
-            <!-- 자바스크립트로 사진 카드가 동적으로 채워집니다. -->
+            <!-- Data will be filled here -->
         </div>
     </main>
 
-    <!-- About Us 컨텐츠 (숨김 상태로 시작) -->
+    <!-- About Us content (hidden by default) -->
     <main class="content-area about-page-bg view-section" id="aboutView" style="display: none;">
         <section class="about-container">
             <div class="about-header">
@@ -84,7 +81,7 @@
         </section>
     </main>
 
-    <!-- Make My Phostory 컨텐츠 (숨김 상태로 시작) -->
+    <!-- Make My Phostory content (hidden by default) -->
     <main class="content-area build-page-bg view-section" id="makeView" style="display: none;">
         <section class="make-container">
             <div class="make-header">
@@ -92,7 +89,7 @@
                 <p class="subtitle">Share your unique moments with the world, or keep them just for you.</p>
             </div>
             <form id="makeForm" class="make-form">
-                <!-- 이미지 업로드 영역 -->
+                <!-- Image upload area -->
                 <div class="upload-area">
                     <input type="file" id="photoInput" accept="image/jpeg, image/png, image/webp, image/gif" class="file-input" required>
                     <div class="upload-placeholder">
@@ -108,7 +105,7 @@
                     <input type="text" id="postTitle" placeholder="Give your photo a catchy title" required>
                 </div>
 
-                <!-- 공개/비공개 토글 -->
+                <!-- Visibility toggle -->
                 <div class="visibility-section">
                     <label class="visibility-label">Visibility</label>
                     <div class="custom-toggle-wrapper">
@@ -123,14 +120,14 @@
                 <button type="submit" class="btn-primary btn-submit-post" id="makeSubmitBtn">Publish Post</button>
             </form>
 
-            <!-- 내 업로드 목록 (추가됨) -->
+            <!-- My uploads list (added) -->
             <div class="my-uploads-section">
                 <hr class="section-divider">
                 <div class="my-uploads-header">
                     <h3>My Uploaded Stories</h3>
                     <p>Posts you have created on Phostory.</p>
                 </div>
-                <!-- 기존 쉐어 뷰의 미니 그리드 스타일 재사용 -->
+                <!-- Reuse mini grid styles from share view -->
                 <div class="mini-masonry" id="makeMiniMasonry">
                     <div style="grid-column: span 2; text-align: center; color: #888; font-size: 14px; padding: 20px;">Fetching your posts...</div>
                 </div>
@@ -138,7 +135,7 @@
         </section>
     </main>
 
-    <!-- Share My Phostory 컨텐츠 (숨김 상태로 시작) -->
+    <!-- Share My Phostory content (hidden by default) -->
     <main class="content-area share-page-bg view-section" id="shareView" style="display: none;">
         <section class="share-container">
             <div class="share-header">
@@ -211,7 +208,7 @@
         </section>
     </main>
 
-    <!-- 5. 유저 프로필 뷰 (링크 접속 시) -->
+    <!-- 5. User profile view (on link access) -->
     <main class="content-area view-section fade-in" id="profilePageView" style="display: none;">
         <div class="profile-hero" style="margin-top: 3rem;">
             <div class="profile-avatar-wrap" style="width: 120px; height: 120px; margin-bottom: 1.5rem;">
@@ -222,11 +219,11 @@
         </div>
         
         <div class="masonry-grid" id="realProfileGrid" style="max-width: 1200px; margin: 0 auto;">
-            <!-- 유저 사진 카드 출력 영역 -->
+            <!-- User photo grid area -->
         </div>
     </main>
 
-    <!-- 로그인 모달 -->
+    <!-- Login modal -->
     <div class="modal-overlay" id="loginModal">
         <div class="modal-content">
             <button class="close-btn" id="closeModal">&times;</button>
@@ -293,19 +290,19 @@
         </div>
     </div>
 
-    <!-- 토스트 알림 컨테이너 -->
+    <!-- Toast notification container -->
     <div id="toastContainer" class="toast-container"></div>
 
-    <!-- 메뉴 동작 및 Supabase 서버 연결 스크립트 -->
+    <!-- Menu logic and Supabase client script -->
     <script type="module">
         import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm'
 
-        // 1. Supabase 초기화 (제공받은 키 사용)
+        // 1. Initialize Supabase
         const supabaseUrl = 'https://jlxlccrhwmmrubvgyloi.supabase.co';
         const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImpseGxjY3Jod21tcnVidmd5bG9pIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU3OTc3NDcsImV4cCI6MjA5MTM3Mzc0N30.hnv4A5NFzmMJsq2rrt72hH-cToCAKmqSxhcmaB8eWeg';
         const supabase = createClient(supabaseUrl, supabaseKey);
 
-        // 1.5. 토스트 알림 함수
+        // 1.5. Toast notification function
         function showToast(message, type = 'success') {
             const container = document.getElementById('toastContainer');
             const toast = document.createElement('div');
@@ -318,14 +315,14 @@
             toast.innerHTML = `${icon}<span>${message}</span>`;
             container.appendChild(toast);
 
-            // 3초 후 제거
+            // Remove after 3 seconds
             setTimeout(() => {
                 toast.classList.add('out');
                 setTimeout(() => toast.remove(), 400);
             }, 3000);
         }
 
-        // 2. 햄버거 메뉴 토글 로직
+        // 2. Hamburger menu toggle logic
         const menuToggle = document.getElementById('menuToggle');
         const dropdownMenu = document.getElementById('dropdownMenu');
         
@@ -334,7 +331,7 @@
             dropdownMenu.classList.toggle('active');
         });
 
-        // 3. 모달 UI 및 로직
+        // 3. Modal UI and logic
         const loginModal = document.getElementById('loginModal');
         const closeModalBtn = document.getElementById('closeModal');
         const navLoginBtn = document.getElementById('navLogin');
@@ -348,38 +345,38 @@
         const modalSubtitle = document.querySelector('.modal-subtitle');
         const authSubmitBtn = document.getElementById('authSubmitBtn');
         
-        let isLoginMode = true; // true: 로그인, false: 회원가입
+        let isLoginMode = true; // true: login, false: signup
 
-        // 로그인 버튼 클릭 처리 (로그아웃 상태면 모달 열기, 로그인 상태면 로그아웃 진행)
+        // Login button handler
         navLoginBtn.addEventListener('click', async (e) => {
             e.preventDefault();
-            dropdownMenu.classList.remove('active'); // 메뉴 닫기
+            dropdownMenu.classList.remove('active'); // Close menu
             menuToggle.classList.remove('active');
 
             if (navLoginBtn.textContent === 'Logout') {
                 const { error } = await supabase.auth.signOut();
                 if (!error) {
                     navLoginBtn.textContent = 'Login';
-                    showToast('성공적으로 로그아웃되었습니다.');
+                    showToast('Successfully logged out.');
                 }
             } else {
                 loginModal.classList.add('active');
             }
         });
 
-        // 모달 닫기
+        // Close modal
         closeModalBtn.addEventListener('click', () => {
             loginModal.classList.remove('active');
         });
 
-        // 화면 바깥 클릭으로 모달 닫기
+        // Close modal on backdrop click
         loginModal.addEventListener('click', (e) => {
             if (e.target === loginModal) {
                 loginModal.classList.remove('active');
             }
         });
 
-        // 로그인 <-> 회원가입 창 전환 방지
+        // Toggle login/signup mode
         toggleAuthMode.addEventListener('click', () => {
             isLoginMode = !isLoginMode;
             if (isLoginMode) {
@@ -395,7 +392,7 @@
             }
         });
 
-        // 4. Supabase 인증 폼 제출 처리 (가입/로그인)
+        // 4. Supabase auth form submission (Join/Login)
         authForm.addEventListener('submit', async (e) => {
             e.preventDefault();
             const email = emailInput.value;
@@ -406,25 +403,25 @@
 
             try {
                 if (isLoginMode) {
-                    // 로그인
+                    // Login
                     const { error } = await supabase.auth.signInWithPassword({
                         email: email,
                         password: password,
                     });
                     if (error) throw error;
-                    showToast('성공적으로 로그인되었습니다!');
+                    showToast('Successfully logged in!');
                     
                 } else {
-                    // 회원가입
+                    // Signup
                     const { error } = await supabase.auth.signUp({
                         email: email,
                         password: password,
                     });
                     if (error) throw error;
-                    showToast('회원가입이 완료되었습니다!');
+                    showToast('Sign up completed successfully!');
                 }
                 
-                // 로그인/가입 성공 후 모달 닫고 내비게이션 업데이트
+                // Update UI on auth success
                 loginModal.classList.remove('active');
                 navLoginBtn.textContent = 'Logout';
                 authForm.reset();
@@ -432,7 +429,7 @@
             } catch (error) {
                 let msg = error.message;
                 if (msg.includes('Invalid login credentials')) {
-                    msg = '아이디 또는 비밀번호가 잘못되었습니다.';
+                    msg = 'Invalid email or password.';
                 }
                 showToast(msg, 'error');
             } finally {
@@ -441,7 +438,7 @@
             }
         });
         
-        // 5. 페이지 새로고침 시 사용자 로그인 유지 상태 확인
+        // 5. Check user session on reload
         async function checkUser() {
             const { data: { session } } = await supabase.auth.getSession();
             if (session) {
@@ -450,7 +447,7 @@
         }
         checkUser();
 
-        // 6. SPA 라우팅 로직 (Home <-> About Us <-> Make My Phostory 화면 전환)
+        // 6. SPA routing logic (Home <-> About Us <-> Make My Phostory view switching)
         const homeView = document.getElementById('homeView');
         const aboutView = document.getElementById('aboutView');
         const makeView = document.getElementById('makeView');
@@ -461,14 +458,14 @@
         const navLogoBtn = document.getElementById('navLogo');
 
         function switchView(viewToShow) {
-            // 모든 뷰 숨기기
+            // Hide all views
             homeView.style.display = 'none';
             aboutView.style.display = 'none';
             if (makeView) makeView.style.display = 'none';
             if (shareView) shareView.style.display = 'none';
             if (document.getElementById('profilePageView')) document.getElementById('profilePageView').style.display = 'none';
             
-            // 선택한 뷰 보이기 (배경이 있는 페이지는 flex 유지)
+            // Show selected view
             if (viewToShow === aboutView || viewToShow === makeView || viewToShow === shareView) {
                 viewToShow.style.display = 'flex';
             } else if (viewToShow === document.getElementById('profilePageView')) {
@@ -477,7 +474,7 @@
                 homeView.style.display = 'block';
             }
             
-            // 부드러운 전환 효과를 위해 애니메이션 클래스 재부여
+            // Trigger fade-in animation
             viewToShow.classList.remove('fade-in');
             void viewToShow.offsetWidth; // Trigger reflow
             viewToShow.classList.add('fade-in');
@@ -485,7 +482,7 @@
 
         navAboutBtn.addEventListener('click', (e) => {
             e.preventDefault();
-            dropdownMenu.classList.remove('active'); // 클릭 시 메뉴 닫기
+            dropdownMenu.classList.remove('active'); // Close menu on click
             menuToggle.classList.remove('active');
             switchView(aboutView);
         });
@@ -495,17 +492,17 @@
             dropdownMenu.classList.remove('active');
             menuToggle.classList.remove('active');
             
-            // 글쓰기 창으로 가기 전 로그인 상태 확인
+            // Check auth before writing
             const { data: { session } } = await supabase.auth.getSession();
             if (!session) {
-                showToast('사진을 등록하려면 먼저 로그인해주세요.', 'error');
+                showToast('Please login first to upload photos.', 'error');
                 loginModal.classList.add('active');
                 return;
             }
             
             switchView(makeView);
 
-            // 내가 올린 게시물 불러오기 (Make My Phostory 전용 렌더링)
+            // Fetch my uploads (Make My Phostory dedicated rendering)
             const makeMiniMasonry = document.getElementById('makeMiniMasonry');
             if (makeMiniMasonry) {
                 makeMiniMasonry.innerHTML = '<div style="grid-column: span 2; text-align: center; color: #888; font-size: 14px; padding: 20px;">Loading...</div>';
@@ -534,7 +531,7 @@
                             </div>
                         `;
 
-                        // Edit Title / Visibility 로직
+                        // Edit Title / Visibility logic
                         miniCard.querySelector('.edit-btn').addEventListener('click', async () => {
                             const result = await showEditModalDialog(photo.title, photo.is_public);
                             if (result !== null) {
@@ -542,41 +539,41 @@
                                 const newIsPublic = result.newIsPublic;
                                 
                                 if (newTitle === '') {
-                                    showToast('제목을 입력해주세요.', 'error');
+                                    showToast('Please enter a title.', 'error');
                                     return;
                                 }
 
-                                // 로딩 상태 표시 (버튼 비활성화 등은 생략하지만 토스트로 알림)
+                                // Show loading state
                                 const editBtn = miniCard.querySelector('.edit-btn');
                                 editBtn.textContent = '...';
 
                                 try {
                                     let finalUrl = photo.url;
                                     
-                                    // 공개 여부가 변경된 경우: 파일 이동 로직 실행
+                                    // If visibility changed: move file
                                     if (newIsPublic !== photo.is_public) {
-                                        // 1. 기존 정보 파싱
+                                        // 1. Parse existing info
                                         let oldBucket = photo.is_public ? 'public_photos' : 'private_photos';
                                         let newBucket = newIsPublic ? 'public_photos' : 'private_photos';
                                         let filePath = '';
                                         
                                         if (photo.url.includes(`/${oldBucket}/`)) {
-                                            filePath = photo.url.split(`/${oldBucket}/`)[1].split('?')[0]; // 캐시 버스팅 파라미터 제외
+                                            filePath = photo.url.split(`/${oldBucket}/`)[1].split('?')[0]; 
                                         }
 
                                         if (filePath) {
-                                            // 1. 파일 다운로드
+                                            // 1. Download file
                                             const { data: blob, error: downloadError } = await supabase.storage.from(oldBucket).download(filePath);
                                             if (downloadError) throw downloadError;
 
-                                            // 2. 새 버킷으로 업로드
+                                            // 2. Upload to new bucket
                                             const { error: uploadError } = await supabase.storage.from(newBucket).upload(filePath, blob, {
                                                 upsert: true,
-                                                contentType: 'image/jpeg' // 기본값 (실제로는 blob.type 사용 가능)
+                                                contentType: 'image/jpeg' 
                                             });
                                             if (uploadError) throw uploadError;
 
-                                            // 3. 새 URL 생성
+                                            // 3. Generate new URL
                                             if (newIsPublic) {
                                                 const { data: { publicUrl } } = supabase.storage.from(newBucket).getPublicUrl(filePath);
                                                 finalUrl = publicUrl;
@@ -586,12 +583,12 @@
                                                 finalUrl = signedData.signedUrl;
                                             }
 
-                                            // 4. 이전 파일 삭제 (비동기로 천천히 처리해도 됨)
+                                            // 4. Remove old file
                                             supabase.storage.from(oldBucket).remove([filePath]);
                                         }
                                     }
 
-                                    // 2. 데이터베이스 업데이트 (Title 및 새로운 URL/공개상태)
+                                    // 2. Update DB record
                                     const { data, error } = await supabase.from('posts').update({ 
                                         title: newTitle, 
                                         is_public: newIsPublic,
@@ -599,39 +596,39 @@
                                     }).eq('id', photo.id).select();
                                     
                                     if (error) {
-                                        showToast('수정 중 오류 발생: ' + error.message, 'error');
+                                        showToast('Error updating: ' + error.message, 'error');
                                     } else if (!data || data.length === 0) {
-                                        showToast('서버에서 수정이 거부되었습니다.', 'error');
+                                        showToast('Update denied by server.', 'error');
                                     } else {
                                         miniCard.querySelector('.mini-card-title').textContent = newTitle;
-                                        miniCard.querySelector('img').src = finalUrl; // 이미지 소스도 갱신
+                                        miniCard.querySelector('img').src = finalUrl; 
                                         photo.title = newTitle;
                                         photo.is_public = newIsPublic;
                                         photo.url = finalUrl;
-                                        showToast('성공적으로 수정 및 이동되었습니다.');
+                                        showToast('Successfully updated and moved.');
                                     }
                                 } catch (err) {
                                     console.error('Migration error:', err);
-                                    showToast('파일 이동 중 오류가 발생했습니다.', 'error');
+                                    showToast('Error moving file.', 'error');
                                 } finally {
                                     editBtn.textContent = 'Edit';
                                 }
                             }
                         });
 
-                        // Delete Post 로직
+                        // Delete Post logic
                         miniCard.querySelector('.delete-btn').addEventListener('click', async () => {
-                            const isConfirmed = await showConfirm('이 게시물을 정말 삭제하시겠습니까? (삭제 시 복구 불가)');
+                            const isConfirmed = await showConfirm('Are you sure you want to delete this story? (This action cannot be undone)');
                             if (isConfirmed) {
-                                // 버튼 임시 상태 변경
+                                // Set loading state
                                 const deleteBtn = miniCard.querySelector('.delete-btn');
                                 const originalText = deleteBtn.textContent;
                                 deleteBtn.textContent = '...';
                                 deleteBtn.disabled = true;
 
-                                // 1. 파일 삭제를 위해 이미지 URL에서 스토리지 내부 경로 파싱
+                                // 1. Parse file path from URL
                                 let filePath = '';
-                                let targetBucket = 'photos'; // 기존 호환용 기본값
+                                let targetBucket = 'photos'; 
                                 
                                 if (photo.url) {
                                     if (photo.url.includes('/public_photos/')) {
@@ -646,26 +643,26 @@
                                     }
                                 }
                                 
-                                // 2. Supabase Storage (버킷)에서 실제 파일 삭제
+                                // 2. Delete file from Supabase Storage
                                 if (filePath) {
                                     const { error: storageError } = await supabase.storage.from(targetBucket).remove([filePath]);
                                     if (storageError) {
-                                        console.error('스토리지 파일 삭제 오류:', storageError);
+                                        console.error('Storage file deletion error:', storageError);
                                     }
                                 }
 
-                                // 3. Supabase DB (posts 테이블)에서 레코드 데이터 삭제
+                                // 3. Delete record from DB
                                 const { data, error } = await supabase.from('posts').delete().eq('id', photo.id).select();
                                 if (error) {
-                                    showToast('게시물 삭제 중 오류 발생: ' + error.message, 'error');
+                                    showToast('Error deleting post: ' + error.message, 'error');
                                     deleteBtn.textContent = originalText;
                                     deleteBtn.disabled = false;
                                 } else if (!data || data.length === 0) {
-                                    showToast('서버에서 삭제가 거부되었습니다!', 'error');
+                                    showToast('Deletion denied by server!', 'error');
                                     deleteBtn.textContent = originalText;
                                     deleteBtn.disabled = false;
                                 } else {
-                                    showToast('게시물이 성공적으로 삭제되었습니다.');
+                                    showToast('Post successfully deleted.');
                                     miniCard.style.opacity = '0';
                                     setTimeout(() => miniCard.remove(), 300);
                                 }
@@ -685,27 +682,27 @@
             
             const { data: { session } } = await supabase.auth.getSession();
             if (!session) {
-                showToast('내 페이지를 보려면 먼저 로그인해주세요.', 'error');
+                showToast('Please login first to view your page.', 'error');
                 loginModal.classList.add('active');
                 return;
             }
             
             const emailPrefix = session.user.email.split('@')[0];
 
-            // 1. Supabase 'profiles' 테이블에서 내 프로필 정보 가져오기
+            // 1. Get my profile info from 'profiles' table
             const { data: profileData, error: profileError } = await supabase
                 .from('profiles')
                 .select('*')
                 .eq('id', session.user.id)
                 .single();
 
-            // 프로필 링크 생성 (현재 사이트 주소와 파라미터 조합)
+            // Create profile link
             const profileUsername = profileData?.username || emailPrefix;
             const baseUrl = window.location.origin + window.location.pathname;
             const fullLink = `${baseUrl}?user=${profileUsername}`;
             document.getElementById('profileLink').value = fullLink;
             
-            // 프리뷰 정보 업데이트
+            // Update preview info
             const browserUrl = document.getElementById('browserUrl');
             const previewUsername = document.getElementById('previewUsername');
             if (browserUrl) browserUrl.textContent = fullLink;
@@ -726,7 +723,7 @@
                     document.getElementById('previewAvatarImg').src = profileData.avatar_url;
                 }
             } else {
-                // 정보가 없으면 기본값 세팅
+                // Set defaults if no info found
                 document.getElementById('editNameInput').value = emailPrefix;
                 document.getElementById('editBioInput').value = 'Capturing the world through my lens.';
                 document.getElementById('previewBioText').textContent = 'Capturing the world through my lens.';
@@ -734,7 +731,7 @@
 
             switchView(shareView);
 
-            // 미니 그리드(나의 포스트) 실제 데이터 렌더링
+            // Mini grid (my posts) rendering
             const miniMasonry = document.getElementById('miniMasonry');
             if (miniMasonry) {
                 miniMasonry.innerHTML = '<div style="grid-column: span 2; text-align: center; color: #888; font-size: 14px; padding: 20px;">Loading...</div>';
@@ -753,7 +750,7 @@
             }
         });
 
-        // 링복사 기능
+        // Copy link functionality
         const copyLinkBtn = document.getElementById('copyLinkBtn');
         const profileLink = document.getElementById('profileLink');
         copyLinkBtn.addEventListener('click', async () => {
@@ -770,7 +767,7 @@
             }
         });
 
-        // 프로필 업데이트 (사진 및 소개글) 기능
+        // Profile update functionality
         const editAvatarInput = document.getElementById('editAvatarInput');
         const editAvatarPreview = document.getElementById('editAvatarPreview');
         const previewAvatarImg = document.getElementById('previewAvatarImg');
@@ -813,19 +810,19 @@
         saveProfileBtn.addEventListener('click', async () => {
             makeSubmitBtn.disabled = true;
             
-            // 저장 버튼 클릭 시 텍스트 변경
+            // Change text on save
             const originalText = saveProfileBtn.textContent;
             saveProfileBtn.textContent = 'Saving...';
             
             try {
                 const { data: { session } } = await supabase.auth.getSession();
                 if (!session) {
-                    showToast('프로필을 저장하려면 로그인 상태여야 합니다.', 'error');
+                    showToast('Please login to save your profile.', 'error');
                     saveProfileBtn.textContent = originalText;
                     return;
                 }
 
-                // 1. 이름 및 소개글 DB 업데이트 (최초 생성 보장을 위해 upsert 사용)
+                // 1. Update name and bio in DB
                 const { error: updateError } = await supabase
                     .from('profiles')
                     .upsert({ 
@@ -836,7 +833,7 @@
                 
                 if (updateError) throw updateError;
                 
-                // 2. 프로필 사진이 변경된 경우 Supabase 'profiles' 버킷에 업로드 및 DB 기록
+                // 2. Upload avatar if changed
                 const file = editAvatarInput.files[0];
                 if (file) {
                     let fileExt = file.name.split('.').pop().toLowerCase();
@@ -862,7 +859,7 @@
                         
                     const cacheBustedUrl = `${publicUrl}?t=${Date.now()}`;
 
-                    // DB에 아바타 URL 저장
+                    // Update DB with avatar URL
                     const { error: avatarDbError } = await supabase
                         .from('profiles')
                         .update({ avatar_url: cacheBustedUrl })
@@ -875,17 +872,17 @@
                 }
             } catch (error) {
                 if (error.message.includes("Could not find the 'username' column")) {
-                    showToast('Supabase DB오류: profiles 테이블에 username 컬럼(타입: text)을 먼저 만들어주세요!', 'error');
+                    showToast('Supabase DB error: Please create "username" column in profiles table!', 'error');
                 } else {
-                    showToast('프로필 저장 오류: ' + error.message, 'error');
+                    showToast('Profile save error: ' + error.message, 'error');
                 }
             } finally {
                 makeSubmitBtn.disabled = false;
             }
             
-            // 시각적 성공 피드백
+            // Visual success feedback
             saveProfileBtn.textContent = 'Saved Successfully!';
-            saveProfileBtn.style.backgroundColor = '#10b981'; // 초록색 느낌
+            saveProfileBtn.style.backgroundColor = '#10b981'; 
             saveProfileBtn.style.color = '#fff';
             setTimeout(() => {
                 saveProfileBtn.textContent = 'Save Profile';
@@ -899,7 +896,7 @@
             switchView(homeView);
         });
 
-        // 커스텀 프롬프트/컨펌 모달 로직
+        // Custom prompt/confirm modal logic
         function showEditModalDialog(initialTitle, initialIsPublic) {
             return new Promise((resolve) => {
                 const editModal = document.getElementById('editModal');
@@ -914,7 +911,7 @@
 
                 input.value = initialTitle || '';
                 
-                // 초기 토글 상태 세팅
+                // Initial toggle state
                 const updateToggleVisual = () => {
                     if (visPublic.checked) {
                         editToggleBg.style.transform = 'translateX(0)';
@@ -935,7 +932,7 @@
                 
                 editModal.classList.add('active');
                 
-                // 모달 뜰때 포커스
+                // Focus on open
                 setTimeout(() => input.focus(), 100);
 
                 const cleanup = () => {
@@ -998,10 +995,10 @@
             });
         }
 
-        // 7. 메인 페이지 및 프리뷰 렌더링 로직 (Supabase 연동)
+        // 7. Main page and preview rendering logic (Supabase integration)
         const masonryGrid = document.getElementById('masonryGrid');
         
-        // 고해상도 샘플 더미 데이터 (비상용 또는 데이터 텅 비었을 때 전시용)
+        // High-res sample dummy data
         function getDummyPhotos(category = 'All') {
             const count = category === 'All' ? 8 : 4; 
             return Array.from({ length: count }, (_, i) => {
@@ -1018,59 +1015,64 @@
             });
         }
 
-        // Supabase에서 게시물 가져오기
-        async function fetchPosts(userId = null) {
-            console.log('Fetching posts for:', userId || 'Public Feed');
+        // Fetch posts from Supabase
+        async function fetchPosts(userId = null, filterMode = 'All') {
+            console.log('Fetching posts Mode:', filterMode);
             try {
-                // 가장 표준적인 조인 방식 사용
-                let query = supabase
-                    .from('posts')
-                    .select('*, profiles(username, avatar_url)')
-                    .order('created_at', { ascending: false });
+                // Get current user
+                const { data: { session } } = await supabase.auth.getSession();
+                const currentUserId = session ? session.user.id : null;
+
+                let query;
                 
-                if (userId) {
-                    query = query.eq('user_id', userId);
+                if (filterMode === 'Likes') {
+                    // [Filter: Liked posts only]
+                    if (!currentUserId) return []; 
+
+                    // 1. Get IDs of posts I've liked
+                    const { data: myLikes } = await supabase.from('likes').select('post_id').eq('user_id', currentUserId);
+                    if (!myLikes || myLikes.length === 0) return [];
+                    
+                    const likedIds = myLikes.map(lk => lk.post_id);
+                    
+                    // 2. Fetch posts with those IDs
+                    query = supabase.from('posts')
+                        .select('*, profiles(username, avatar_url)')
+                        .in('id', likedIds)
+                        .order('created_at', { ascending: false });
+
+                } else if (userId) {
+                    // [Filter: My posts only]
+                    query = supabase.from('posts').select('*, profiles(username, avatar_url)').eq('user_id', userId).order('created_at', { ascending: false });
                 } else {
-                    query = query.eq('is_public', true);
+                    // [Filter: Public posts only]
+                    query = supabase.from('posts').select('*, profiles(username, avatar_url)').eq('is_public', true).order('created_at', { ascending: false });
                 }
                 
                 const { data: realPosts, error } = await query;
-                
-                if (error) {
-                    console.error('Supabase Query Error:', error);
-                    // 만약 조인 에러가 나면 순수 게시물만 가져오기 (절대 실패 방지)
-                    const { data: fallbackPosts, error: fbError } = await supabase
-                        .from('posts')
-                        .select('*')
-                        .order('created_at', { ascending: false })
-                        .eq(userId ? 'user_id' : 'is_public', userId || true);
-                    
-                    if (fbError) throw fbError;
-                    return mapPosts(fallbackPosts);
+                if (error) throw error;
+
+                // Create a set of liked post IDs
+                let myLikePostIds = new Set();
+                if (currentUserId) {
+                    const { data: myCheckLikes } = await supabase.from('likes').select('post_id').eq('user_id', currentUserId);
+                    if (myCheckLikes) myCheckLikes.forEach(lk => myLikePostIds.add(lk.post_id));
                 }
                 
-                if (!realPosts || realPosts.length === 0) {
-                    console.warn('No posts found in database.');
-                }
-                
-                return mapPosts(realPosts);
+                return mapPosts(realPosts, myLikePostIds);
             } catch (err) {
                 console.error('Critical Fetch error:', err);
                 return []; 
             }
         }
 
-        // 매핑 로직 분리 (재사용 및 가독성)
-        function mapPosts(posts) {
+        // Separate mapping logic
+        function mapPosts(posts, myLikePostIds = new Set()) {
             if (!posts) return [];
             return posts.map(post => {
-                // Supabase Join 결과가 배열([])일 수도 있고 객체({})일 수도 있으므로 둘 다 대응합니다.
                 const profile = Array.isArray(post.profiles) ? post.profiles[0] : (post.profiles || {});
                 
-                // 사용자가 설정한 username이 있으면 사용, 없으면 user_id 기반 코드 표시
                 const displayAuthor = profile.username ? `@${profile.username.replace(/^@/, '')}` : (post.user_id ? `@user_${post.user_id.substring(0,6)}` : 'Unknown');
-                
-                // 아바타 역시 설정된 것이 없으면 ID 기반의 고유 아바타 생성
                 const displayAvatar = profile.avatar_url || `https://i.pravatar.cc/150?u=${post.user_id}`;
 
                 return {
@@ -1079,23 +1081,31 @@
                     title: post.title,
                     is_public: post.is_public,
                     author: displayAuthor,
-                    avatar: displayAvatar
+                    avatar: displayAvatar,
+                    isLiked: myLikePostIds.has(post.id)
                 };
             });
         }
 
         async function renderGrid(category = 'All') {
-            masonryGrid.innerHTML = '<div style="grid-column: 1 / -1; text-align: center; padding: 40px; color: #888;">Loading stories...</div>';
+            const emptyMsg = category === 'Likes' ? 'You haven\'t liked any stories yet.' : 'Loading stories...';
+            masonryGrid.innerHTML = `<div style="grid-column: 1 / -1; text-align: center; padding: 40px; color: #888;">${emptyMsg}</div>`;
             
-            // DB에서 퍼블릭 게시물 로드
-            let photos = await fetchPosts(); 
+            // Load posts from DB
+            let photos = await fetchPosts(null, category); 
             
-            // 등록된 실 데이터가 아예 없거나 오류가 났다면 빈 화면 방지를 위해 더미 데이터 렌더링
-            if (photos.length === 0) {
+            // Fallback to dummy data if no real data exists
+            if (photos.length === 0 && category === 'All') {
                 photos = getDummyPhotos(category);
             }
             
             masonryGrid.innerHTML = '';
+            
+            if (photos.length === 0) {
+                const noResultMsg = category === 'Likes' ? "You haven't liked anything yet. Go discover some stories!" : "No stories found.";
+                masonryGrid.innerHTML = `<div style="grid-column: 1 / -1; text-align: center; padding: 60px; color: #888; font-weight:300;">${noResultMsg}</div>`;
+                return;
+            }
             
             photos.forEach(photo => {
                 const card = document.createElement('div');
@@ -1125,13 +1135,32 @@
                 `;
                 
                 const likeBtn = card.querySelector('.like-btn');
-                likeBtn.addEventListener('click', (e) => {
+                const heartIcon = likeBtn.querySelector('.heart-icon');
+
+                // Set initial like state
+                if (photo.isLiked) {
+                    likeBtn.classList.add('active');
+                    heartIcon.style.fill = '#ff4b4b';
+                    heartIcon.style.stroke = '#ff4b4b';
+                }
+
+                likeBtn.addEventListener('click', async (e) => {
                     e.preventDefault(); 
                     e.stopPropagation();
-                    const heartIcon = likeBtn.querySelector('.heart-icon');
-                    likeBtn.classList.toggle('active');
+
+                    // Check login status
+                    const { data: { session } } = await supabase.auth.getSession();
+                    if (!session) {
+                        showToast('Please login to like stories.', 'error');
+                        loginModal.classList.add('active');
+                        return;
+                    }
+
+                    const isCurrentlyLiked = likeBtn.classList.contains('active');
                     
-                    if (likeBtn.classList.contains('active')) {
+                    // Optimistic UI update
+                    likeBtn.classList.toggle('active');
+                    if (!isCurrentlyLiked) {
                         heartIcon.style.fill = '#ff4b4b';
                         heartIcon.style.stroke = '#ff4b4b';
                         likeBtn.style.transform = 'scale(1.2)';
@@ -1140,28 +1169,47 @@
                         heartIcon.style.fill = 'none';
                         heartIcon.style.stroke = 'currentColor';
                     }
+
+                    // Server sync
+                    try {
+                        if (!isCurrentlyLiked) {
+                            // Add like
+                            await supabase.from('likes').insert({ 
+                                user_id: session.user.id, 
+                                post_id: photo.id 
+                            });
+                        } else {
+                            // Remove like
+                            await supabase.from('likes')
+                                .delete()
+                                .eq('user_id', session.user.id)
+                                .eq('post_id', photo.id);
+                        }
+                    } catch (err) {
+                        console.error('Like toggle error:', err);
+                    }
                 });
 
                 masonryGrid.appendChild(card);
             });
         }
 
-        // 초기 렌더링
+        // Initial render
         renderGrid('All');
 
-        // 8. 필터 칩 동작 로직
+        // 8. Filter chip logic
         const filterChips = document.querySelectorAll('.chip');
         filterChips.forEach(chip => {
             chip.addEventListener('click', () => {
-                if (chip.classList.contains('active')) return; // 이미 선택된 카테고리면 무시
+                if (chip.classList.contains('active')) return; // Ignore if already active
 
-                // 기존 활성화된 칩 비활성화 후 클릭한 칩 활성화
+                // Deactivate old chip, activate new one
                 document.querySelector('.chip.active')?.classList.remove('active');
                 chip.classList.add('active');
                 
-                const categoryName = chip.textContent;
+                const categoryName = chip.getAttribute('data-filter');
                 
-                // 스무스한 전환 애니메이션
+                // Smooth transition animation
                 masonryGrid.style.opacity = '0';
                 masonryGrid.style.transition = 'opacity 0.3s ease';
                 
@@ -1172,7 +1220,7 @@
             });
         });
 
-        // 9. Make My Phostory 기능 (사진 업로드 및 상태 전환)
+        // 9. Make My Phostory features (upload and state switching)
         const makeForm = document.getElementById('makeForm');
         const photoInput = document.getElementById('photoInput');
         const photoPreview = document.getElementById('photoPreview');
@@ -1181,7 +1229,7 @@
         const visibilityInputs = document.querySelectorAll('input[name="visibility"]');
         const toggleBg = document.querySelector('.toggle-bg');
 
-        // 공개/비공개 토글 슬릿 애니메이션
+        // Public/Private toggle animation
         visibilityInputs.forEach(input => {
             input.addEventListener('change', (e) => {
                 if(e.target.value === 'public') {
@@ -1192,11 +1240,11 @@
             });
         });
 
-        // 이미지 미리보기
+        // Image preview
         photoInput.addEventListener('change', (e) => {
             const file = e.target.files[0];
             if (file) {
-                // 모바일 메모리 부하 방지를 위해 createObjectURL 사용 (Data URL 변환 시 브라우저 크래시 방지)
+                // Use createObjectURL for mobile memory efficiency
                 const imageUrl = URL.createObjectURL(file);
                 photoPreview.src = imageUrl;
                 photoPreview.style.display = 'block';
@@ -1204,13 +1252,13 @@
             }
         });
 
-        // 폼 제출 (Supabase Storage 및 DB Insert)
+        // Form submission (Supabase Storage and DB Insert)
         makeForm.addEventListener('submit', async (e) => {
             e.preventDefault();
             
             const { data: { session } } = await supabase.auth.getSession();
             if (!session) {
-                alert('세션이 만료되었습니다. 다시 로그인해주세요.');
+                showToast('Session expired. Please login again.', 'error');
                 return;
             }
 
@@ -1219,7 +1267,7 @@
             const file = photoInput.files[0];
 
             if (!file) {
-                alert('사진을 선택해주세요.');
+                showToast('Please select a photo.', 'error');
                 return;
             }
 
@@ -1227,7 +1275,7 @@
             makeSubmitBtn.disabled = true;
 
             try {
-                // 1. Supabase Storage에 이미지 업로드 (버킷 분기: public_photos or private_photos)
+                // 1. Upload image to Supabase Storage
                 let fileExt = file.name.split('.').pop().toLowerCase();
                 if (fileExt === file.name.toLowerCase() || !/^[a-z0-9]+$/.test(fileExt)) {
                     fileExt = file.type.split('/')[1] || 'jpg';
@@ -1235,7 +1283,7 @@
                 const fileName = `${Date.now()}-${Math.floor(Math.random()*1000)}.${fileExt}`;
                 const filePath = `${session.user.id}/${fileName}`;
                 
-                // 공개 여부에 따라 저장할 버킷 결정
+                // Determine bucket based on visibility
                 const targetBucket = isPublic ? 'public_photos' : 'private_photos';
                 
                 const { error: uploadError, data } = await supabase.storage
@@ -1248,19 +1296,19 @@
 
                 if (uploadError) throw uploadError;
 
-                // 2. 업로드된 파일의 URL 가져오기
+                // 2. Get the uploaded file's URL
                 let finalUrl = '';
                 if (isPublic) {
                     const { data: { publicUrl } } = supabase.storage.from(targetBucket).getPublicUrl(filePath);
                     finalUrl = publicUrl;
                 } else {
-                    // 프라이빗 버킷의 경우 서명된 URL(Signed URL)을 임의로 10년(315360000초) 할당하여 DB에 저장
+                    // Assign a 10-year signed URL for private bucket storage
                     const { data: signedData, error: signedError } = await supabase.storage.from(targetBucket).createSignedUrl(filePath, 315360000);
                     if (signedError) throw signedError;
                     finalUrl = signedData.signedUrl;
                 }
 
-                // 3. 데이터베이스에 레코드 삽입 (테이스: 'posts')
+                // 3. Insert record into database (table: 'posts')
                 const { error: dbError } = await supabase
                     .from('posts')
                     .insert([
@@ -1269,16 +1317,15 @@
                             title: title, 
                             image_url: finalUrl,
                             is_public: isPublic,
-                            // (선택사항) 조인이 안될 때를 대비해 업로드 시점의 닉네임을 보존하고 싶다면 
-                            // posts 테이블에 author_name 컬럼을 추가해두면 좋습니다.
+                            // (Optional) Add author_name here if you added it to the posts table
                         }
                     ]);
 
                 if (dbError) throw dbError;
 
-                showToast('게시물이 성공적으로 등록되었습니다!');
+                showToast('Post successfully published!');
                 
-                // 폼 초기화 및 홈으로 이동
+                // Reset form and go home
                 makeForm.reset();
                 photoPreview.style.display = 'none';
                 uploadPlaceholder.style.display = 'flex';
@@ -1287,11 +1334,11 @@
 
             } catch (error) {
                 console.error('Upload error:', error);
-                // 테이블이나 버킷이 존재하지 않을 때 친절한 안내 메시지 표시
+                // Friendly error message for missing buckets/tables
                 if (error.message.includes('Bucket not found') || error.message.includes('relation "public.posts" does not exist')) {
-                    showToast('개발자 참고: 적절한 스토리지 버킷과 테이블을 셋업해주세요. (콘솔 확인)', 'error');
+                    showToast('Developer notice: Set up storage buckets and tables. (Check console)', 'error');
                 } else {
-                    showToast('업로드 중 오류가 발생했습니다: ' + error.message, 'error');
+                    showToast('Error during upload: ' + error.message, 'error');
                 }
             } finally {
                 makeSubmitBtn.disabled = false;
@@ -1300,7 +1347,7 @@
         });
 
         // ==========================================
-        // 새 기능: URL파라미터를 통한 프로필 직접 접속 로직
+        // New Feature: Direct profile access via URL parameters
         // ==========================================
         const urlParams = new URLSearchParams(window.location.search);
         const viewUser = urlParams.get('user');
@@ -1318,7 +1365,7 @@
             realProfileBio.textContent = '';
             realProfileGrid.innerHTML = '<div style="grid-column: 1/-1; text-align: center; color: #888; padding: 40px;">Fetching user data...</div>';
 
-            // 1. 이름으로 유저 프로필 조회
+            // 1. Fetch user profile by username
             const { data: profileList, error: profileErr } = await supabase
                 .from('profiles')
                 .select('*')
@@ -1333,29 +1380,29 @@
             realProfileBio.textContent = targetProfile.bio || 'Capturing the world through my lens.';
             if (targetProfile.avatar_url) realProfileAvatar.src = targetProfile.avatar_url;
 
-            // 2. 현재 방문자가 이 페이지의 주인인지 확인 (세션 기반)
+            // 2. Check if current visitor is the owner (based on session)
             let isMyProfile = false;
             const { data: { session } } = await supabase.auth.getSession();
             if (session && session.user.id === targetProfile.id) {
                 isMyProfile = true;
             }
 
-            // 3. 사진 게시물 불러오기 (로그인 여부 무관하게 해당 유저의 퍼블릭/프라이빗 모두 조회)
-            let postQuery = supabase.from('posts').select('*').eq('user_id', targetProfile.id).order('created_at', { ascending: false });
+                // 3. Load posts (Fetches both public and private stories regardless of login status)
+                let postQuery = supabase.from('posts').select('*').eq('user_id', targetProfile.id).order('created_at', { ascending: false });
 
-            const { data: userPosts, error: postErr } = await postQuery;
-            realProfileGrid.innerHTML = '';
-            
-            if (postErr || !userPosts || userPosts.length === 0) {
-                realProfileGrid.innerHTML = '<div style="grid-column: 1/-1; text-align: center; color: #888; padding: 40px;">No posts yet.</div>';
-                return;
-            }
+                const { data: userPosts, error: postErr } = await postQuery;
+                realProfileGrid.innerHTML = '';
+                
+                if (postErr || !userPosts || userPosts.length === 0) {
+                    realProfileGrid.innerHTML = '<div style="grid-column: 1/-1; text-align: center; color: #888; padding: 40px;">No posts yet.</div>';
+                    return;
+                }
 
             userPosts.forEach(post => {
                 const card = document.createElement('div');
                 card.className = 'photo-card fade-in';
                 
-                // 본인 화면일 때만 공개/비공개 상태 배지 표시
+                // Show public/private badges only on your own profile
                 const statusBadge = isMyProfile 
                     ? (post.is_public 
                         ? `<div class="status-badge public">Public</div>` 
@@ -1372,7 +1419,7 @@
             });
         }
 
-        // 페이지 진입 시 파라미터가 있다면 해당 유저 프로필 로드
+        // Check for URL parameters on load
         if (viewUser) {
             loadUserProfilePage(viewUser);
         }

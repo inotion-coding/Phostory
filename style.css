@@ -4,7 +4,7 @@
     --nav-bg: #000000;
     --text-light: #ffffff;
     --text-dark: #1a1a1a;
-    --header-height: 60px; /* 고정된 픽셀 단위 헤더 높이 */
+    --header-height: 60px; /* Fixed header height in pixels */
     --safe-area-inset-bottom: env(safe-area-inset-bottom, 0px);
 }
 
@@ -20,29 +20,29 @@ body {
     color: var(--text-dark);
 }
 
-/* Navigation Bar (상단 블랙 툴바) */
+/* Navigation Bar (Top black toolbar) */
 .top-nav {
     background-color: var(--nav-bg);
     height: var(--header-height);
-    padding: 0 20px; /* 픽셀 단위 좌우 여백 */
+    padding: 0 20px; /* Horizontal padding in pixels */
     display: flex;
-    justify-content: space-between; /* 양쪽 끝으로 자식 요소 배치 */
+    justify-content: space-between; /* Space out child elements */
     align-items: center;
     position: sticky;
     top: 0;
     z-index: 1000;
 }
 
-/* 햄버거 메뉴 아이콘 */
+/* Hamburger menu icon */
 .menu-toggle {
     display: flex;
     flex-direction: column;
     justify-content: center;
-    gap: 6px; /* 줄 간의 간격을 픽셀 단위로 명확히 지정하여 컨테이너 제약에 의한 짤림 방지 */
+    gap: 6px; /* Explicit vertical spacing to prevent clipping */
     width: 30px;
-    padding: 2px 0; /* 컨테이너 내부에 미세한 여유 공간을 주어 마지막 줄이 가려지지 않도록 보호 */
+    padding: 2px 0; /* Small internal padding to protect the last bar line */
     cursor: pointer;
-    z-index: 1001; /* 로고와 드롭다운 위로 */
+    z-index: 1001; /* Above logo and dropdown */
 }
 
 .menu-toggle .bar {
@@ -51,10 +51,10 @@ body {
     background-color: var(--text-light);
     border-radius: 3px;
     flex-shrink: 0;
-    transition: transform 0.3s ease, opacity 0.3s ease; /* transition 최적화 */
+    transition: transform 0.3s ease, opacity 0.3s ease; /* Optimized transition */
 }
 
-/* 햄버거 메뉴 활성화 시 X 모양 애니메이션 */
+/* X-shape animation on toggle active */
 .menu-toggle.active .bar:nth-child(1) {
     transform: translateY(9px) rotate(45deg);
 }
@@ -67,31 +67,31 @@ body {
     transform: translateY(-9px) rotate(-45deg);
 }
 
-/* 세련된 흰색 글씨 로고 */
+/* Elegant white text logo */
 .logo {
     color: var(--text-light);
-    font-size: 24px; /* 픽셀 단위로 세밀하게 조정 */
+    font-size: 24px; /* Fine-tuned pixel size */
     font-weight: 600;
     letter-spacing: 1px;
     cursor: pointer;
-    position: absolute; /* 부모인 top-nav를 기준으로 절대 중앙정렬 */
+    position: absolute; /* Absolute centering within top-nav */
     left: 50%;
     transform: translateX(-50%);
     white-space: nowrap;
 }
 
-/* 오른쪽 빈 공간(로고 중앙 배치를 시각적으로 안정감 있게 유지) */
+/* Spacer to maintain visual balance for centered logo */
 .nav-placeholder {
     width: 30px; 
 }
 
-/* 드롭다운 메뉴 */
+/* Dropdown menu */
 .dropdown-menu {
     position: absolute;
-    top: 100%; /* top-nav 하단에 붙음 */
+    top: 100%; /* Sticks to bottom of top-nav */
     left: 0;
     width: 100%;
-    background-color: rgba(0, 0, 0, 0.95); /* 반투명 블랙 렌더링 */
+    background-color: rgba(0, 0, 0, 0.95); /* Semi-transparent black rendering */
     backdrop-filter: blur(8px);
     overflow: hidden;
     max-height: 0;
@@ -150,17 +150,17 @@ body {
     background-color: rgba(255, 255, 255, 0.1);
 }
 
-/* Content Area (하단 흰색 배경 부분) */
+/* Content Area (Main white background section) */
 .content-area {
     width: 100%;
     min-height: calc(100vh - var(--header-height));
     background-color: var(--bg-color);
-    padding: 40px 20px; /* 모바일 우선 패딩 */
+    padding: 40px 20px; /* Mobile-first padding */
 }
 
 @media (min-width: 768px) {
     .content-area {
-        padding: 60px 10%; /* 테블릿/PC 소폭 넓은 여백 */
+        padding: 60px 10%; /* Slightly wider margins for Tablet/PC */
     }
 }
 
@@ -171,7 +171,7 @@ body {
 }
 
 .home-title {
-    font-size: 32px; /* 모바일 최적화 크기 */
+    font-size: 32px; /* Mobile optimized size */
     font-weight: 600;
     margin-bottom: 8px;
     color: var(--text-dark);
@@ -222,7 +222,7 @@ body {
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
 }
 
-/* Masonry Grid CSS (가장 현대적이고 간단한 방법: column-count) */
+/* Masonry Grid CSS (Modern column-count approach) */
 .masonry-grid {
     column-count: 4;
     column-gap: 1.5rem;
@@ -230,7 +230,7 @@ body {
     padding-bottom: 3rem;
 }
 
-/* 화면 너비에 따른 컬럼 수 조절 (반응형) */
+/* Responsive column counts */
 @media (max-width: 1200px) {
     .masonry-grid { column-count: 3; }
 }
@@ -243,7 +243,7 @@ body {
 
 /* Individual Photo Card */
 .photo-card {
-    break-inside: avoid; /* 컴포넌트가 컬럼 사이에서 쪼개지는 것 방지 */
+    break-inside: avoid; /* Prevent card splitting across columns */
     margin-bottom: 1.5rem;
     position: relative;
     border-radius: 16px;
@@ -251,7 +251,7 @@ body {
     cursor: pointer;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
     background-color: #f9fafb;
-    transform: translateZ(0); /* 하드웨어 가속 강제 (버벅임 방지) */
+    transform: translateZ(0); /* Force hardware acceleration for smoothness */
 }
 
 .card-image-wrapper {
@@ -266,10 +266,10 @@ body {
 }
 
 .photo-card:hover .card-image-wrapper img {
-    transform: scale(1.05); /* 마우스 오버 시 사진 확대 느낌 */
+    transform: scale(1.05); /* Subtle zoom effect on hover */
 }
 
-/* 프리미엄 글래스모피즘 오버레이 */
+/* Premium glassmorphism overlay */
 .glass-overlay {
     position: absolute;
     inset: 0; 
@@ -333,7 +333,7 @@ body {
 
 .btn-icon {
     background: rgba(255, 255, 255, 0.2);
-    backdrop-filter: blur(8px); /* 유리가 서린 느낌 (글래스모피즘) */
+    backdrop-filter: blur(8px); /* Frosted glass effect (glassmorphism) */
     -webkit-backdrop-filter: blur(8px);
     border: 1px solid rgba(255, 255, 255, 0.1);
     border-radius: 50%;
@@ -354,7 +354,7 @@ body {
 
 /* --- About Us Page Styles --- */
 .about-page-bg {
-    background-color: #f9fafb; /* 메인과 구분되는 아주 연한 회색 배경 */
+    background-color: #f9fafb; /* Subtle grey background to distinguish from main */
     display: flex;
     justify-content: center;
     align-items: flex-start;
@@ -441,7 +441,7 @@ body {
     margin-bottom: 0;
 }
 
-/* 반응형 (모바일 뷰어) */
+/* Responsive (Mobile view) */
 @media (max-width: 768px) {
     .about-features {
         flex-direction: column;
@@ -711,11 +711,11 @@ body {
 }
 
 .status-badge.public {
-    background: rgba(0, 0, 0, 0.4); /* 스크린샷과 유사한 고급 블랙 반투명 */
+    background: rgba(0, 0, 0, 0.4); /* Sophisticated black semi-transparency */
 }
 
 .status-badge.private {
-    background: rgba(0, 0, 0, 0.65); /* 프라이빗은 조금 더 진하게 */
+    background: rgba(0, 0, 0, 0.65); /* Slightly darker for private badge */
 }
 
 .mini-card-title {
@@ -796,7 +796,7 @@ body {
 
 .modal-content {
     background: #ffffff;
-    width: calc(100% - 40px); /* 모바일 양옆 여백 */
+    width: calc(100% - 40px); /* Mobile side margins */
     max-width: 420px;
     padding: 40px 24px;
     border-radius: 20px;
