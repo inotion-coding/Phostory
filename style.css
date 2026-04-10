@@ -1098,8 +1098,68 @@ body {
 .browser-body {
     padding: 2rem;
     background: #fafafa;
-    max-height: 450px;
+    max-height: 500px;
     overflow-y: auto;
+}
+
+/* Mobile responsive adjustments for the mockup */
+@media (max-width: 600px) {
+    .browser-mockup {
+        width: 100%;
+        margin: 0;
+    }
+    
+    .browser-header {
+        padding: 0.5rem 0.7rem;
+        gap: 8px;
+    }
+    
+    .browser-dots {
+        gap: 4px;
+        margin-right: 0.5rem;
+    }
+    
+    .browser-dots span {
+        width: 8px;
+        height: 8px;
+    }
+    
+    .browser-url {
+        padding: 0.2rem 0.5rem;
+        font-size: 0.7rem;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+    
+    .browser-body {
+        padding: 1.5rem 1rem;
+        max-height: 400px;
+    }
+
+    .profile-hero {
+        margin-bottom: 20px;
+    }
+
+    .profile-avatar-wrap {
+        width: 60px;
+        height: 60px;
+        margin-bottom: 10px;
+    }
+
+    .profile-name {
+        font-size: 1.1rem;
+        margin-bottom: 4px;
+    }
+
+    .profile-bio {
+        font-size: 0.85rem;
+    }
+
+    .mini-masonry {
+        column-count: 2;
+        column-gap: 8px;
+    }
 }
 
 .profile-hero {

@@ -1020,38 +1020,68 @@
 
         // Supabase에서 게시물 가져오기
         async function fetchPosts(userId = null) {
+            console.log('Fetching posts for:', userId || 'Public Feed');
             try {
-                // profiles 테이블과 조인(Join)하여 작성자의 이름과 아바타 정보를 함께 가져옵니다.
-                let query = supabase.from('posts').select('*, profiles(username, avatar_url)').order('created_at', { ascending: false });
+                // 가장 표준적인 조인 방식 사용
+                let query = supabase
+                    .from('posts')
+                    .select('*, profiles(username, avatar_url)')
+                    .order('created_at', { ascending: false });
                 
                 if (userId) {
-                    query = query.eq('user_id', userId); // 내 프로필 보기: 내 진짜 게시물 모두 가져오기 (비공개 포함)
+                    query = query.eq('user_id', userId);
                 } else {
-                    query = query.eq('is_public', true); // 메인 페이지: 전체공개로 설정된 것만 보여주기
+                    query = query.eq('is_public', true);
                 }
                 
                 const { data: realPosts, error } = await query;
-                if (error) throw error;
                 
-                return realPosts.map(post => {
-                    // 사용자가 설정한 프로필 정보가 있으면 그것을 사용하고, 없으면 기본값(ID 조각 및 기본 아바타)을 사용합니다.
-                    const profile = post.profiles || {};
-                    const displayAuthor = profile.username ? `@${profile.username}` : (post.user_id ? `@user_${post.user_id.substring(0,6)}` : 'Unknown');
-                    const displayAvatar = profile.avatar_url || `https://i.pravatar.cc/150?u=${post.user_id}`;
-
-                    return {
-                        id: post.id,
-                        url: post.image_url,
-                        title: post.title,
-                        is_public: post.is_public,
-                        author: displayAuthor,
-                        avatar: displayAvatar
-                    };
-                });
+                if (error) {
+                    console.error('Supabase Query Error:', error);
+                    // 만약 조인 에러가 나면 순수 게시물만 가져오기 (절대 실패 방지)
+                    const { data: fallbackPosts, error: fbError } = await supabase
+                        .from('posts')
+                        .select('*')
+                        .order('created_at', { ascending: false })
+                        .eq(userId ? 'user_id' : 'is_public', userId || true);
+                    
+                    if (fbError) throw fbError;
+                    return mapPosts(fallbackPosts);
+                }
+                
+                if (!realPosts || realPosts.length === 0) {
+                    console.warn('No posts found in database.');
+                }
+                
+                return mapPosts(realPosts);
             } catch (err) {
-                console.error('Fetch error:', err);
+                console.error('Critical Fetch error:', err);
                 return []; 
             }
+        }
+
+        // 매핑 로직 분리 (재사용 및 가독성)
+        function mapPosts(posts) {
+            if (!posts) return [];
+            return posts.map(post => {
+                // Supabase Join 결과가 배열([])일 수도 있고 객체({})일 수도 있으므로 둘 다 대응합니다.
+                const profile = Array.isArray(post.profiles) ? post.profiles[0] : (post.profiles || {});
+                
+                // 사용자가 설정한 username이 있으면 사용, 없으면 user_id 기반 코드 표시
+                const displayAuthor = profile.username ? `@${profile.username.replace(/^@/, '')}` : (post.user_id ? `@user_${post.user_id.substring(0,6)}` : 'Unknown');
+                
+                // 아바타 역시 설정된 것이 없으면 ID 기반의 고유 아바타 생성
+                const displayAvatar = profile.avatar_url || `https://i.pravatar.cc/150?u=${post.user_id}`;
+
+                return {
+                    id: post.id,
+                    url: post.image_url,
+                    title: post.title,
+                    is_public: post.is_public,
+                    author: displayAuthor,
+                    avatar: displayAvatar
+                };
+            });
         }
 
         async function renderGrid(category = 'All') {
@@ -1230,7 +1260,7 @@
                     finalUrl = signedData.signedUrl;
                 }
 
-                // 3. 데이터베이스에 레코드 삽입 (테이블: 'posts')
+                // 3. 데이터베이스에 레코드 삽입 (테이스: 'posts')
                 const { error: dbError } = await supabase
                     .from('posts')
                     .insert([
@@ -1238,7 +1268,9 @@
                             user_id: session.user.id,
                             title: title, 
                             image_url: finalUrl,
-                            is_public: isPublic
+                            is_public: isPublic,
+                            // (선택사항) 조인이 안될 때를 대비해 업로드 시점의 닉네임을 보존하고 싶다면 
+                            // posts 테이블에 author_name 컬럼을 추가해두면 좋습니다.
                         }
                     ]);
 
