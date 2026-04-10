@@ -716,11 +716,11 @@
             // Fetch my uploads (Make My Phostory dedicated rendering)
             const makeMiniMasonry = document.getElementById('makeMiniMasonry');
             if (makeMiniMasonry) {
-                makeMiniMasonry.innerHTML = '<div style="grid-column: span 2; text-align: center; color: #888; font-size: 14px; padding: 20px;">Loading...</div>';
+                makeMiniMasonry.innerHTML = '<div style="column-span: all; width: 100%; text-align: center; color: #888; font-size: 14px; padding: 20px;">Loading...</div>';
                 const myPhotos = await fetchPosts(session.user.id);
                 makeMiniMasonry.innerHTML = '';
                 if (myPhotos.length === 0) {
-                    makeMiniMasonry.innerHTML = '<div style="grid-column: span 2; text-align: center; color: #888; font-size: 14px; padding: 20px;">No posts yet.</div>';
+                    makeMiniMasonry.innerHTML = '<div style="column-span: all; width: 100%; text-align: center; color: #888; font-size: 14px; padding: 20px;">No posts yet.</div>';
                 } else {
                     myPhotos.forEach(photo => {
                         const miniCard = document.createElement('div');
@@ -943,11 +943,11 @@
             // Mini grid (my posts) rendering
             const miniMasonry = document.getElementById('miniMasonry');
             if (miniMasonry) {
-                miniMasonry.innerHTML = '<div style="grid-column: span 2; text-align: center; color: #888; font-size: 14px; padding: 20px;">Loading...</div>';
+                miniMasonry.innerHTML = '<div style="column-span: all; width: 100%; text-align: center; color: #888; font-size: 14px; padding: 20px;">Loading...</div>';
                 const myPhotos = await fetchPosts(session.user.id);
                 miniMasonry.innerHTML = '';
                 if (myPhotos.length === 0) {
-                    miniMasonry.innerHTML = '<div style="grid-column: span 2; text-align: center; color: #888; font-size: 14px; padding: 20px;">No posts yet.</div>';
+                    miniMasonry.innerHTML = '<div style="column-span: all; width: 100%; text-align: center; color: #888; font-size: 14px; padding: 20px;">No posts yet.</div>';
                 } else {
                     myPhotos.slice(0, 10).forEach(photo => {
                         const miniCard = document.createElement('div');
@@ -1510,7 +1510,6 @@
             photos.forEach(photo => {
                 const card = document.createElement('div');
                 card.className = 'photo-card fade-in';
-                card.style.animationDelay = `${Math.random() * 0.4}s`;
 
                 card.innerHTML = `
                     <div class="card-image-wrapper">
@@ -1763,7 +1762,7 @@
             
             realProfileUsername.textContent = `@${username}`;
             realProfileBio.textContent = '';
-            realProfileGrid.innerHTML = '<div style="grid-column: 1/-1; text-align: center; color: #888; padding: 40px;">Fetching user data...</div>';
+            realProfileGrid.innerHTML = '<div style="column-span: all; width: 100%; text-align: center; color: #888; padding: 60px 20px;">Fetching user data...</div>';
 
             // 1. Fetch user profile by username
             const { data: profileList, error: profileErr } = await supabase
@@ -1772,7 +1771,7 @@
                 .eq('username', username.replace(/^@/, ''));
                 
             if (profileErr || !profileList || profileList.length === 0) {
-                realProfileGrid.innerHTML = '<div style="grid-column: 1/-1; text-align: center; color: #888; padding: 40px;">User not found.</div>';
+                realProfileGrid.innerHTML = '<div style="column-span: all; width: 100%; text-align: center; color: #888; padding: 60px 20px;">User not found.</div>';
                 return;
             }
             
@@ -1780,31 +1779,43 @@
             realProfileBio.textContent = targetProfile.bio || 'Capturing the world through my lens.';
             if (targetProfile.avatar_url) realProfileAvatar.src = targetProfile.avatar_url;
 
-            // 2. Check if current visitor is the owner (based on session)
+            // 2. Check if current visitor is the owner and check liked posts
             let isMyProfile = false;
+            let myLikePostIds = new Set();
             const { data: { session } } = await supabase.auth.getSession();
-            if (session && session.user.id === targetProfile.id) {
-                isMyProfile = true;
+            
+            if (session) {
+                if (session.user.id === targetProfile.id) isMyProfile = true;
+                
+                const { data: myCheckLikes } = await supabase.from('likes')
+                    .select('post_id')
+                    .eq('user_id', session.user.id);
+                if (myCheckLikes) myCheckLikes.forEach(lk => myLikePostIds.add(lk.post_id));
             }
 
-                // 3. Load posts (Fetches both public and private stories regardless of login status)
-                let postQuery = supabase.from('posts').select('*').eq('user_id', targetProfile.id).order('created_at', { ascending: false });
+            // 3. Load posts with profile info for consistent author display
+            let postQuery = supabase.from('posts')
+                .select('*, profiles(username, avatar_url)')
+                .eq('user_id', targetProfile.id)
+                .order('created_at', { ascending: false });
 
-                const { data: userPosts, error: postErr } = await postQuery;
-                realProfileGrid.innerHTML = '';
-                
-                if (postErr || !userPosts || userPosts.length === 0) {
-                    realProfileGrid.innerHTML = '<div style="grid-column: 1/-1; text-align: center; color: #888; padding: 40px;">No posts yet.</div>';
-                    return;
-                }
+            const { data: rawUserPosts, error: postErr } = await postQuery;
+            realProfileGrid.innerHTML = '';
+            
+            if (postErr || !rawUserPosts || rawUserPosts.length === 0) {
+                realProfileGrid.innerHTML = '<div style="column-span: all; width: 100%; text-align: center; color: #888; padding: 60px 20px;">No posts yet.</div>';
+                return;
+            }
 
-            userPosts.forEach(post => {
+            const photos = mapPosts(rawUserPosts, myLikePostIds);
+
+            photos.forEach(photo => {
                 const card = document.createElement('div');
                 card.className = 'photo-card fade-in';
                 
                 // Show public/private badges only on your own profile
                 const statusBadge = isMyProfile 
-                    ? (post.is_public 
+                    ? (photo.is_public 
                         ? `<div class="status-badge public">Public</div>` 
                         : `<div class="status-badge private">Private</div>`)
                     : '';
@@ -1812,9 +1823,72 @@
                 card.innerHTML = `
                     ${statusBadge}
                     <div class="card-image-wrapper">
-                        <img src="${post.image_url}" alt="${post.title}" loading="lazy">
+                        <img src="${photo.url}" alt="${photo.title}" loading="lazy">
+                    </div>
+                    <div class="glass-overlay">
+                        <div class="overlay-content">
+                            <h3 class="photo-title">${photo.title}</h3>
+                            <div class="photo-meta">
+                                <div class="photographer">
+                                    <img src="${photo.avatar}" alt="${photo.author}" class="photographer-avatar">
+                                    <span>${photo.author}</span>
+                                </div>
+                                <div class="action-buttons">
+                                    <button class="btn-icon like-btn" aria-label="Like" title="Like">
+                                        <svg class="heart-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 `;
+
+                const likeBtn = card.querySelector('.like-btn');
+                const heartIcon = likeBtn.querySelector('.heart-icon');
+
+                if (photo.isLiked) {
+                    likeBtn.classList.add('active');
+                    heartIcon.style.fill = '#ff4b4b';
+                    heartIcon.style.stroke = '#ff4b4b';
+                }
+
+                likeBtn.addEventListener('click', async (e) => {
+                    e.preventDefault(); 
+                    e.stopPropagation();
+
+                    const { data: { session: currentSession } } = await supabase.auth.getSession();
+                    if (!currentSession) {
+                        showToast('Please login to like stories.', 'error');
+                        loginModal.classList.add('active');
+                        return;
+                    }
+
+                    const isCurrentlyLiked = likeBtn.classList.contains('active');
+                    likeBtn.classList.toggle('active');
+                    if (!isCurrentlyLiked) {
+                        heartIcon.style.fill = '#ff4b4b';
+                        heartIcon.style.stroke = '#ff4b4b';
+                        likeBtn.style.transform = 'scale(1.2)';
+                        setTimeout(() => likeBtn.style.transform = '', 200);
+                    } else {
+                        heartIcon.style.fill = 'none';
+                        heartIcon.style.stroke = 'currentColor';
+                    }
+
+                    try {
+                        if (!isCurrentlyLiked) {
+                            await supabase.from('likes').insert({ 
+                                user_id: currentSession.user.id, 
+                                post_id: photo.id 
+                            });
+                        } else {
+                            await supabase.from('likes').delete()
+                                .eq('user_id', currentSession.user.id)
+                                .eq('post_id', photo.id);
+                        }
+                    } catch (err) { console.error('Like error:', err); }
+                });
+
                 realProfileGrid.appendChild(card);
             });
         }
