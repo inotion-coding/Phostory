@@ -47,6 +47,7 @@
             <div class="filter-chips">
                 <button class="chip active" data-filter="All">All Stories</button>
                 <button class="chip" data-filter="Likes">My Likes</button>
+                <button class="chip" data-filter="Best">Top Liked</button>
             </div>
         </div>
         
@@ -1472,6 +1473,19 @@
         }
 
         async function renderGrid(category = 'All') {
+            if (category === 'Best') {
+                masonryGrid.innerHTML = `
+                    <div style="column-span: all; text-align: center; padding: 120px 20px; color: #888; width: 100%;">
+                        <h2 style="font-size: 2rem; margin-bottom: 16px; color: #111; letter-spacing: -0.03em; font-weight: 700;">✨ Top Liked is coming soon!</h2>
+                        <p style="font-weight: 300; line-height: 1.7; color: #666; max-width: 500px; margin: 0 auto; font-size: 1.05rem;">
+                            Our team is currently refining the algorithm to curate the most loved stories in real-time. 
+                            Please stay tuned for an even more inspiring collection!
+                        </p>
+                    </div>
+                `;
+                return;
+            }
+
             const emptyMsg = category === 'Likes' ? 'Your favorite stories will appear here.' : 'Loading stories...';
             masonryGrid.innerHTML = `<div style="column-span: all; text-align: center; padding: 40px; color: #888; width: 100%;">${emptyMsg}</div>`;
             
