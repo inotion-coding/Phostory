@@ -239,7 +239,13 @@ body {
     .masonry-grid { column-count: 2; }
 }
 @media (max-width: 500px) {
-    .masonry-grid { column-count: 1; }
+    .masonry-grid { 
+        column-count: 2; 
+        column-gap: 0.75rem; /* 모바일에서 2줄일 때 더 조밀하게 보이도록 간격 축소 */
+    }
+    .photo-card {
+        margin-bottom: 0.75rem; /* 하단 여백도 맞춰서 축소 */
+    }
 }
 
 /* Individual Photo Card */
@@ -273,16 +279,23 @@ body {
 .glass-overlay {
     position: absolute;
     inset: 0; 
-    background: linear-gradient(to top, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.2) 50%, rgba(0,0,0,0) 100%);
+    background: linear-gradient(to top, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.2) 60%, rgba(0,0,0,0) 100%);
     opacity: 0;
-    transition: opacity 0.4s ease;
+    transition: all 0.4s ease;
     display: flex;
     flex-direction: column;
     justify-content: flex-end;
     padding: 1.5rem;
 }
 
-.photo-card:hover .glass-overlay {
+@media (max-width: 500px) {
+    .glass-overlay {
+        padding: 0.8rem; /* 모바일에서 패딩 축소 */
+    }
+}
+
+.photo-card:hover .glass-overlay,
+.photo-card.touch-active .glass-overlay {
     opacity: 1;
 }
 
@@ -291,8 +304,14 @@ body {
     transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.photo-card:hover .overlay-content {
+.photo-card:hover .overlay-content,
+.photo-card.touch-active .overlay-content {
     transform: translateY(0);
+}
+
+/* 터치 지원을 위한 추가 스타일 */
+.photo-card.touch-active .glass-overlay {
+    opacity: 1;
 }
 
 .photo-title {
@@ -301,6 +320,16 @@ body {
     font-weight: 600;
     margin-bottom: 0.8rem;
     letter-spacing: 0.5px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+@media (max-width: 500px) {
+    .photo-title {
+        font-size: 0.9rem; /* 모바일에서 제목 크기 축소 */
+        margin-bottom: 0.4rem;
+    }
 }
 
 .photo-meta {
@@ -312,10 +341,24 @@ body {
 .photographer {
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 8px;
     color: #f3f4f6;
-    font-size: 0.95rem;
+    font-size: 0.9rem;
     font-weight: 300;
+    overflow: hidden;
+}
+
+.photographer span {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+@media (max-width: 500px) {
+    .photographer {
+        font-size: 0.75rem; /* 모바일에서 작성자 텍스트 축소 */
+        gap: 5px;
+    }
 }
 
 .photographer-avatar {
@@ -324,6 +367,14 @@ body {
     border-radius: 50%;
     object-fit: cover;
     border: 1px solid rgba(255, 255, 255, 0.5);
+    flex-shrink: 0;
+}
+
+@media (max-width: 500px) {
+    .photographer-avatar {
+        width: 20px; /* 모바일에서 아바타 축소 */
+        height: 20px;
+    }
 }
 
 .action-buttons {
@@ -333,7 +384,7 @@ body {
 
 .btn-icon {
     background: rgba(255, 255, 255, 0.2);
-    backdrop-filter: blur(8px); /* Frosted glass effect (glassmorphism) */
+    backdrop-filter: blur(8px);
     -webkit-backdrop-filter: blur(8px);
     border: 1px solid rgba(255, 255, 255, 0.1);
     border-radius: 50%;
@@ -342,6 +393,22 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
+    color: #ffffff;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    flex-shrink: 0;
+}
+
+@media (max-width: 500px) {
+    .btn-icon {
+        width: 30px; /* 모바일에서 하트 버튼 축소 */
+        height: 30px;
+    }
+    .btn-icon svg {
+        width: 14px;
+        height: 14px;
+    }
+}
     color: white;
     cursor: pointer;
     transition: all 0.3s ease;

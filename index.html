@@ -1190,6 +1190,29 @@
             });
         }
 
+        // --- Mobile Touch Reveal Logic ---
+        // 모바일 터치 기기에서 사진을 탭하면 정보를 보여줌
+        document.addEventListener('touchstart', (e) => {
+            const card = e.target.closest('.photo-card');
+            
+            // 다른 카드의 터치 상태 해제
+            if (!card) {
+                document.querySelectorAll('.photo-card.touch-active').forEach(c => c.classList.remove('touch-active'));
+                return;
+            }
+
+            // 하트 아이콘 자체를 누른 경우 상태 토글 대신 기능 수행만 보장 (이벤트 전파는 별도 처리됨)
+            if (e.target.closest('.like-btn')) return;
+
+            // 터치한 카드 토글 및 다른 카드 해제
+            if (!card.classList.contains('touch-active')) {
+                document.querySelectorAll('.photo-card.touch-active').forEach(c => c.classList.remove('touch-active'));
+                card.classList.add('touch-active');
+            } else {
+                card.classList.remove('touch-active');
+            }
+        }, { passive: true });
+
         // --- Settings Page Logic ---
         const navSettingsBtnPage = document.getElementById('navSettings');
         
