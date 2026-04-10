@@ -460,11 +460,35 @@
                         miniCard.querySelector('.delete-btn').addEventListener('click', async () => {
                             const isConfirmed = await showConfirm('이 게시물을 정말 삭제하시겠습니까? (삭제 시 복구 불가)');
                             if (isConfirmed) {
+                                // 버튼 임시 상태 변경
+                                const deleteBtn = miniCard.querySelector('.delete-btn');
+                                const originalText = deleteBtn.textContent;
+                                deleteBtn.textContent = '...';
+                                deleteBtn.disabled = true;
+
+                                // 1. 파일 삭제를 위해 이미지 URL에서 스토리지 내부 경로 파싱
+                                let filePath = '';
+                                if (photo.url && photo.url.includes('/photos/')) {
+                                    filePath = photo.url.split('/photos/')[1];
+                                }
+                                
+                                // 2. Supabase Storage (버킷)에서 실제 파일 삭제
+                                if (filePath) {
+                                    const { error: storageError } = await supabase.storage.from('photos').remove([filePath]);
+                                    if (storageError) {
+                                        console.error('스토리지 파일 삭제 오류:', storageError);
+                                    }
+                                }
+
+                                // 3. Supabase DB (posts 테이블)에서 레코드 데이터 삭제
                                 const { error } = await supabase.from('posts').delete().eq('id', photo.id);
                                 if (error) {
                                     alert('게시물 삭제 중 오류 발생: ' + error.message);
+                                    deleteBtn.textContent = originalText;
+                                    deleteBtn.disabled = false;
                                 } else {
-                                    miniCard.remove();
+                                    miniCard.style.opacity = '0';
+                                    setTimeout(() => miniCard.remove(), 300);
                                 }
                             }
                         });
