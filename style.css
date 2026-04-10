@@ -248,7 +248,11 @@ body {
 
 /* Individual Photo Card */
 .photo-card {
+    display: inline-block; /* column-count 상단 정렬 버그 방지 */
+    vertical-align: top;   /* 두 줄의 시작점을 일직선으로 맞춤 */
+    width: 100%;
     break-inside: avoid;
+    margin-top: 0;
     margin-bottom: 1.5rem;
     position: relative;
     border-radius: 12px;
