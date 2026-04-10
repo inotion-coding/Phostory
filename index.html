@@ -205,9 +205,25 @@
                             <div class="mini-card" style="grid-column: span 2; text-align: center; color: #888; font-size: 14px; padding: 20px;">Fetching your posts...</div>
                         </div>
                     </div>
+                    </div>
                 </div>
             </div>
         </section>
+    </main>
+
+    <!-- 5. 유저 프로필 뷰 (링크 접속 시) -->
+    <main class="content-area view-section fade-in" id="profilePageView" style="display: none;">
+        <div class="profile-hero" style="margin-top: 3rem;">
+            <div class="profile-avatar-wrap" style="width: 120px; height: 120px; margin-bottom: 1.5rem;">
+                <img src="https://i.pravatar.cc/150" alt="Profile" class="profile-avatar" id="realProfileAvatar">
+            </div>
+            <h2 class="profile-name" id="realProfileUsername" style="font-size: 2rem;">Loading...</h2>
+            <p class="profile-bio" id="realProfileBio" style="margin-bottom: 2rem;">...</p>
+        </div>
+        
+        <div class="masonry-grid" id="realProfileGrid" style="max-width: 1200px; margin: 0 auto;">
+            <!-- 유저 사진 카드 출력 영역 -->
+        </div>
     </main>
 
     <!-- 로그인 모달 -->
@@ -435,10 +451,13 @@
             aboutView.style.display = 'none';
             if (makeView) makeView.style.display = 'none';
             if (shareView) shareView.style.display = 'none';
+            if (document.getElementById('profilePageView')) document.getElementById('profilePageView').style.display = 'none';
             
             // 선택한 뷰 보이기 (배경이 있는 페이지는 flex 유지)
             if (viewToShow === aboutView || viewToShow === makeView || viewToShow === shareView) {
                 viewToShow.style.display = 'flex';
+            } else if (viewToShow === document.getElementById('profilePageView')) {
+                viewToShow.style.display = 'block';
             } else {
                 homeView.style.display = 'block';
             }
@@ -579,23 +598,26 @@
                 return;
             }
             
-            // 프로필 링크 생성 (이메일 앞부분 사용)
             const emailPrefix = session.user.email.split('@')[0];
-            const fullLink = `https://phostory.com/@${emailPrefix}`;
-            document.getElementById('profileLink').value = fullLink;
-            
-            // 프리뷰 정보 업데이트
-            const browserUrl = document.getElementById('browserUrl');
-            const previewUsername = document.getElementById('previewUsername');
-            if (browserUrl) browserUrl.textContent = fullLink;
-            if (previewUsername) previewUsername.textContent = `@${emailPrefix}`;
-            
+
             // 1. Supabase 'profiles' 테이블에서 내 프로필 정보 가져오기
             const { data: profileData, error: profileError } = await supabase
                 .from('profiles')
                 .select('*')
                 .eq('id', session.user.id)
                 .single();
+
+            // 프로필 링크 생성 (현재 사이트 주소와 파라미터 조합)
+            const profileUsername = profileData?.username || emailPrefix;
+            const baseUrl = window.location.origin + window.location.pathname;
+            const fullLink = `${baseUrl}?user=${profileUsername}`;
+            document.getElementById('profileLink').value = fullLink;
+            
+            // 프리뷰 정보 업데이트
+            const browserUrl = document.getElementById('browserUrl');
+            const previewUsername = document.getElementById('previewUsername');
+            if (browserUrl) browserUrl.textContent = fullLink;
+            if (previewUsername) previewUsername.textContent = `@${profileUsername}`;
 
             if (profileData) {
                 if (profileData.username) {
@@ -1120,6 +1142,83 @@
                 makeSubmitBtn.textContent = 'Publish Post';
             }
         });
+
+        // ==========================================
+        // 새 기능: URL파라미터를 통한 프로필 직접 접속 로직
+        // ==========================================
+        const urlParams = new URLSearchParams(window.location.search);
+        const viewUser = urlParams.get('user');
+
+        async function loadUserProfilePage(username) {
+            const profilePageView = document.getElementById('profilePageView');
+            const realProfileAvatar = document.getElementById('realProfileAvatar');
+            const realProfileUsername = document.getElementById('realProfileUsername');
+            const realProfileBio = document.getElementById('realProfileBio');
+            const realProfileGrid = document.getElementById('realProfileGrid');
+
+            switchView(profilePageView);
+            
+            realProfileUsername.textContent = `@${username}`;
+            realProfileBio.textContent = '';
+            realProfileGrid.innerHTML = '<div style="grid-column: 1/-1; text-align: center; color: #888; padding: 40px;">Fetching user data...</div>';
+
+            // 1. 이름으로 유저 프로필 조회
+            const { data: profileList, error: profileErr } = await supabase
+                .from('profiles')
+                .select('*')
+                .eq('username', username.replace(/^@/, ''));
+                
+            if (profileErr || !profileList || profileList.length === 0) {
+                realProfileGrid.innerHTML = '<div style="grid-column: 1/-1; text-align: center; color: #888; padding: 40px;">User not found.</div>';
+                return;
+            }
+            
+            const targetProfile = profileList[0];
+            realProfileBio.textContent = targetProfile.bio || 'Capturing the world through my lens.';
+            if (targetProfile.avatar_url) realProfileAvatar.src = targetProfile.avatar_url;
+
+            // 2. 현재 방문자가 이 페이지의 주인인지 확인 (세션 기반)
+            let isMyProfile = false;
+            const { data: { session } } = await supabase.auth.getSession();
+            if (session && session.user.id === targetProfile.id) {
+                isMyProfile = true;
+            }
+
+            // 3. 사진 게시물 불러오기 (로그인 여부 무관하게 해당 유저의 퍼블릭/프라이빗 모두 조회)
+            let postQuery = supabase.from('posts').select('*').eq('user_id', targetProfile.id).order('created_at', { ascending: false });
+
+            const { data: userPosts, error: postErr } = await postQuery;
+            realProfileGrid.innerHTML = '';
+            
+            if (postErr || !userPosts || userPosts.length === 0) {
+                realProfileGrid.innerHTML = '<div style="grid-column: 1/-1; text-align: center; color: #888; padding: 40px;">No posts yet.</div>';
+                return;
+            }
+
+            userPosts.forEach(post => {
+                const card = document.createElement('div');
+                card.className = 'photo-card fade-in';
+                
+                // 본인 화면일 때만 Private 사진에 뱃지 표시
+                const badgeHtml = (!post.is_public && isMyProfile) 
+                    ? `<div style="position:absolute; top:10px; right:10px; background:rgba(0,0,0,0.6); color:#fff; padding:4px 8px; border-radius:12px; font-size:12px; font-weight:bold; backdrop-filter:blur(4px); z-index:10;">Private</div>` 
+                    : '';
+
+                card.innerHTML = `
+                    ${badgeHtml}
+                    <div class="card-image-wrapper">
+                        <img src="${post.image_url}" alt="${post.title}" loading="lazy">
+                    </div>
+                `;
+                realProfileGrid.appendChild(card);
+            });
+        }
+
+        // 페이지 진입 시 파라미터가 있다면 해당 유저 프로필 로드
+        if (viewUser) {
+            loadUserProfilePage(viewUser);
+        }
+
     </script>
 </body>
 </html>
