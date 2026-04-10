@@ -166,6 +166,10 @@
                         </div>
                     </div>
                     <div class="input-modern" style="margin-bottom: 0;">
+                        <label for="editNameInput">Name / Username</label>
+                        <input type="text" id="editNameInput" placeholder="Enter your username" maxlength="20">
+                    </div>
+                    <div class="input-modern" style="margin-bottom: 0;">
                         <label for="editBioInput">Bio (Max 50 characters)</label>
                         <input type="text" id="editBioInput" placeholder="Write a short bio..." maxlength="50">
                     </div>
@@ -594,6 +598,11 @@
                 .single();
 
             if (profileData) {
+                if (profileData.username) {
+                    document.getElementById('editNameInput').value = profileData.username;
+                    const displayUsername = profileData.username.startsWith('@') ? profileData.username : `@${profileData.username}`;
+                    if (previewUsername) previewUsername.textContent = displayUsername;
+                }
                 if (profileData.bio) {
                     document.getElementById('editBioInput').value = profileData.bio;
                     document.getElementById('previewBioText').textContent = profileData.bio;
@@ -604,6 +613,7 @@
                 }
             } else {
                 // 정보가 없으면 기본값 세팅
+                document.getElementById('editNameInput').value = emailPrefix;
                 document.getElementById('editBioInput').value = 'Capturing the world through my lens.';
                 document.getElementById('previewBioText').textContent = 'Capturing the world through my lens.';
             }
@@ -652,8 +662,18 @@
         const previewAvatarImg = document.getElementById('previewAvatarImg');
         const editBioInput = document.getElementById('editBioInput');
         const previewBioText = document.getElementById('previewBioText');
+        const editNameInput = document.getElementById('editNameInput');
 
         let pendingAvatarBase64 = null;
+
+        if (editNameInput) {
+            editNameInput.addEventListener('input', (e) => {
+                const nameText = e.target.value.trim() === '' ? `@User` : `@${e.target.value.replace(/^@/, '')}`;
+                if (document.getElementById('previewUsername')) {
+                    document.getElementById('previewUsername').textContent = nameText;
+                }
+            });
+        }
 
         editAvatarInput.addEventListener('change', (e) => {
             const file = e.target.files[0];
@@ -691,11 +711,14 @@
                     return;
                 }
 
-                // 1. 소개글 DB 업데이트
+                // 1. 이름 및 소개글 DB 업데이트 (최초 생성 보장을 위해 upsert 사용)
                 const { error: updateError } = await supabase
                     .from('profiles')
-                    .update({ bio: editBioInput.value })
-                    .eq('id', session.user.id);
+                    .upsert({ 
+                        id: session.user.id,
+                        username: editNameInput.value,
+                        bio: editBioInput.value 
+                    }, { onConflict: 'id' });
                 
                 if (updateError) throw updateError;
                 
@@ -737,7 +760,11 @@
                     previewAvatarImg.src = cacheBustedUrl;
                 }
             } catch (error) {
-                showToast('프로필 저장 오류: ' + error.message, 'error');
+                if (error.message.includes("Could not find the 'username' column")) {
+                    showToast('Supabase DB오류: profiles 테이블에 username 컬럼(타입: text)을 먼저 만들어주세요!', 'error');
+                } else {
+                    showToast('프로필 저장 오류: ' + error.message, 'error');
+                }
             } finally {
                 makeSubmitBtn.disabled = false;
             }
