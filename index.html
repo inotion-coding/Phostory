@@ -2371,7 +2371,14 @@
 
                         delBtn.onclick = async (e) => {
                             e.stopPropagation();
-                            // Directly delete without confirmation as requested
+                            
+                            const myRole = await getLatestRole();
+                            const isStaff = (r) => ['admin', 'developer', 'operator'].includes(r);
+                            if (myRole !== 'operator' && isStaff(profile.role)) {
+                                showToast("Access Denied: Administrative Tier Protection.", "error");
+                                return;
+                            }
+
                             try {
                                 const { data, error } = await supabase
                                     .from('posts')
@@ -2380,14 +2387,11 @@
                                     .select();
 
                                 if (error) throw error;
-
                                 if (!data || data.length === 0) {
                                     showToast('Delete ignored by server (Check RLS policies)', 'error');
                                 } else {
                                     showToast('Post deleted successfully');
-                                    // Refresh the detail view to update list and count
                                     showUserDetail(userId);
-                                    // Also refresh background user list to update post counts
                                     renderAdminUsers();
                                 }
                             } catch (err) {
@@ -2460,6 +2464,15 @@
                         return data;
                     }
 
+                    // Security Helper: Absolute Protection for Operator, Mutual for Staff
+                    const isStaff = (role) => ['admin', 'developer', 'operator'].includes(role);
+                    const isProtected = (myRole, targetRole) => {
+                        if (myRole === 'operator') return false; // Operator can do anything
+                        if (targetRole === 'operator') return true; // Only Operator can touch Operator
+                        if (isStaff(myRole) && (targetRole === 'admin' || targetRole === 'developer')) return true;
+                        return false;
+                    };
+
                     try {
                         switch (cmd) {
                             case '/role': {
@@ -2506,6 +2519,10 @@
 
                                 const user = await lookup(oldId);
                                 if (user) {
+                                    if (isProtected(myRole, user.role)) {
+                                        showToast("Access Denied: Administrative Tier Protection.", "error");
+                                        break;
+                                    }
                                     const { data, error } = await supabase.from('profiles').update({ username: newId }).eq('id', user.id).select();
                                     if (error) throw error;
                                     showToast(`Success: ${oldId} translated to ${newId}`);
@@ -2523,17 +2540,27 @@
                                 if (!user) { showToast(`Target Not Found: ${targetId}`, "error"); break; }
 
                                 if (type === 'pw') {
+                                    if (myRole !== 'operator' && user.role === 'operator') {
+                                        showToast("Access Denied: Operator Protection Active.", "error");
+                                        break;
+                                    }
                                     const { error } = await supabase.auth.resetPasswordForEmail(user.email);
                                     if (error) throw error;
                                     showToast("Security: Password reset email dispatched.");
-                                } else if (type === 'profile') {
-                                    const { error } = await supabase.from('profiles').update({ avatar_url: null }).eq('id', user.id);
-                                    if (error) throw error;
-                                    showToast("Success: Profile picture cleared.");
-                                } else if (type === 'bio') {
-                                    const { error } = await supabase.from('profiles').update({ bio: 'Capturing the world through my lens.' }).eq('id', user.id);
-                                    if (error) throw error;
-                                    showToast("Success: Biography reset to default.");
+                                } else if (type === 'profile' || type === 'bio') {
+                                    if (isProtected(myRole, user.role)) {
+                                        showToast("Access Denied: Administrative Tier Protection.", "error");
+                                        break;
+                                    }
+                                    if (type === 'profile') {
+                                        const { error } = await supabase.from('profiles').update({ avatar_url: null }).eq('id', user.id);
+                                        if (error) throw error;
+                                        showToast("Success: Profile picture cleared.");
+                                    } else {
+                                        const { error } = await supabase.from('profiles').update({ bio: 'Capturing the world through my lens.' }).eq('id', user.id);
+                                        if (error) throw error;
+                                        showToast("Success: Biography reset to default.");
+                                    }
                                 } else {
                                     showToast("Invalid Reset Type: Use profile, bio, or pw.", "error");
                                 }
@@ -2545,6 +2572,10 @@
                                 const targetId = parts[1];
                                 const user = await lookup(targetId);
                                 if (user) {
+                                    if (isProtected(myRole, user.role)) {
+                                        showToast("Access Denied: Administrative Tier Protection.", "error");
+                                        break;
+                                    }
                                     if (confirm(`CRITICAL ACTION: Purge account ${user.username}?\nThis action is logged and irreversible.`)) {
                                         const { error } = await supabase.from('profiles').delete().eq('id', user.id);
                                         if (error) {
@@ -2650,8 +2681,8 @@
                 });
 
                 // Actions
-                btnSavePhotoAdmin.onclick = () => updatePhotoAdmin(photoId);
-                btnDeletePhotoAdmin.onclick = () => deletePhotoAdmin(photoId);
+                btnSavePhotoAdmin.onclick = () => updatePhotoAdmin(photoId, profile.role || 'user');
+                btnDeletePhotoAdmin.onclick = () => deletePhotoAdmin(photoId, profile.role || 'user');
 
                 photoDetailModal.classList.add('active');
             } catch (err) {
@@ -2660,7 +2691,14 @@
             }
         }
 
-        async function updatePhotoAdmin(photoId) {
+        async function updatePhotoAdmin(photoId, targetRole) {
+            const myRole = await getLatestRole();
+            const isStaff = (r) => ['admin', 'developer', 'operator'].includes(r);
+            if (myRole !== 'operator' && isStaff(targetRole)) {
+                showToast("Access Denied: Administrative Tier Protection.", "error");
+                return;
+            }
+
             const title = document.getElementById('adminDetailPhotoTitle').value.trim();
             const isPublic = document.querySelector('input[name="adminVisibility"]:checked').value === 'true';
 
@@ -2685,8 +2723,14 @@
             }
         }
 
-        async function deletePhotoAdmin(photoId) {
-            // Directly delete without confirmation as requested
+        async function deletePhotoAdmin(photoId, targetRole) {
+            const myRole = await getLatestRole();
+            const isStaff = (r) => ['admin', 'developer', 'operator'].includes(r);
+            if (myRole !== 'operator' && isStaff(targetRole)) {
+                showToast("Access Denied: Administrative Tier Protection.", "error");
+                return;
+            }
+
             try {
                 const { data, error } = await supabase
                     .from('posts')
@@ -2714,7 +2758,7 @@
 
             try {
                 const { data: photos, error } = await supabase.from('posts')
-                    .select('*, profiles(username)')
+                    .select('*, profiles(username, role)')
                     .is('deleted_at', null)
                     .order('created_at', { ascending: false });
                 if (error) throw error;
@@ -2760,7 +2804,7 @@
                     const delBtn = tr.querySelector('.btn-table-delete');
                     delBtn.onclick = (e) => {
                         e.stopPropagation();
-                        deletePhotoAdmin(photo.id);
+                        deletePhotoAdmin(photo.id, profile.role || 'user');
                     };
 
                     list.appendChild(tr);
