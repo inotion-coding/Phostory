@@ -2089,7 +2089,13 @@
         }
 
         // Global Resize Handler for both Home and Profile grids
+        // Fix for mobile: Only re-render if WIDTH changes, ignoring height shifts from address bar UI
+        let lastWidth = window.innerWidth;
         window.addEventListener('resize', () => {
+            const currentWidth = window.innerWidth;
+            if (currentWidth === lastWidth) return; // Ignore height-only changes
+            lastWidth = currentWidth;
+
             // Update Home Grid if active
             if (masonryGrid && masonryGrid._currentRenderer && masonryGrid._currentPhotos) {
                 masonryGrid._currentRenderer();
