@@ -1297,11 +1297,18 @@ body {
 }
 
 .share-header h2 {
-    font-size: 2.5rem;
+    font-size: 2.2rem;
     color: var(--text-dark);
-    font-weight: 600;
+    font-weight: 700;
     margin-bottom: 0.5rem;
-    letter-spacing: -0.5px;
+    letter-spacing: -1px;
+    line-height: 1.1;
+}
+
+@media (max-width: 480px) {
+    .share-header h2 {
+        font-size: 1.8rem;
+    }
 }
 
 .share-link-section, .preview-section {
@@ -1324,10 +1331,13 @@ body {
 .link-box {
     display: flex;
     gap: 10px;
+    width: 100%;
+    align-items: stretch;
 }
 
 .link-box input {
     flex: 1;
+    min-width: 0; /* CRITICAL: Allows flex child to shrink on mobile */
     padding: 1rem 1.25rem;
     border: 1px solid #e5e7eb;
     border-radius: 12px;
@@ -1335,10 +1345,19 @@ body {
     background-color: #ffffff;
     color: #4b5563;
     outline: none;
+    width: 100%;
+}
+
+@media (max-width: 480px) {
+    .link-box input {
+        padding: 0.8rem 1rem;
+        font-size: 0.95rem;
+    }
 }
 
 .btn-copy {
-    padding: 0 1.5rem;
+    flex-shrink: 0; /* CRITICAL: Prevents button from being squeezed */
+    padding: 0 1.2rem;
     background-color: var(--text-dark);
     color: #fff;
     border: none;
@@ -1346,6 +1365,16 @@ body {
     font-weight: 600;
     cursor: pointer;
     transition: background-color 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+@media (max-width: 480px) {
+    .btn-copy {
+        padding: 0 1rem;
+        font-size: 0.9rem;
+    }
 }
 
 .btn-copy:hover {
