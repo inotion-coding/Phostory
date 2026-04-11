@@ -1162,7 +1162,7 @@
 
             // Create profile link (Clean Format: phostory.studio/username)
             const profileUsername = profileData?.username || emailPrefix;
-            const baseUrl = window.location.origin;
+            const baseUrl = window.location.origin.replace(/^https?:\/\//, '');
             const fullLink = `${baseUrl}/${profileUsername}`;
             document.getElementById('profileLink').value = fullLink;
 
