@@ -5,6 +5,19 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Phostory</title>
+    <script type="text/javascript">
+        // --- GitHub Pages SPA URL Restoration ---
+        (function(l) {
+            if (l.search[1] === 'p' && l.search[2] === '=') {
+                var decoded = l.search.slice(3).split('&').map(function(s) { 
+                    return s.replace(/~and~/g, '&')
+                }).join('?');
+                window.history.replaceState(null, null,
+                    l.pathname.slice(0, -1) + (decoded.startsWith('/') ? decoded : '/' + decoded) + l.hash
+                );
+            }
+        }(window.location))
+    </script>
     <meta name="description" content="Phostory - A photo blog for Instagram profiles">
     <link rel="stylesheet" href="/style.css">
     <!-- Apply Google Fonts Outfit for a polished look -->
