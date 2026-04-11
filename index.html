@@ -160,7 +160,7 @@
                 <h3>Profile Settings</h3>
                 <div class="profile-edit-form">
                     <div class="avatar-upload-area">
-                        <img src="https://i.pravatar.cc/150?img=12" id="editAvatarPreview" alt="Avatar Preview" class="edit-avatar">
+                        <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48cmVjdCB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgZmlsbD0iI2Y4ZmFmYyIvPjxjaXJjbGUgY3g9IjUwIiBjeT0iNDIiIHI9IjE4IiBmaWxsPSIjZTJlOGYwIi8+PHBhdGggZD0iTTUwIDY0QzMyLjMzIDY0IDE4IDczLjY3IDE4IDg0Vjg2SDgyVjg0QzgyIDczLjY3IDY3LjY3IDY0IDUwIDY0WiIgZmlsbD0iI2UyZThmMCIvPjwvc3ZnPg==" id="editAvatarPreview" alt="Avatar Preview" class="edit-avatar">
                         <div style="flex: 1;">
                             <label for="editAvatarInput" class="btn-secondary btn-small" style="display: inline-block; cursor: pointer; text-align: center; margin-bottom: 0.5rem;">Change Photo</label>
                             <input type="file" id="editAvatarInput" accept="image/jpeg, image/png, image/webp" style="display: none;">
@@ -192,7 +192,7 @@
                         <!-- Profile Header -->
                         <div class="profile-hero">
                             <div class="profile-avatar-wrap">
-                                <img src="https://i.pravatar.cc/150?img=12" alt="Profile" class="profile-avatar" id="previewAvatarImg">
+                                <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48cmVjdCB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgZmlsbD0iI2Y4ZmFmYyIvPjxjaXJjbGUgY3g9IjUwIiBjeT0iNDIiIHI9IjE4IiBmaWxsPSIjZTJlOGYwIi8+PHBhdGggZD0iTTUwIDY0QzMyLjMzIDY0IDE4IDczLjY3IDE4IDg0Vjg2SDgyVjg0QzgyIDczLjY3IDY3LjY3IDY0IDUwIDY0WiIgZmlsbD0iI2UyZThmMCIvPjwvc3ZnPg==" alt="Profile" class="profile-avatar" id="previewAvatarImg">
                             </div>
                             <h2 class="profile-name" id="previewUsername">@Username</h2>
                             <p class="profile-bio" id="previewBioText">Capturing the world through my lens.</p>
@@ -213,7 +213,7 @@
     <main class="content-area view-section fade-in" id="profilePageView" style="display: none;">
         <div class="profile-hero" style="margin-top: 3rem;">
             <div class="profile-avatar-wrap" style="width: 120px; height: 120px; margin-bottom: 1.5rem;">
-                <img src="https://i.pravatar.cc/150" alt="Profile" class="profile-avatar" id="realProfileAvatar">
+                <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48cmVjdCB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgZmlsbD0iI2Y4ZmFmYyIvPjxjaXJjbGUgY3g9IjUwIiBjeT0iNDIiIHI9IjE4IiBmaWxsPSIjZTJlOGYwIi8+PHBhdGggZD0iTTUwIDY0QzMyLjMzIDY0IDE4IDczLjY3IDE4IDg0Vjg2SDgyVjg0QzgyIDczLjY3IDY3LjY3IDY0IDUwIDY0WiIgZmlsbD0iI2UyZThmMCIvPjwvc3ZnPg==" alt="Profile" class="profile-avatar" id="realProfileAvatar">
             </div>
             <h2 class="profile-name" id="realProfileUsername" style="font-size: 2rem;">Loading...</h2>
             <p class="profile-bio" id="realProfileBio" style="margin-bottom: 2rem;">...</p>
@@ -432,7 +432,7 @@
             
             <div class="user-detail-header-premium">
                 <div class="detail-avatar-container">
-                    <img src="https://i.pravatar.cc/150" id="detailUserAvatar" alt="User Avatar" class="profile-avatar-large">
+                    <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48cmVjdCB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgZmlsbD0iI2Y4ZmFmYyIvPjxjaXJjbGUgY3g9IjUwIiBjeT0iNDIiIHI9IjE4IiBmaWxsPSIjZTJlOGYwIi8+PHBhdGggZD0iTTUwIDY0QzMyLjMzIDY0IDE4IDczLjY3IDE4IDg0Vjg2SDgyVjg0QzgyIDczLjY3IDY3LjY3IDY0IDUwIDY0WiIgZmlsbD0iI2UyZThmMCIvPjwvc3ZnPg==" id="detailUserAvatar" alt="User Avatar" class="profile-avatar-large">
                     <div id="detailUserRole" class="role-badge-floating">Admin</div>
                 </div>
                 <div class="detail-title-container">
@@ -548,6 +548,8 @@
         const supabaseUrl = 'https://jlxlccrhwmmrubvgyloi.supabase.co';
         const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImpseGxjY3Jod21tcnVidmd5bG9pIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU3OTc3NDcsImV4cCI6MjA5MTM3Mzc0N30.hnv4A5NFzmMJsq2rrt72hH-cToCAKmqSxhcmaB8eWeg';
         const supabase = createClient(supabaseUrl, supabaseKey);
+
+        const DEFAULT_AVATAR = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48cmVjdCB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgZmlsbD0iI2Y4ZmFmYyIvPjxjaXJjbGUgY3g9IjUwIiBjeT0iNDIiIHI9IjE4IiBmaWxsPSIjZTJlOGYwIi8+PHBhdGggZD0iTTUwIDY0QzMyLjMzIDY0IDE4IDczLjY3IDE4IDg0Vjg2SDgyVjg0QzgyIDczLjY3IDY3LjY3IDY0IDUwIDY0WiIgZmlsbD0iI2UyZThmMCIvPjwvc3ZnPg==';
 
         // 1.5. Toast notification function
         function showToast(message, type = 'success') {
@@ -1586,7 +1588,7 @@
                     url: `https://picsum.photos/seed/${seed}/600/${randomHeight}`,
                     title: `${catTitle} ${i+1}`,
                     author: `Creator_${Math.floor(Math.random()*100)}`,
-                    avatar: `https://i.pravatar.cc/150?img=${Math.floor(Math.random()*70)}`
+                    avatar: DEFAULT_AVATAR
                 };
             });
         }
@@ -1658,7 +1660,7 @@
                 const profile = Array.isArray(post.profiles) ? post.profiles[0] : (post.profiles || {});
                 
                 const displayAuthor = profile.username ? `@${profile.username.replace(/^@/, '')}` : (post.user_id ? `@user_${post.user_id.substring(0,6)}` : 'Unknown');
-                const displayAvatar = profile.avatar_url || `https://i.pravatar.cc/150?u=${post.user_id}`;
+                const displayAvatar = profile.avatar_url || DEFAULT_AVATAR;
 
                 return {
                     id: post.id,
@@ -2169,7 +2171,7 @@
                 users.forEach(user => {
                     const tr = document.createElement('tr');
                     const roleBadge = user.is_admin ? '<span class="badge badge-admin">Admin</span>' : '<span class="badge badge-user">User</span>';
-                    const avatar = user.avatar_url || `https://i.pravatar.cc/150?u=${user.id}`;
+                    const avatar = user.avatar_url || DEFAULT_AVATAR;
                     const count = postCounts[user.id] || 0;
                     
                     tr.innerHTML = `
@@ -2238,7 +2240,7 @@
                 if (postsErr) throw postsErr;
 
                 // 3. Populate Modal
-                document.getElementById('detailUserAvatar').src = profile.avatar_url || `https://i.pravatar.cc/150?u=${profile.id}`;
+                document.getElementById('detailUserAvatar').src = profile.avatar_url || DEFAULT_AVATAR;
                 document.getElementById('detailUsername').textContent = `@${profile.username}`;
                 
                 const roleEl = document.getElementById('detailUserRole');

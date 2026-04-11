@@ -20,6 +20,33 @@ body {
     color: var(--text-dark);
 }
 
+/* --- Global Custom Scrollbar (Premium Phostory Style) --- */
+::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+}
+
+::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #e2e8f0;
+    border-radius: 10px;
+    border: 3px solid #ffffff; /* Gives it some breathing room from the edge */
+    transition: background 0.3s ease;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #cbd5e1;
+}
+
+/* For Firefox: CSS standard scrollbar styling */
+* {
+    scrollbar-width: thin;
+    scrollbar-color: #e2e8f0 transparent;
+}
+
 /* Navigation Bar (Top black toolbar) */
 .top-nav {
     background-color: var(--nav-bg);
@@ -855,11 +882,13 @@ body {
     backdrop-filter: blur(10px);
     display: flex;
     justify-content: center;
-    align-items: center;
+    align-items: center; /* Initial center */
+    padding: 20px; /* Safety padding for tall content */
     z-index: 2000;
     opacity: 0;
     visibility: hidden;
     transition: opacity 0.4s ease, visibility 0.4s ease;
+    overflow-y: auto; /* Fallback scrolling for the backdrop itself */
 }
 
 .modal-overlay.active {
@@ -1063,17 +1092,26 @@ body {
     position: absolute;
     top: 1.5rem;
     right: 1.5rem;
-    background: none;
+    background: rgba(0,0,0,0.04);
     border: none;
-    font-size: 1.8rem;
-    color: #9ca3af;
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #94a3b8;
+    font-size: 1.55rem;
     cursor: pointer;
     line-height: 1;
-    transition: color 0.2s ease;
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    z-index: 1000;
 }
 
 .close-btn:hover {
-    color: var(--text-dark);
+    background: #000000;
+    color: #ffffff;
+    transform: rotate(90deg) scale(1.1);
 }
 
 .modal-content h2 {
@@ -1712,13 +1750,30 @@ body {
 
 .admin-container {
     width: 100%;
-    max-width: 1200px;
+    max-width: 1400px;
     margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+}
+
+@media (min-width: 1024px) {
+    .admin-container {
+        display: grid;
+        grid-template-areas: 
+            "header header"
+            "tabs content";
+        grid-template-columns: 240px 1fr;
+        gap: 2.5rem;
+        align-items: start;
+    }
 }
 
 .admin-header {
-    margin-bottom: 2rem;
+    grid-area: header;
+    margin-bottom: 2.5rem;
     text-align: left;
+    border-bottom: 1px solid #f1f5f9;
+    padding-bottom: 1.5rem;
 }
 
 .admin-header h2 {
@@ -1730,42 +1785,74 @@ body {
 /* Tab Navigation */
 .admin-tabs {
     display: flex;
-    gap: 1.5rem;
+    gap: 1rem;
     border-bottom: 1px solid #e5e7eb;
     margin-bottom: 2rem;
     overflow-x: auto;
     padding-bottom: 1px;
 }
 
+@media (min-width: 1024px) {
+    .admin-tabs {
+        grid-area: tabs;
+        flex-direction: column;
+        border-bottom: none;
+        border-right: 1px solid #f1f5f9;
+        margin-bottom: 0;
+        padding-right: 1.5rem;
+        gap: 0.25rem;
+    }
+}
+
 .admin-tab {
-    padding: 1rem 0.5rem;
+    padding: 0.8rem 1rem;
     background: none;
     border: none;
-    font-size: 1rem;
+    font-size: 0.95rem;
     font-weight: 600;
-    color: #9ca3af;
+    color: #94a3b8;
     cursor: pointer;
     position: relative;
     white-space: nowrap;
-    transition: color 0.3s ease;
+    transition: all 0.3s ease;
+    text-align: left;
+    border-radius: 8px;
 }
 
 .admin-tab:hover {
     color: var(--text-dark);
+    background-color: #f8fafc;
 }
 
 .admin-tab.active {
     color: var(--text-dark);
+    background-color: #f1f5f9;
 }
 
 .admin-tab.active::after {
-    content: '';
-    position: absolute;
-    bottom: -1px;
-    left: 0;
-    width: 100%;
-    height: 2px;
-    background-color: var(--text-dark);
+    display: none; /* Removed the underline in favor of pill background */
+}
+
+@media (max-width: 1023px) {
+    .admin-tab.active {
+        background: none;
+        color: var(--text-dark);
+    }
+    .admin-tab.active::after {
+        display: block;
+        content: '';
+        position: absolute;
+        bottom: -1px;
+        left: 0;
+        width: 100%;
+        height: 2px;
+        background-color: var(--text-dark);
+    }
+}
+
+#adminTabContent {
+    grid-area: content;
+    min-width: 0; /* Overflow fix for grid */
 }
 
 /* Management Tables */
@@ -1951,10 +2038,15 @@ body {
 
 /* --- Admin User Detail Modal (Premium Redesign) --- */
 .admin-detail-modal {
-    max-width: 700px;
-    padding: 3rem;
-    border-radius: 24px;
-    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15);
+    max-width: 900px !important;
+    width: 95% !important;
+    max-height: 92vh !important;
+    padding: 0 !important;
+    border-radius: 28px;
+    box-shadow: 0 40px 100px -20px rgba(0, 0, 0, 0.2);
+    overflow-y: auto !important; /* Internal scrolling if content is long */
+    display: flex;
+    flex-direction: column;
 }
 
 .user-detail-header-premium {
@@ -1962,21 +2054,33 @@ body {
     flex-direction: column;
     align-items: center;
     text-align: center;
-    margin-bottom: 2.5rem;
+    padding: 2.5rem 1.5rem 1.5rem;
+    background: linear-gradient(135deg, #f8fafc 0%, #ffffff 100%);
+    border-bottom: 1px solid #f1f5f9;
+    flex-shrink: 0;
+}
+
+@media (min-width: 768px) {
+    .user-detail-header-premium {
+        flex-direction: row;
+        text-align: left;
+        padding: 2.5rem 3rem;
+        gap: 2rem;
+    }
 }
 
 .detail-avatar-container {
     position: relative;
-    margin-bottom: 1.5rem;
+    flex-shrink: 0;
 }
 
 .profile-avatar-large {
-    width: 120px;
-    height: 120px;
+    width: 100px;
+    height: 100px;
     border-radius: 50%;
     object-fit: cover;
     border: 4px solid #ffffff;
-    box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+    box-shadow: 0 10px 25px rgba(0,0,0,0.08);
 }
 
 .role-badge-floating {
@@ -2017,11 +2121,16 @@ body {
     display: flex;
     justify-content: space-around;
     align-items: center;
-    background: #f8fafc;
-    border: 1px solid #f1f5f9;
-    border-radius: 20px;
-    padding: 2rem 1.5rem;
-    margin-bottom: 3rem;
+    background: #ffffff;
+    border-radius: 0;
+    border-bottom: 1px solid #f1f5f9;
+    padding: 1.5rem;
+    margin-bottom: 0;
+}
+
+.user-content-section {
+    padding: 2.5rem;
+    background: #ffffff;
 }
 
 .stat-item {
@@ -2082,12 +2191,13 @@ body {
 
 /* --- Admin Console Interface (Minimalist Light Mode) --- */
 .admin-console-section {
-    margin-top: 2rem;
-    background: #ffffff; /* Clean White */
-    border-radius: 16px;
+    margin: 1.5rem;
+    background: #ffffff; 
+    border-radius: 12px;
     border: 1px solid #e2e8f0;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.02);
     overflow: hidden;
+    flex-shrink: 0;
 }
 
 .console-window-header {
@@ -2197,8 +2307,40 @@ body {
 
 .admin-modal-actions {
     display: flex;
-    gap: 1rem;
-    margin-top: 1.5rem;
+    justify-content: center;
+    padding: 2rem;
+    margin-top: 0;
+    background: #ffffff;
+    border-top: 1px solid #f1f5f9;
+    flex-shrink: 0;
+}
+
+#closeUserDetailModalAlt {
+    width: auto !important;
+    min-width: 200px;
+    padding: 0.9rem 2.5rem !important;
+    border-radius: 50px !important; /* Elegant pill shape */
+    margin: 0 !important;
+}
+
+/* --- Refined Custom Scrollbar for Admin Detail Modal --- */
+.admin-detail-modal::-webkit-scrollbar {
+    width: 8px;
+}
+
+.admin-detail-modal::-webkit-scrollbar-track {
+    background: transparent;
+    margin: 15px 0; /* Ensures scrollbar doesn't hit the rounded edges */
+}
+
+.admin-detail-modal::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 10px;
+    border: 2px solid #ffffff; /* Contrast border */
+}
+
+.admin-detail-modal::-webkit-scrollbar-thumb:hover {
+    background: #94a3b8;
 }
 
 .btn-action-reset, .btn-action-close {
@@ -2321,69 +2463,104 @@ body {
 
 /* --- Refined Admin Photo Detail Modal (V2) --- */
 .admin-photo-detail-modal-v2 {
-    max-width: 500px !important;
+    max-width: 850px !important;
+    width: 95% !important;
+    max-height: 92vh !important;
     padding: 0 !important;
-    overflow: visible; /* Allowing close btn to breathe */
     border-radius: 28px;
     background: #ffffff;
-    box-shadow: 0 25px 60px rgba(0,0,0,0.15);
-}
-
-.admin-photo-header {
-    height: 40px;
+    box-shadow: 0 40px 100px -20px rgba(0, 0, 0, 0.2);
+    overflow: hidden; 
     display: flex;
-    justify-content: flex-end;
-    align-items: center;
-    padding: 0 1rem;
-    position: relative;
-    border-bottom: none;
+    flex-direction: column;
 }
 
-.admin-photo-header .close-btn {
-    top: 20px;
-    right: 20px;
-    position: absolute;
-    z-index: 100;
+@media (min-width: 900px) {
+    .admin-photo-detail-modal-v2 {
+        flex-direction: row;
+        height: auto;
+        min-height: 500px;
+    }
 }
 
-
-
+.admin-photo-header { display: none; }
 
 .admin-photo-preview-v2 {
-    width: 100%;
-    background: #ffffff;
+    flex: 1.2;
+    background: #f8fafc;
     display: flex;
     justify-content: center;
-    padding: 2rem 0 1rem 0;
+    align-items: center;
+    padding: 2.5rem;
+    position: relative;
+    border-right: 1px solid #f1f5f9;
 }
 
 .admin-photo-preview-v2 img {
-    max-width: 90%;
-    max-height: 380px;
+    max-width: 100%;
+    max-height: 80vh;
     object-fit: contain;
     border-radius: 12px;
-    box-shadow: 0 15px 40px rgba(0,0,0,0.12);
+    box-shadow: 0 20px 50px rgba(0,0,0,0.08);
 }
 
 .admin-photo-body {
-    padding: 0 2rem 2.5rem 2rem;
-    text-align: center;
+    flex: 1;
+    padding: 3rem 2.5rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    overflow-y: auto;
+    position: relative;
 }
+
+@media (max-width: 900px) {
+    .admin-photo-detail-modal-v2 {
+        max-height: 96vh !important;
+    }
+    .admin-photo-preview-v2 {
+        flex: none;
+        padding: 2.5rem;
+        background: #ffffff;
+        border-right: none;
+        border-bottom: 1px solid #f1f5f9;
+        height: auto; /* Removed fixed 300px */
+    }
+    .admin-photo-preview-v2 img {
+        max-height: 45vh;
+    }
+    .admin-photo-body {
+        padding: 2rem;
+        text-align: left;
+    }
+}
+
+
+
+
+
 
 
 
 .admin-photo-body .admin-form-group {
-    margin-bottom: 2rem;
+    margin-bottom: 1.5rem;
+    text-align: left;
 }
 
 .admin-photo-body .admin-form-group label {
     display: block;
-    font-size: 0.75rem;
-    font-weight: 700;
+    font-size: 0.7rem;
+    font-weight: 800;
     color: #94a3b8;
     text-transform: uppercase;
-    letter-spacing: 0.05em;
-    margin-bottom: 0.75rem;
+    letter-spacing: 0.1em;
+    margin-bottom: 0.6rem;
+}
+
+@media (max-width: 899px) {
+    .admin-photo-body .admin-form-group {
+        text-align: center;
+    }
 }
 
 /* Redesigned Slim Toggle - Precision Centering */
@@ -2455,14 +2632,27 @@ body {
 }
 
 .admin-meta-info {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    margin-top: 1.5rem;
-    margin-bottom: 2rem;
-    padding-top: 1.5rem;
     border-top: 1px solid #f1f5f9;
+    padding-top: 2rem;
+    margin-top: 1rem;
+    margin-bottom: 2.5rem;
+    color: #64748b;
+    font-size: 0.85rem;
+    line-height: 1.6;
+}
+
+.admin-meta-info div {
+    margin-bottom: 0.5rem;
+}
+
+.admin-meta-info strong {
+    color: var(--text-dark);
+    font-weight: 700;
+    text-transform: uppercase;
+    font-size: 0.72rem;
+    letter-spacing: 0.05em;
+    display: inline-block;
+    width: 90px;
 }
 
 .meta-item.full-width {
@@ -2492,42 +2682,49 @@ body {
 }
 
 .admin-photo-actions-v2 {
-    display: flex;
+    margin-top: 1rem;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
     gap: 1rem;
-    justify-content: center;
 }
+
+@media (max-width: 900px) {
+    .admin-photo-actions-v2 {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Use global .close-btn */
 
 .btn-save-photo-v2, .btn-delete-photo-v2 {
     width: 100%;
-    max-width: 200px;
-    padding: 1.1rem;
-    border-radius: 16px;
-    font-size: 1rem;
+    padding: 1rem;
+    border-radius: 12px;
+    font-size: 0.9rem;
     font-weight: 700;
     cursor: pointer;
-    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    transition: all 0.2s ease;
     border: none;
 }
 
 .btn-save-photo-v2 {
-    background: #1e293b;
+    background: var(--text-dark);
     color: white;
 }
 
 .btn-save-photo-v2:hover {
-    background: #000000;
-    transform: translateY(-3px);
-    box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+    background: #333;
+    transform: translateY(-2px);
 }
 
 .btn-delete-photo-v2 {
-    background: #fff1f2;
-    color: #e11d48;
+    background: #fff5f5;
+    color: #e53e3e;
 }
 
 .btn-delete-photo-v2:hover {
-    background: #ffe4e6;
-    transform: translateY(-3px);
+    background: #fed7d7;
+    transform: translateY(-2px);
 }
 
 /* --- Mobile Responsiveness for Photo Detail --- */
