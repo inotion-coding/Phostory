@@ -219,7 +219,7 @@
             <p class="profile-bio" id="realProfileBio" style="margin-bottom: 2rem;">...</p>
         </div>
         
-        <div class="masonry-grid" id="realProfileGrid" style="max-width: 1200px; margin: 0 auto;">
+        <div class="masonry-root" id="realProfileGrid" style="max-width: 1200px; margin: 0 auto;">
             <!-- User photo grid area -->
         </div>
     </main>
@@ -1742,18 +1742,18 @@
             }
         }
 
-        // Handle dynamic resizing without re-fetching
-        window.addEventListener('resize', () => {
-            if (masonryGrid && masonryGrid._currentRenderer && masonryGrid._currentPhotos) {
-                // Throttled or direct? Let's go direct for immediate 'wow' effect
-                masonryGrid._currentRenderer();
-            }
-        });
 
-        function createPhotoCard(photo) {
+
+        function createPhotoCard(photo, isOwner = false) {
             const card = document.createElement('div');
             card.className = 'photo-card fade-in';
+            const statusBadge = isOwner 
+                ? (photo.is_public 
+                    ? `<div class="status-badge public">Public</div>` 
+                    : `<div class="status-badge private">Private</div>`)
+                : '';
             card.innerHTML = `
+                ${statusBadge}
                 <div class="card-image-wrapper">
                     <img src="${photo.url}" alt="${photo.title}" loading="lazy">
                 </div>
@@ -2057,90 +2057,49 @@
             const photos = mapPosts(rawUserPosts, myLikePostIds);
 
             if (realProfileGrid) {
-                photos.forEach(photo => {
-                    const card = document.createElement('div');
-                    card.className = 'photo-card fade-in';
-                    
-                    // Show public/private badges only on your own profile
-                    const statusBadge = isMyProfile 
-                        ? (photo.is_public 
-                            ? `<div class="status-badge public">Public</div>` 
-                            : `<div class="status-badge private">Private</div>`)
-                        : '';
+                const renderProfileGrid = () => {
+                    const width = window.innerWidth;
+                    let colCount = 4;
+                    if (width <= 600) colCount = 2;
+                    else if (width <= 900) colCount = 3;
+                    else colCount = 4;
 
-                    card.innerHTML = `
-                        ${statusBadge}
-                        <div class="card-image-wrapper">
-                            <img src="${photo.url}" alt="${photo.title}" loading="lazy">
-                        </div>
-                        <div class="glass-overlay">
-                            <div class="overlay-content">
-                                <h3 class="photo-title">${photo.title}</h3>
-                                <div class="photo-meta">
-                                    <div class="photographer">
-                                        <img src="${photo.avatar}" alt="${photo.author}" class="photographer-avatar">
-                                        <span>${photo.author}</span>
-                                    </div>
-                                    <div class="action-buttons">
-                                        <button class="btn-icon like-btn" aria-label="Like" title="Like">
-                                            <svg class="heart-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    `;
-
-                    const likeBtn = card.querySelector('.like-btn');
-                    const heartIcon = likeBtn.querySelector('.heart-icon');
-
-                    if (photo.isLiked) {
-                        likeBtn.classList.add('active');
-                        heartIcon.style.fill = '#ff4b4b';
-                        heartIcon.style.stroke = '#ff4b4b';
+                    realProfileGrid.innerHTML = '';
+                    const columns = [];
+                    for (let i = 0; i < colCount; i++) {
+                        const col = document.createElement('div');
+                        col.className = 'masonry-column';
+                        realProfileGrid.appendChild(col);
+                        columns.push(col);
                     }
 
-                    likeBtn.addEventListener('click', async (e) => {
-                        e.preventDefault(); 
-                        e.stopPropagation();
-
-                        const { data: { session: currentSession } } = await supabase.auth.getSession();
-                        if (!currentSession) {
-                            showToast('Please login to like stories.', 'error');
-                            loginModal.classList.add('active');
-                            return;
-                        }
-
-                        const isCurrentlyLiked = likeBtn.classList.contains('active');
-                        likeBtn.classList.toggle('active');
-                        if (!isCurrentlyLiked) {
-                            heartIcon.style.fill = '#ff4b4b';
-                            heartIcon.style.stroke = '#ff4b4b';
-                            likeBtn.style.transform = 'scale(1.2)';
-                            setTimeout(() => likeBtn.style.transform = '', 200);
-                        } else {
-                            heartIcon.style.fill = 'none';
-                            heartIcon.style.stroke = 'currentColor';
-                        }
-
-                        try {
-                            if (!isCurrentlyLiked) {
-                                await supabase.from('likes').insert({ 
-                                    user_id: currentSession.user.id, 
-                                    post_id: photo.id 
-                                });
-                            } else {
-                                await supabase.from('likes').delete()
-                                    .eq('user_id', currentSession.user.id)
-                                    .eq('post_id', photo.id);
-                            }
-                        } catch (err) { console.error('Like error:', err); }
+                    photos.forEach((photo, index) => {
+                        const colIdx = index % colCount;
+                        const card = createPhotoCard(photo, isMyProfile);
+                        columns[colIdx].appendChild(card);
                     });
+                };
 
-                    realProfileGrid.appendChild(card);
-                });
+                renderProfileGrid();
+                
+                // Bind to resize and store ref
+                realProfileGrid._currentRenderer = renderProfileGrid;
+                realProfileGrid._currentPhotos = photos;
             }
         }
+
+        // Global Resize Handler for both Home and Profile grids
+        window.addEventListener('resize', () => {
+            // Update Home Grid if active
+            if (masonryGrid && masonryGrid._currentRenderer && masonryGrid._currentPhotos) {
+                masonryGrid._currentRenderer();
+            }
+            // Update Profile Grid if active
+            const profileGrid = document.getElementById('realProfileGrid');
+            if (profileGrid && profileGrid._currentRenderer && profileGrid._currentPhotos) {
+                profileGrid._currentRenderer();
+            }
+        });
 
         // Admin Page Navigation
         if (navAdminBtn) {
@@ -2321,30 +2280,28 @@
                         
                         delBtn.onclick = async (e) => {
                             e.stopPropagation();
-                            const isConfirmed = await showConfirm('Are you sure you want to delete this post as an administrator?');
-                            if (isConfirmed) {
-                                try {
-                                    const { data, error } = await supabase
-                                        .from('posts')
-                                        .update({ deleted_at: new Date().toISOString() })
-                                        .eq('id', post.id)
-                                        .select();
+                            // Directly delete without confirmation as requested
+                            try {
+                                const { data, error } = await supabase
+                                    .from('posts')
+                                    .update({ deleted_at: new Date().toISOString() })
+                                    .eq('id', post.id)
+                                    .select();
 
-                                    if (error) throw error;
-                                    
-                                    if (!data || data.length === 0) {
-                                        showToast('Delete ignored by server (Check RLS policies)', 'error');
-                                    } else {
-                                        showToast('Post deleted successfully');
-                                        // Refresh the detail view to update list and count
-                                        showUserDetail(userId);
-                                        // Also refresh background user list to update post counts
-                                        renderAdminUsers();
-                                    }
-                                } catch (err) {
-                                    console.error('Delete error:', err);
-                                    showToast('Failed to delete post: ' + err.message, 'error');
+                                if (error) throw error;
+                                
+                                if (!data || data.length === 0) {
+                                    showToast('Delete ignored by server (Check RLS policies)', 'error');
+                                } else {
+                                    showToast('Post deleted successfully');
+                                    // Refresh the detail view to update list and count
+                                    showUserDetail(userId);
+                                    // Also refresh background user list to update post counts
+                                    renderAdminUsers();
                                 }
+                            } catch (err) {
+                                console.error('Delete error:', err);
+                                showToast('Failed to delete post: ' + err.message, 'error');
                             }
                         };
                         
@@ -2483,27 +2440,25 @@
         }
 
         async function deletePhotoAdmin(photoId) {
-            const isConfirmed = await showConfirm('Are you sure you want to delete this photo as an administrator?');
-            if (isConfirmed) {
-                try {
-                    const { data, error } = await supabase
-                        .from('posts')
-                        .update({ deleted_at: new Date().toISOString() })
-                        .eq('id', photoId)
-                        .select();
+            // Directly delete without confirmation as requested
+            try {
+                const { data, error } = await supabase
+                    .from('posts')
+                    .update({ deleted_at: new Date().toISOString() })
+                    .eq('id', photoId)
+                    .select();
 
-                    if (error) throw error;
+                if (error) throw error;
 
-                    if (!data || data.length === 0) {
-                        showToast('Delete ignored by server (Check RLS policies)', 'error');
-                    } else {
-                        showToast('Photo deleted successfully');
-                        photoDetailClose();
-                        renderAdminPhotos(); // Refresh list
-                    }
-                } catch (err) {
-                    showToast('Delete failed: ' + err.message, 'error');
+                if (!data || data.length === 0) {
+                    showToast('Delete ignored by server (Check RLS policies)', 'error');
+                } else {
+                    showToast('Photo deleted successfully');
+                    photoDetailClose();
+                    renderAdminPhotos(); // Refresh list
                 }
+            } catch (err) {
+                showToast('Delete failed: ' + err.message, 'error');
             }
         }
 
