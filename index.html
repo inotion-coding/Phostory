@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -11,6 +12,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;600&display=swap" rel="stylesheet">
 </head>
+
 <body>
     <!-- Top navigation toolbar -->
     <header class="top-nav">
@@ -20,10 +22,10 @@
             <span class="bar"></span>
             <span class="bar"></span>
         </div>
-        
+
         <!-- Center logo -->
         <h1 class="logo" id="navLogo" style="cursor: pointer;">Phostory</h1>
-        
+
         <!-- Right side spacer -->
         <div class="nav-placeholder"></div>
 
@@ -51,7 +53,7 @@
                 <button class="chip" data-filter="Best">Top Liked</button>
             </div>
         </div>
-        
+
         <!-- Photo cards populated via JavaScript -->
         <div class="masonry-root" id="masonryGrid">
             <!-- Data will be filled here -->
@@ -65,13 +67,19 @@
                 <h2>Our Journey</h2>
                 <p class="subtitle">Transforming fleeting moments into timeless history.</p>
             </div>
-            
-            <div class="about-content">
-                <p>Welcome to <strong>Phostory</strong>. We believe that every image is more than just a picture; it’s a living chapter of history waiting to be told. Our purpose is to provide you with an elegant and intuitive sanctuary where your most cherished memories can be archived as history and shared with the soul of the world.</p>
-                <p>Founded in 2026, Phostory is dedicated to offering a premium, contemporary experience where your memories don’t just exist—they truly shine.</p>
 
-                <p>Phostory is developed under the vision and support of <strong>Geonwoo Yoo</strong>, CEO of <strong>Lab. U</strong>. As an integral part of <strong>Lab. U</strong>, Phostory reflects our shared commitment to innovation and the preservation of human narratives.</p>
-                
+            <div class="about-content">
+                <p>Welcome to <strong>Phostory</strong>. We believe that every image is more than just a picture; it’s a
+                    living chapter of history waiting to be told. Our purpose is to provide you with an elegant and
+                    intuitive sanctuary where your most cherished memories can be archived as history and shared with
+                    the soul of the world.</p>
+                <p>Founded in 2026, Phostory is dedicated to offering a premium, contemporary experience where your
+                    memories don’t just exist—they truly shine.</p>
+
+                <p>Phostory is developed under the vision and support of <strong>Geonwoo Yoo</strong>, CEO of
+                    <strong>Lab. U</strong>. As an integral part of <strong>Lab. U</strong>, Phostory reflects our
+                    shared commitment to innovation and the preservation of human narratives.</p>
+
                 <div class="about-features">
                     <div class="feature-card">
                         <h3>Minimalist Design</h3>
@@ -96,9 +104,15 @@
             <form id="makeForm" class="make-form">
                 <!-- Image upload area -->
                 <div class="upload-area">
-                    <input type="file" id="photoInput" accept="image/jpeg, image/png, image/webp, image/gif" class="file-input" required>
+                    <input type="file" id="photoInput" accept="image/jpeg, image/png, image/webp, image/gif"
+                        class="file-input" required>
                     <div class="upload-placeholder">
-                        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="upload-icon"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+                        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="upload-icon">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                            <polyline points="17 8 12 3 7 8"></polyline>
+                            <line x1="12" y1="3" x2="12" y2="15"></line>
+                        </svg>
                         <span>Click or drag image to upload</span>
                         <span class="upload-hint">High quality JPEG, PNG up to 10MB</span>
                     </div>
@@ -134,7 +148,8 @@
                 </div>
                 <!-- Reuse mini grid styles from share view -->
                 <div class="mini-masonry" id="makeMiniMasonry">
-                    <div style="grid-column: span 2; text-align: center; color: #888; font-size: 14px; padding: 20px;">Fetching your posts...</div>
+                    <div style="grid-column: span 2; text-align: center; color: #888; font-size: 14px; padding: 20px;">
+                        Fetching your posts...</div>
                 </div>
             </div>
         </section>
@@ -147,7 +162,7 @@
                 <h2>Share My Phostory</h2>
                 <p class="subtitle">Share your personalized page and check your performance overview.</p>
             </div>
-            
+
             <div class="share-link-section">
                 <h3>Your Profile Link</h3>
                 <div class="link-box">
@@ -160,10 +175,14 @@
                 <h3>Profile Settings</h3>
                 <div class="profile-edit-form">
                     <div class="avatar-upload-area">
-                        <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48cmVjdCB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgZmlsbD0iI2Y4ZmFmYyIvPjxjaXJjbGUgY3g9IjUwIiBjeT0iNDIiIHI9IjE4IiBmaWxsPSIjZTJlOGYwIi8+PHBhdGggZD0iTTUwIDY0QzMyLjMzIDY0IDE4IDczLjY3IDE4IDg0Vjg2SDgyVjg0QzgyIDczLjY3IDY3LjY3IDY0IDUwIDY0WiIgZmlsbD0iI2UyZThmMCIvPjwvc3ZnPg==" id="editAvatarPreview" alt="Avatar Preview" class="edit-avatar">
+                        <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48cmVjdCB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgZmlsbD0iI2Y4ZmFmYyIvPjxjaXJjbGUgY3g9IjUwIiBjeT0iNDIiIHI9IjE4IiBmaWxsPSIjZTJlOGYwIi8+PHBhdGggZD0iTTUwIDY0QzMyLjMzIDY0IDE4IDczLjY3IDE4IDg0Vjg2SDgyVjg0QzgyIDczLjY3IDY3LjY3IDY0IDUwIDY0WiIgZmlsbD0iI2UyZThmMCIvPjwvc3ZnPg=="
+                            id="editAvatarPreview" alt="Avatar Preview" class="edit-avatar">
                         <div style="flex: 1;">
-                            <label for="editAvatarInput" class="btn-secondary btn-small" style="display: inline-block; cursor: pointer; text-align: center; margin-bottom: 0.5rem;">Change Photo</label>
-                            <input type="file" id="editAvatarInput" accept="image/jpeg, image/png, image/webp" style="display: none;">
+                            <label for="editAvatarInput" class="btn-secondary btn-small"
+                                style="display: inline-block; cursor: pointer; text-align: center; margin-bottom: 0.5rem;">Change
+                                Photo</label>
+                            <input type="file" id="editAvatarInput" accept="image/jpeg, image/png, image/webp"
+                                style="display: none;">
                             <p style="font-size: 0.85rem; color: #9ca3af; margin: 0;">JPG, PNG up to 2MB</p>
                         </div>
                     </div>
@@ -180,7 +199,7 @@
                     <h3>Public Page Preview</h3>
                     <p class="preview-desc">This is how visitors will see your public profile.</p>
                 </div>
-                
+
                 <div class="browser-mockup">
                     <div class="browser-header">
                         <div class="browser-dots">
@@ -192,17 +211,19 @@
                         <!-- Profile Header -->
                         <div class="profile-hero">
                             <div class="profile-avatar-wrap">
-                                <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48cmVjdCB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgZmlsbD0iI2Y4ZmFmYyIvPjxjaXJjbGUgY3g9IjUwIiBjeT0iNDIiIHI9IjE4IiBmaWxsPSIjZTJlOGYwIi8+PHBhdGggZD0iTTUwIDY0QzMyLjMzIDY0IDE4IDczLjY3IDE4IDg0Vjg2SDgyVjg0QzgyIDczLjY3IDY3LjY3IDY0IDUwIDY0WiIgZmlsbD0iI2UyZThmMCIvPjwvc3ZnPg==" alt="Profile" class="profile-avatar" id="previewAvatarImg">
+                                <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48cmVjdCB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgZmlsbD0iI2Y4ZmFmYyIvPjxjaXJjbGUgY3g9IjUwIiBjeT0iNDIiIHI9IjE4IiBmaWxsPSIjZTJlOGYwIi8+PHBhdGggZD0iTTUwIDY0QzMyLjMzIDY0IDE4IDczLjY3IDE4IDg0Vjg2SDgyVjg0QzgyIDczLjY3IDY3LjY3IDY0IDUwIDY0WiIgZmlsbD0iI2UyZThmMCIvPjwvc3ZnPg=="
+                                    alt="Profile" class="profile-avatar" id="previewAvatarImg">
                             </div>
                             <h2 class="profile-name" id="previewUsername">@Username</h2>
                             <p class="profile-bio" id="previewBioText">Capturing the world through my lens.</p>
                         </div>
-                        
+
                         <!-- Mini Masonry Grid -->
                         <div class="mini-masonry" id="miniMasonry">
-                            <div class="mini-card" style="grid-column: span 2; text-align: center; color: #888; font-size: 14px; padding: 20px;">Fetching your posts...</div>
+                            <div class="mini-card"
+                                style="grid-column: span 2; text-align: center; color: #888; font-size: 14px; padding: 20px;">
+                                Fetching your posts...</div>
                         </div>
-                    </div>
                     </div>
                 </div>
             </div>
@@ -213,12 +234,13 @@
     <main class="content-area view-section fade-in" id="profilePageView" style="display: none;">
         <div class="profile-hero" style="margin-top: 3rem;">
             <div class="profile-avatar-wrap" style="width: 120px; height: 120px; margin-bottom: 1.5rem;">
-                <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48cmVjdCB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgZmlsbD0iI2Y4ZmFmYyIvPjxjaXJjbGUgY3g9IjUwIiBjeT0iNDIiIHI9IjE4IiBmaWxsPSIjZTJlOGYwIi8+PHBhdGggZD0iTTUwIDY0QzMyLjMzIDY0IDE4IDczLjY3IDE4IDg0Vjg2SDgyVjg0QzgyIDczLjY3IDY3LjY3IDY0IDUwIDY0WiIgZmlsbD0iI2UyZThmMCIvPjwvc3ZnPg==" alt="Profile" class="profile-avatar" id="realProfileAvatar">
+                <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48cmVjdCB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgZmlsbD0iI2Y4ZmFmYyIvPjxjaXJjbGUgY3g9IjUwIiBjeT0iNDIiIHI9IjE4IiBmaWxsPSIjZTJlOGYwIi8+PHBhdGggZD0iTTUwIDY0QzMyLjMzIDY0IDE4IDczLjY3IDE4IDg0Vjg2SDgyVjg0QzgyIDczLjY3IDY3LjY3IDY0IDUwIDY0WiIgZmlsbD0iI2UyZThmMCIvPjwvc3ZnPg=="
+                    alt="Profile" class="profile-avatar" id="realProfileAvatar">
             </div>
             <h2 class="profile-name" id="realProfileUsername" style="font-size: 2rem;">Loading...</h2>
             <p class="profile-bio" id="realProfileBio" style="margin-bottom: 2rem;">...</p>
         </div>
-        
+
         <div class="masonry-root" id="realProfileGrid" style="max-width: 1200px; margin: 0 auto;">
             <!-- User photo grid area -->
         </div>
@@ -233,7 +255,8 @@
             <form id="authForm">
                 <div class="input-group" id="idInputGroup">
                     <label for="idInput" id="idInputLabel">ID</label>
-                    <input type="text" id="idInput" name="username" autocomplete="username" placeholder="Enter your ID (Max 15)" maxlength="15" required>
+                    <input type="text" id="idInput" name="username" autocomplete="username"
+                        placeholder="Enter your ID (Max 15)" maxlength="15" required>
                     <div id="idStatus" class="input-hint"></div>
                 </div>
                 <div class="input-group" id="emailInputGroup">
@@ -262,12 +285,12 @@
                 <label for="editTitleInput">Title</label>
                 <input type="text" id="editTitleInput" placeholder="Enter new title" required>
             </div>
-            
+
             <div class="visibility-section" style="margin-bottom: 2rem; text-align: left;">
                 <span class="visibility-label">Visibility</span>
                 <div class="custom-toggle-wrapper">
                     <div class="toggle-bg" id="editToggleBg"></div>
-                    
+
                     <input type="radio" name="editVisibility" id="editVisPublic" value="public">
                     <label for="editVisPublic" class="toggle-option">Public</label>
 
@@ -300,17 +323,25 @@
     <div class="modal-overlay" id="accDeleteModal">
         <div class="modal-content modal-compact">
             <div class="modal-icon-danger">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z">
+                    </path>
+                    <line x1="12" y1="9" x2="12" y2="13"></line>
+                    <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                </svg>
             </div>
             <h2>Delete Account</h2>
-            <p class="modal-subtitle-compact">This will permanently remove all your posts and record. Proceed with caution.</p>
+            <p class="modal-subtitle-compact">This will permanently remove all your posts and record. Proceed with
+                caution.</p>
             <div class="modal-actions-vertical">
-                <button class="btn-primary btn-danger btn-full" id="confirmAccDeleteActionBtn">Permanently Delete</button>
+                <button class="btn-primary btn-danger btn-full" id="confirmAccDeleteActionBtn">Permanently
+                    Delete</button>
                 <button class="btn-ghost btn-full" id="cancelAccDeleteBtn">Keep My Account</button>
             </div>
         </div>
     </div>
-    
+
     <!-- Settings content (hidden by default) -->
     <main class="content-area settings-page-bg view-section" id="settingsView" style="display: none;">
         <section class="settings-container-page">
@@ -318,7 +349,7 @@
                 <h2>Settings</h2>
                 <p class="subtitle">Manage your account information and privacy</p>
             </div>
-            
+
             <div class="settings-page-list">
                 <!-- Change ID -->
                 <div class="settings-card">
@@ -349,7 +380,8 @@
                     <div class="settings-card-body">
                         <div class="input-modern">
                             <label for="currentPwInputPage">Current Password</label>
-                            <input type="password" id="currentPwInputPage" placeholder="Enter current password for verification">
+                            <input type="password" id="currentPwInputPage"
+                                placeholder="Enter current password for verification">
                         </div>
                         <div class="input-modern">
                             <label for="newPwInputPage">New Password</label>
@@ -375,7 +407,7 @@
                 <h2>Admin Management</h2>
                 <p class="subtitle">Oversee user accounts and manage site content</p>
             </div>
-            
+
             <div class="admin-tabs">
                 <button class="admin-tab active" data-tab="users">Users</button>
                 <button class="admin-tab" data-tab="photos">Photos</button>
@@ -395,7 +427,9 @@
                                     </tr>
                                 </thead>
                                 <tbody id="adminUsersList">
-                                    <tr><td colspan="3" style="text-align:center; padding: 40px;">Loading users...</td></tr>
+                                    <tr>
+                                        <td colspan="3" style="text-align:center; padding: 40px;">Loading users...</td>
+                                    </tr>
                                 </tbody>
                             </table>
                         </div>
@@ -412,10 +446,13 @@
                                         <th>Photo</th>
                                         <th>Author</th>
                                         <th style="text-align: center;">Visibility</th>
+                                        <th style="text-align: center;">Actions</th>
                                     </tr>
                                 </thead>
                                 <tbody id="adminPhotosList">
-                                    <tr><td colspan="3" style="text-align:center; padding: 40px;">Loading photos...</td></tr>
+                                    <tr>
+                                        <td colspan="4" style="text-align:center; padding: 40px;">Loading photos...</td>
+                                    </tr>
                                 </tbody>
                             </table>
                         </div>
@@ -429,17 +466,18 @@
     <div class="modal-overlay" id="userDetailModal">
         <div class="modal-content modal-wide admin-detail-modal">
             <button class="close-btn" id="closeUserDetailModal">&times;</button>
-            
+
             <div class="user-detail-header-premium">
                 <div class="detail-avatar-container">
-                    <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48cmVjdCB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgZmlsbD0iI2Y4ZmFmYyIvPjxjaXJjbGUgY3g9IjUwIiBjeT0iNDIiIHI9IjE4IiBmaWxsPSIjZTJlOGYwIi8+PHBhdGggZD0iTTUwIDY0QzMyLjMzIDY0IDE4IDczLjY3IDE4IDg0Vjg2SDgyVjg0QzgyIDczLjY3IDY3LjY3IDY0IDUwIDY0WiIgZmlsbD0iI2UyZThmMCIvPjwvc3ZnPg==" id="detailUserAvatar" alt="User Avatar" class="profile-avatar-large">
+                    <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48cmVjdCB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgZmlsbD0iI2Y4ZmFmYyIvPjxjaXJjbGUgY3g9IjUwIiBjeT0iNDIiIHI9IjE4IiBmaWxsPSIjZTJlOGYwIi8+PHBhdGggZD0iTTUwIDY0QzMyLjMzIDY0IDE4IDczLjY3IDE4IDg0Vjg2SDgyVjg0QzgyIDczLjY3IDY3LjY3IDY0IDUwIDY0WiIgZmlsbD0iI2UyZThmMCIvPjwvc3ZnPg=="
+                        id="detailUserAvatar" alt="User Avatar" class="profile-avatar-large">
                     <div id="detailUserRole" class="role-badge-floating">Admin</div>
                 </div>
                 <div class="detail-title-container">
                     <h2 id="detailUsername">@Username</h2>
                 </div>
             </div>
-            
+
             <div class="user-stats-card">
                 <div class="stat-item">
                     <span class="stat-label">Email Address</span>
@@ -465,7 +503,12 @@
                     <!-- User posts will be filled here -->
                 </div>
                 <div id="emptyPostsPlaceholder" class="empty-state-wrap">
-                    <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+                    <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
+                        <circle cx="8.5" cy="8.5" r="1.5" />
+                        <polyline points="21 15 16 10 5 21" />
+                    </svg>
                     <p>No posts uploaded yet.</p>
                 </div>
             </div>
@@ -481,7 +524,8 @@
                 </div>
                 <div class="console-input-wrap">
                     <span class="console-prompt">&gt;</span>
-                    <input type="text" id="adminCommandInput" placeholder="Type command... (e.g. /reset, /role admin, /help)" spellcheck="false">
+                    <input type="text" id="adminCommandInput"
+                        placeholder="Type command... (e.g. /reset, /role admin, /help)" spellcheck="false">
                     <button id="btnRunCommand">Run</button>
                 </div>
                 <div id="consoleHelp" class="console-help">Admin Command Console Active</div>
@@ -556,8 +600,8 @@
             const container = document.getElementById('toastContainer');
             const toast = document.createElement('div');
             toast.className = `toast ${type}`;
-            
-            const icon = type === 'success' 
+
+            const icon = type === 'success'
                 ? `<svg class="toast-icon" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" /></svg>`
                 : `<svg class="toast-icon" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd" /></svg>`;
 
@@ -574,7 +618,7 @@
         // 2. Hamburger menu toggle logic
         const menuToggle = document.getElementById('menuToggle');
         const dropdownMenu = document.getElementById('dropdownMenu');
-        
+
         menuToggle.addEventListener('click', () => {
             menuToggle.classList.toggle('active');
             dropdownMenu.classList.toggle('active');
@@ -584,7 +628,7 @@
         const loginModal = document.getElementById('loginModal');
         const closeModalBtn = document.getElementById('closeModal');
         const navLoginBtn = document.getElementById('navLogin');
-        
+
         const authForm = document.getElementById('authForm');
         const idInput = document.getElementById('idInput');
         const idStatus = document.getElementById('idStatus');
@@ -593,12 +637,12 @@
         const emailInput = document.getElementById('emailInput');
         const emailInputGroup = document.getElementById('emailInputGroup');
         const passwordInput = document.getElementById('passwordInput');
-        
+
         const toggleAuthMode = document.getElementById('toggleAuthMode');
         const modalTitle = document.getElementById('modalTitle');
         const modalSubtitle = document.querySelector('.modal-subtitle');
         const authSubmitBtn = document.getElementById('authSubmitBtn');
-        
+
         let isLoginMode = true; // true: login, false: signup
 
         // Login button handler
@@ -638,7 +682,7 @@
                 modalSubtitle.textContent = 'Log in to your Phostory account';
                 authSubmitBtn.textContent = 'Login';
                 toggleAuthMode.innerHTML = `Don't have an account? <b>Sign up</b>`;
-                
+
                 // Login mode UI: ID/Email combined, hide Email input
                 idInputLabel.textContent = 'ID or Email';
                 idInput.placeholder = 'Enter your ID or Email';
@@ -651,7 +695,7 @@
                 modalSubtitle.textContent = 'Join Phostory to share your moments';
                 authSubmitBtn.textContent = 'Sign Up';
                 toggleAuthMode.innerHTML = `Already have an account? <b>Log in</b>`;
-                
+
                 // Signup mode UI: Show ID and Email separately
                 idInputLabel.textContent = 'ID';
                 idInput.placeholder = 'Enter your ID';
@@ -666,7 +710,7 @@
         let checkTimeout;
         idInput.addEventListener('input', () => {
             if (isLoginMode) return;
-            
+
             const username = idInput.value.trim().replace(/^@/, '');
             idStatus.textContent = '';
             idStatus.className = 'input-hint';
@@ -710,7 +754,7 @@
                 }
             }, 500); // 500ms debounce
         });
-        
+
         // Initial state for login mode
         emailInputGroup.style.display = 'none';
         emailInput.required = false;
@@ -736,7 +780,7 @@
                     return;
                 }
             }
-            
+
             authSubmitBtn.textContent = 'Processing...';
             authSubmitBtn.disabled = true;
 
@@ -744,7 +788,7 @@
                 if (isLoginMode) {
                     // Login: handle ID or Email
                     let targetEmail = identifier;
-                    
+
                     // If doesn't look like email, search profiles by username
                     if (!identifier.includes('@')) {
                         const { data: profile, error: profileErr } = await supabase
@@ -752,7 +796,7 @@
                             .select('email')
                             .eq('username', identifier.replace(/^@/, ''))
                             .single();
-                        
+
                         if (profileErr || !profile) {
                             throw new Error('User not found with that ID.');
                         }
@@ -765,12 +809,12 @@
                     });
                     if (error) throw error;
                     showToast('Successfully logged in!');
-                    
+
                 } else {
                     // Signup: check ID formatting and uniqueness
                     const usernameFinal = identifier.trim().replace(/^@/, '');
                     const idRegex = /^[a-zA-Z0-9._]+$/;
-                    
+
                     if (usernameFinal.length < 3 || usernameFinal.length > 15) {
                         throw new Error('ID must be between 3 and 15 characters.');
                     }
@@ -793,7 +837,7 @@
                         password: password,
                     });
                     if (error) throw error;
-                    
+
                     if (data.user) {
                         // Create profile with username and email
                         const { error: profileError } = await supabase
@@ -805,19 +849,19 @@
                             });
                         if (profileError) console.error('Profile creation error:', profileError);
                     }
-                    
+
                     showToast('Sign up completed successfully!');
                 }
-                
+
                 // Update UI on auth success
                 loginModal.classList.remove('active');
                 navLoginBtn.textContent = 'Logout';
                 authForm.reset();
-                
+
             } catch (error) {
                 let msg = error.message;
                 const lowerMsg = msg.toLowerCase();
-                
+
                 if (lowerMsg.includes('invalid') || lowerMsg.includes('not found') || lowerMsg.includes('credentials')) {
                     msg = 'Incorrect ID, Email, or Password. Please check again.';
                 } else if (lowerMsg.includes('email') && lowerMsg.includes('phone') || lowerMsg.includes('missing')) {
@@ -829,33 +873,33 @@
                 authSubmitBtn.textContent = isLoginMode ? 'Login' : 'Sign Up';
             }
         });
-        
+
         // 5. Check user session on reload
         async function checkUser() {
             const { data: { session } } = await supabase.auth.getSession();
             const navSettingsBtn = document.getElementById('navSettings');
             const navAdminBtn = document.getElementById('navAdmin');
-            
+
             if (session) {
                 navLoginBtn.textContent = 'Logout';
                 if (navSettingsBtn) navSettingsBtn.style.display = 'block';
-                
+
                 // Role-based access check
                 try {
                     const { data: profile } = await supabase.from('profiles').select('role').eq('id', session.user.id).maybeSingle();
                     const userRole = profile?.role || 'user';
-                    
+
                     // operator, admin, developer can access Admin Management
                     const hasAdminAccess = ['operator', 'admin', 'developer'].includes(userRole);
-                    
+
                     if (hasAdminAccess) {
                         if (navAdminBtn) navAdminBtn.style.display = 'block';
                     } else if (navAdminBtn) {
                         navAdminBtn.style.display = 'none';
                     }
-                    
+
                     // Store role in session-like object for quick access
-                    window._userRole = userRole; 
+                    window._userRole = userRole;
                 } catch (err) { console.error('Role check error:', err); }
             } else {
                 navLoginBtn.textContent = 'Login';
@@ -864,7 +908,7 @@
             }
         }
         checkUser();
-        
+
         // Listen for auth state changes
         supabase.auth.onAuthStateChange(() => {
             checkUser();
@@ -893,7 +937,7 @@
             if (adminView) adminView.style.display = 'none';
             const profilePageView = document.getElementById('profilePageView');
             if (profilePageView) profilePageView.style.display = 'none';
-            
+
             // Show selected view
             if (viewToShow === aboutView || viewToShow === makeView || viewToShow === shareView || viewToShow === settingsView || viewToShow === adminView) {
                 viewToShow.style.display = 'flex';
@@ -902,7 +946,7 @@
             } else if (homeView) {
                 homeView.style.display = 'block';
             }
-            
+
             // Trigger fade-in animation
             viewToShow.classList.remove('fade-in');
             void viewToShow.offsetWidth; // Trigger reflow
@@ -920,7 +964,7 @@
             e.preventDefault();
             dropdownMenu.classList.remove('active');
             menuToggle.classList.remove('active');
-            
+
             // Check auth before writing
             const { data: { session } } = await supabase.auth.getSession();
             if (!session) {
@@ -928,7 +972,7 @@
                 loginModal.classList.add('active');
                 return;
             }
-            
+
             switchView(makeView);
 
             // Fetch my uploads (Make My Phostory dedicated rendering)
@@ -943,9 +987,9 @@
                     myPhotos.forEach(photo => {
                         const miniCard = document.createElement('div');
                         miniCard.className = 'mini-card';
-                        
-                        const statusBadge = photo.is_public 
-                            ? `<div class="status-badge public">Public</div>` 
+
+                        const statusBadge = photo.is_public
+                            ? `<div class="status-badge public">Public</div>`
                             : `<div class="status-badge private">Private</div>`;
 
                         miniCard.innerHTML = `
@@ -966,7 +1010,7 @@
                             if (result !== null) {
                                 const newTitle = result.newTitle.trim();
                                 const newIsPublic = result.newIsPublic;
-                                
+
                                 if (newTitle === '') {
                                     showToast('Please enter a title.', 'error');
                                     return;
@@ -978,16 +1022,16 @@
 
                                 try {
                                     let finalUrl = photo.url;
-                                    
+
                                     // If visibility changed: move file
                                     if (newIsPublic !== photo.is_public) {
                                         // 1. Parse existing info
                                         let oldBucket = photo.is_public ? 'public_photos' : 'private_photos';
                                         let newBucket = newIsPublic ? 'public_photos' : 'private_photos';
                                         let filePath = '';
-                                        
+
                                         if (photo.url.includes(`/${oldBucket}/`)) {
-                                            filePath = photo.url.split(`/${oldBucket}/`)[1].split('?')[0]; 
+                                            filePath = photo.url.split(`/${oldBucket}/`)[1].split('?')[0];
                                         }
 
                                         if (filePath) {
@@ -998,7 +1042,7 @@
                                             // 2. Upload to new bucket
                                             const { error: uploadError } = await supabase.storage.from(newBucket).upload(filePath, blob, {
                                                 upsert: true,
-                                                contentType: 'image/jpeg' 
+                                                contentType: 'image/jpeg'
                                             });
                                             if (uploadError) throw uploadError;
 
@@ -1018,19 +1062,19 @@
                                     }
 
                                     // 2. Update DB record
-                                    const { data, error } = await supabase.from('posts').update({ 
-                                        title: newTitle, 
+                                    const { data, error } = await supabase.from('posts').update({
+                                        title: newTitle,
                                         is_public: newIsPublic,
                                         image_url: finalUrl
                                     }).eq('id', photo.id).select();
-                                    
+
                                     if (error) {
                                         showToast('Error updating: ' + error.message, 'error');
                                     } else if (!data || data.length === 0) {
                                         showToast('Update denied by server.', 'error');
                                     } else {
                                         miniCard.querySelector('.mini-card-title').textContent = newTitle;
-                                        miniCard.querySelector('img').src = finalUrl; 
+                                        miniCard.querySelector('img').src = finalUrl;
                                         photo.title = newTitle;
                                         photo.is_public = newIsPublic;
                                         photo.url = finalUrl;
@@ -1057,8 +1101,8 @@
 
                                 // 1. Soft-delete from DB (set deleted_at)
                                 // We no longer delete from Storage immediately to allow 7-day retention
-                                const { data, error } = await supabase.from('posts').update({ 
-                                    deleted_at: new Date().toISOString() 
+                                const { data, error } = await supabase.from('posts').update({
+                                    deleted_at: new Date().toISOString()
                                 }).eq('id', photo.id).select();
                                 if (error) {
                                     showToast('Error deleting post: ' + error.message, 'error');
@@ -1086,14 +1130,14 @@
             e.preventDefault();
             dropdownMenu.classList.remove('active');
             menuToggle.classList.remove('active');
-            
+
             const { data: { session } } = await supabase.auth.getSession();
             if (!session) {
                 showToast('Please login first to view your page.', 'error');
                 loginModal.classList.add('active');
                 return;
             }
-            
+
             const emailPrefix = session.user.email.split('@')[0];
 
             // 1. Get my profile info from 'profiles' table
@@ -1108,7 +1152,7 @@
             const baseUrl = window.location.origin + window.location.pathname;
             const fullLink = `${baseUrl}?user=${profileUsername}`;
             document.getElementById('profileLink').value = fullLink;
-            
+
             // Update preview info
             const browserUrl = document.getElementById('browserUrl');
             const previewUsername = document.getElementById('previewUsername');
@@ -1206,7 +1250,7 @@
                 // Change text on save
                 const originalText = saveProfileBtn.textContent;
                 saveProfileBtn.textContent = 'Saving...';
-                
+
                 try {
                     const { data: { session } } = await supabase.auth.getSession();
                     if (!session) {
@@ -1218,13 +1262,13 @@
                     // 1. Update bio in DB
                     const { error: updateError } = await supabase
                         .from('profiles')
-                        .upsert({ 
+                        .upsert({
                             id: session.user.id,
-                            bio: editBioInput.value 
+                            bio: editBioInput.value
                         }, { onConflict: 'id' });
-                    
+
                     if (updateError) throw updateError;
-                    
+
                     // 2. Upload avatar if changed
                     const file = editAvatarInput.files[0];
                     if (file) {
@@ -1234,7 +1278,7 @@
                         }
                         const fileName = `avatar.${fileExt}`;
                         const filePath = `${session.user.id}/${fileName}`;
-                        
+
                         const { error: uploadError } = await supabase.storage
                             .from('profiles')
                             .upload(filePath, file, {
@@ -1248,7 +1292,7 @@
                         const { data: { publicUrl } } = supabase.storage
                             .from('profiles')
                             .getPublicUrl(filePath);
-                            
+
                         const cacheBustedUrl = `${publicUrl}?t=${Date.now()}`;
 
                         // Update DB with avatar URL
@@ -1256,16 +1300,16 @@
                             .from('profiles')
                             .update({ avatar_url: cacheBustedUrl })
                             .eq('id', session.user.id);
-                        
+
                         if (avatarDbError) throw avatarDbError;
-                        
+
                         editAvatarPreview.src = cacheBustedUrl;
                         previewAvatarImg.src = cacheBustedUrl;
                     }
-                    
+
                     // Visual success feedback
                     saveProfileBtn.textContent = 'Saved Successfully!';
-                    saveProfileBtn.style.backgroundColor = '#10b981'; 
+                    saveProfileBtn.style.backgroundColor = '#10b981';
                     setTimeout(() => {
                         saveProfileBtn.textContent = 'Save Profile';
                         saveProfileBtn.style.backgroundColor = '';
@@ -1291,13 +1335,13 @@
                 const saveBtn = document.getElementById('saveEditBtn');
                 const cancelBtn = document.getElementById('cancelEditBtn');
                 const closeBtn = document.getElementById('closeEditModal');
-                
+
                 const visPublic = document.getElementById('editVisPublic');
                 const visPrivate = document.getElementById('editVisPrivate');
                 const editToggleBg = document.getElementById('editToggleBg');
 
                 input.value = initialTitle || '';
-                
+
                 // Initial toggle state
                 const updateToggleVisual = () => {
                     if (visPublic.checked) {
@@ -1306,7 +1350,7 @@
                         editToggleBg.style.transform = 'translateX(100%)';
                     }
                 };
-                
+
                 if (initialIsPublic) {
                     visPublic.checked = true;
                 } else {
@@ -1316,9 +1360,9 @@
 
                 visPublic.addEventListener('change', updateToggleVisual);
                 visPrivate.addEventListener('change', updateToggleVisual);
-                
+
                 editModal.classList.add('active');
-                
+
                 // Focus on open
                 setTimeout(() => input.focus(), 100);
 
@@ -1354,7 +1398,7 @@
                 const confirmBtn = document.getElementById('confirmDeleteBtn');
                 const cancelBtn = document.getElementById('cancelDeleteBtn');
                 const closeBtn = document.getElementById('closeDeleteModal');
-                
+
                 if (deleteModal) {
                     deleteModal.querySelector('.modal-subtitle').textContent = message;
                     deleteModal.classList.add('active');
@@ -1388,7 +1432,7 @@
         // 모바일 터치 기기에서 사진을 탭하면 정보를 보여줌
         document.addEventListener('touchstart', (e) => {
             const card = e.target.closest('.photo-card');
-            
+
             // 다른 카드의 터치 상태 해제
             if (!card) {
                 document.querySelectorAll('.photo-card.touch-active').forEach(c => c.classList.remove('touch-active'));
@@ -1409,7 +1453,7 @@
 
         // --- Settings Page Logic ---
         const navSettingsBtnPage = document.getElementById('navSettings');
-        
+
         const btnSaveIdPage = document.getElementById('btnSaveIdPage');
         const btnSavePwPage = document.getElementById('btnSavePwPage');
         const btnConfirmDeleteAccPage = document.getElementById('btnConfirmDeleteAccPage');
@@ -1466,7 +1510,7 @@
             btnSavePwPage.addEventListener('click', async () => {
                 const currentPassword = document.getElementById('currentPwInputPage').value.trim();
                 const newPassword = newPwInputPage.value.trim();
-                
+
                 if (!currentPassword) {
                     showToast('Please enter your current password.', 'error');
                     return;
@@ -1534,7 +1578,7 @@
 
                     // 3. Delete Auth User (RPC)
                     const { error: authErr } = await supabase.rpc('delete_user_self');
-                    
+
                     if (authErr) {
                         console.error('Auth deletion error:', authErr);
                         await supabase.auth.signOut();
@@ -1543,7 +1587,7 @@
                         await supabase.auth.signOut();
                         showToast('All your data and account have been permanently deleted.');
                     }
-                    
+
                     switchView(homeView);
                 } catch (err) {
                     showToast('Deletion error: ' + err.message, 'error');
@@ -1560,7 +1604,7 @@
                 const modal = document.getElementById('accDeleteModal');
                 const confirmBtn = document.getElementById('confirmAccDeleteActionBtn');
                 const cancelBtn = document.getElementById('cancelAccDeleteBtn');
-                
+
                 if (modal) modal.classList.add('active');
 
                 const cleanup = () => {
@@ -1583,19 +1627,19 @@
 
         // 7. Main page and preview rendering logic (Supabase integration)
         const masonryGrid = document.getElementById('masonryGrid');
-        
+
         // High-res sample dummy data
         function getDummyPhotos(category = 'All') {
-            const count = category === 'All' ? 8 : 4; 
+            const count = category === 'All' ? 8 : 4;
             return Array.from({ length: count }, (_, i) => {
                 const randomHeight = Math.floor(Math.random() * 400) + 600;
-                const seed = category + i + Math.random(); 
+                const seed = category + i + Math.random();
                 const catTitle = category === 'All' ? 'Moments' : category;
                 return {
                     id: String(seed),
                     url: `https://picsum.photos/seed/${seed}/600/${randomHeight}`,
-                    title: `${catTitle} ${i+1}`,
-                    author: `Creator_${Math.floor(Math.random()*100)}`,
+                    title: `${catTitle} ${i + 1}`,
+                    author: `Creator_${Math.floor(Math.random() * 100)}`,
                     avatar: DEFAULT_AVATAR
                 };
             });
@@ -1610,17 +1654,17 @@
                 const currentUserId = session ? session.user.id : null;
 
                 let query;
-                
+
                 if (filterMode === 'Likes') {
                     // [Filter: Liked posts only]
-                    if (!currentUserId) return []; 
+                    if (!currentUserId) return [];
 
                     // 1. Get IDs of posts I've liked
                     const { data: myLikes } = await supabase.from('likes').select('post_id').eq('user_id', currentUserId);
                     if (!myLikes || myLikes.length === 0) return [];
-                    
+
                     const likedIds = myLikes.map(lk => lk.post_id);
-                    
+
                     // 2. Fetch posts with those IDs
                     query = supabase.from('posts')
                         .select('*, profiles(username, avatar_url)')
@@ -1643,7 +1687,7 @@
                         .is('deleted_at', null)
                         .order('created_at', { ascending: false });
                 }
-                
+
                 const { data: realPosts, error } = await query;
                 if (error) throw error;
 
@@ -1653,11 +1697,11 @@
                     const { data: myCheckLikes } = await supabase.from('likes').select('post_id').eq('user_id', currentUserId);
                     if (myCheckLikes) myCheckLikes.forEach(lk => myLikePostIds.add(lk.post_id));
                 }
-                
+
                 return mapPosts(realPosts, myLikePostIds);
             } catch (err) {
                 console.error('Critical Fetch error:', err);
-                return []; 
+                return [];
             }
         }
 
@@ -1666,8 +1710,8 @@
             if (!posts) return [];
             return posts.map(post => {
                 const profile = Array.isArray(post.profiles) ? post.profiles[0] : (post.profiles || {});
-                
-                const displayAuthor = profile.username ? `@${profile.username.replace(/^@/, '')}` : (post.user_id ? `@user_${post.user_id.substring(0,6)}` : 'Unknown');
+
+                const displayAuthor = profile.username ? `@${profile.username.replace(/^@/, '')}` : (post.user_id ? `@user_${post.user_id.substring(0, 6)}` : 'Unknown');
                 const displayAvatar = profile.avatar_url || DEFAULT_AVATAR;
 
                 return {
@@ -1684,7 +1728,7 @@
 
         async function renderGrid(category = 'All') {
             const currentFilter = category;
-            
+
             if (category === 'Best') {
                 masonryGrid.innerHTML = `
                     <div style="text-align: center; padding: 120px 20px; color: #888; width: 100%;">
@@ -1700,13 +1744,13 @@
 
             const emptyMsg = category === 'Likes' ? 'Your favorite stories will appear here.' : 'Loading stories...';
             if (masonryGrid) masonryGrid.innerHTML = `<div style="text-align: center; padding: 40px; color: #888; width: 100%;">${emptyMsg}</div>`;
-            
+
             // Load photos
-            let photos = await fetchPosts(null, category); 
+            let photos = await fetchPosts(null, category);
             if (photos.length === 0 && category === 'All') {
                 photos = getDummyPhotos(category);
             }
-            
+
             if (masonryGrid) masonryGrid.innerHTML = '';
             if (photos.length === 0) {
                 const noResultMsg = category === 'Likes' ? "You haven't liked any stories yet. Explore and try clicking the heart to like stories you love!" : "No stories found.";
@@ -1727,12 +1771,12 @@
                 // Optimization: ONLY re-render if the column count has actually changed
                 // This prevents white flickers during mobile zooming or small window tweaks
                 if (masonryGrid._currentColCount === colCount) {
-                    return; 
+                    return;
                 }
-                
+
                 masonryGrid.innerHTML = '';
                 masonryGrid._currentColCount = colCount;
-                
+
                 const columns = [];
                 for (let i = 0; i < colCount; i++) {
                     const col = document.createElement('div');
@@ -1750,7 +1794,7 @@
             };
 
             renderByWidth();
-            
+
             // Store current context for resize handler
             if (masonryGrid) {
                 masonryGrid._currentPhotos = photos;
@@ -1763,9 +1807,9 @@
         function createPhotoCard(photo, isOwner = false) {
             const card = document.createElement('div');
             card.className = 'photo-card fade-in';
-            const statusBadge = isOwner 
-                ? (photo.is_public 
-                    ? `<div class="status-badge public">Public</div>` 
+            const statusBadge = isOwner
+                ? (photo.is_public
+                    ? `<div class="status-badge public">Public</div>`
                     : `<div class="status-badge private">Private</div>`)
                 : '';
             card.innerHTML = `
@@ -1790,7 +1834,7 @@
                     </div>
                 </div>
             `;
-            
+
             const likeBtn = card.querySelector('.like-btn');
             const heartIcon = likeBtn.querySelector('.heart-icon');
             if (photo.isLiked) {
@@ -1853,15 +1897,15 @@
                 // Deactivate old chip, activate new one
                 document.querySelector('.chip.active')?.classList.remove('active');
                 chip.classList.add('active');
-                
+
                 const categoryName = chip.getAttribute('data-filter');
-                
+
                 // Smooth transition animation
                 if (masonryGrid) {
                     masonryGrid.style.opacity = '0';
                     masonryGrid.style.transition = 'opacity 0.3s ease';
                 }
-                
+
                 setTimeout(() => {
                     renderGrid(categoryName);
                     if (masonryGrid) masonryGrid.style.opacity = '1';
@@ -1882,7 +1926,7 @@
         if (visibilityInputsOnPage) {
             visibilityInputsOnPage.forEach(input => {
                 input.addEventListener('change', (e) => {
-                    if(e.target.value === 'public') {
+                    if (e.target.value === 'public') {
                         if (toggleBgOnPage) toggleBgOnPage.style.transform = 'translateX(0)';
                     } else {
                         if (toggleBgOnPage) toggleBgOnPage.style.transform = 'translateX(100%)';
@@ -1911,7 +1955,7 @@
         if (makeFormOnPage) {
             makeFormOnPage.addEventListener('submit', async (e) => {
                 e.preventDefault();
-                
+
                 const { data: { session } } = await supabase.auth.getSession();
                 if (!session) {
                     showToast('Session expired. Please login again.', 'error');
@@ -1938,12 +1982,12 @@
                     if (fileExt === file.name.toLowerCase() || !/^[a-z0-9]+$/.test(fileExt)) {
                         fileExt = file.type.split('/')[1] || 'jpg';
                     }
-                    const fileName = `${Date.now()}-${Math.floor(Math.random()*1000)}.${fileExt}`;
+                    const fileName = `${Date.now()}-${Math.floor(Math.random() * 1000)}.${fileExt}`;
                     const filePath = `${session.user.id}/${fileName}`;
-                    
+
                     // Determine bucket based on visibility
                     const targetBucket = isPublic ? 'public_photos' : 'private_photos';
-                    
+
                     const { error: uploadError, data } = await supabase.storage
                         .from(targetBucket)
                         .upload(filePath, file, {
@@ -1970,9 +2014,9 @@
                     const { error: dbError } = await supabase
                         .from('posts')
                         .insert([
-                            { 
+                            {
                                 user_id: session.user.id,
-                                title: title, 
+                                title: title,
                                 image_url: finalUrl,
                                 is_public: isPublic,
                                 // (Optional) Add author_name here if you added it to the posts table
@@ -1982,7 +2026,7 @@
                     if (dbError) throw dbError;
 
                     showToast('Post successfully published!');
-                    
+
                     // Reset form and go home
                     makeFormOnPage.reset();
                     if (photoPreviewOnPage) photoPreviewOnPage.style.display = 'none';
@@ -2021,7 +2065,7 @@
             const realProfileGrid = document.getElementById('realProfileGrid');
 
             switchView(profilePageView);
-            
+
             if (realProfileUsername) realProfileUsername.textContent = `@${username}`;
             if (realProfileBio) realProfileBio.textContent = '';
             if (realProfileGrid) realProfileGrid.innerHTML = '<div style="column-span: all; width: 100%; text-align: center; color: #888; padding: 60px 20px;">Fetching user data...</div>';
@@ -2031,12 +2075,12 @@
                 .from('profiles')
                 .select('*')
                 .eq('username', username.replace(/^@/, ''));
-                
+
             if (profileErr || !profileList || profileList.length === 0) {
                 if (realProfileGrid) realProfileGrid.innerHTML = '<div style="column-span: all; width: 100%; text-align: center; color: #888; padding: 60px 20px;">User not found.</div>';
                 return;
             }
-            
+
             const targetProfile = profileList[0];
             if (realProfileBio) realProfileBio.textContent = targetProfile.bio || 'Capturing the world through my lens.';
             if (targetProfile.avatar_url && realProfileAvatar) realProfileAvatar.src = targetProfile.avatar_url;
@@ -2045,10 +2089,10 @@
             let isMyProfile = false;
             let myLikePostIds = new Set();
             const { data: { session } } = await supabase.auth.getSession();
-            
+
             if (session) {
                 if (session.user.id === targetProfile.id) isMyProfile = true;
-                
+
                 const { data: myCheckLikes } = await supabase.from('likes')
                     .select('post_id')
                     .eq('user_id', session.user.id);
@@ -2064,7 +2108,7 @@
 
             const { data: rawUserPosts, error: postErr } = await postQuery;
             if (realProfileGrid) realProfileGrid.innerHTML = '';
-            
+
             if (postErr || !rawUserPosts || rawUserPosts.length === 0) {
                 if (realProfileGrid) realProfileGrid.innerHTML = '<div style="column-span: all; width: 100%; text-align: center; color: #888; padding: 60px 20px;">No posts yet.</div>';
                 return;
@@ -2093,18 +2137,18 @@
                         columns.push(col);
                     }
 
-            photos.forEach((photo, index) => {
-                const colIdx = index % colCount;
-                const card = createPhotoCard(photo, isMyProfile);
-                columns[colIdx].appendChild(card);
-            });
-            
-            // Store current column count to avoid redundant re-renders
-            realProfileGrid._currentColCount = colCount;
-        };
+                    photos.forEach((photo, index) => {
+                        const colIdx = index % colCount;
+                        const card = createPhotoCard(photo, isMyProfile);
+                        columns[colIdx].appendChild(card);
+                    });
+
+                    // Store current column count to avoid redundant re-renders
+                    realProfileGrid._currentColCount = colCount;
+                };
 
                 renderProfileGrid();
-                
+
                 // Bind to resize and store ref
                 realProfileGrid._currentRenderer = renderProfileGrid;
                 realProfileGrid._currentPhotos = photos;
@@ -2147,15 +2191,15 @@
         adminTabs.forEach(tab => {
             tab.addEventListener('click', () => {
                 const target = tab.getAttribute('data-tab');
-                
+
                 // Update active tab visual
                 adminTabs.forEach(t => t.classList.remove('active'));
                 tab.classList.add('active');
-                
+
                 // Show/hide content
                 document.getElementById('adminUsersPane').style.display = target === 'users' ? 'block' : 'none';
                 document.getElementById('adminPhotosPane').style.display = target === 'photos' ? 'block' : 'none';
-                
+
                 if (target === 'users') renderAdminUsers();
                 else renderAdminPhotos();
             });
@@ -2164,14 +2208,22 @@
         async function renderAdminUsers() {
             const list = document.getElementById('adminUsersList');
             list.innerHTML = '<tr><td colspan="3" style="text-align:center; padding: 40px;">Loading users...</td></tr>';
-            
+
             try {
                 const { data: users, error } = await supabase
                     .from('profiles')
-                    .select('*')
-                    .order('role', { ascending: true }) // Sort by role significance if possible, or just default
-                    .order('username', { ascending: true });
+                    .select('*');
                 if (error) throw error;
+
+                // Priority Sorting: Operator (0), Admin (1), Developer (2), User (3)
+                const rolePriority = { 'operator': 0, 'admin': 1, 'developer': 2, 'user': 3 };
+                users.sort((a, b) => {
+                    const pA = rolePriority[a.role] ?? 3;
+                    const pB = rolePriority[b.role] ?? 3;
+                    if (pA !== pB) return pA - pB;
+                    // Secondary sort: username
+                    return (a.username || '').localeCompare(b.username || '');
+                });
 
                 // 2. Fetch non-deleted posts for all users to get counts
                 const { data: allPosts, error: postsErr } = await supabase.from('posts').select('user_id').is('deleted_at', null);
@@ -2182,27 +2234,27 @@
                     acc[post.user_id] = (acc[post.user_id] || 0) + 1;
                     return acc;
                 }, {});
-                
+
                 list.innerHTML = '';
                 if (users.length === 0) {
                     list.innerHTML = '<tr><td colspan="3" style="text-align:center; padding: 40px;">No users found.</td></tr>';
                     return;
                 }
-                
+
                 users.forEach(user => {
                     const tr = document.createElement('tr');
-                    
+
                     let roleLabel = 'User';
                     let roleClass = 'badge-user';
-                    
+
                     if (user.role === 'operator') { roleLabel = 'Operator'; roleClass = 'badge-operator'; }
                     else if (user.role === 'admin') { roleLabel = 'Admin'; roleClass = 'badge-admin'; }
                     else if (user.role === 'developer') { roleLabel = 'Developer'; roleClass = 'badge-developer'; }
-                    
+
                     const roleBadge = `<span class="badge ${roleClass}">${roleLabel}</span>`;
                     const avatar = user.avatar_url || DEFAULT_AVATAR;
                     const count = postCounts[user.id] || 0;
-                    
+
                     tr.innerHTML = `
                         <td>
                             <div class="user-info-cell">
@@ -2223,7 +2275,7 @@
                     tr.addEventListener('click', () => {
                         showUserDetail(user.id);
                     });
-                    
+
                     list.appendChild(tr);
                 });
             } catch (err) {
@@ -2242,7 +2294,7 @@
 
         if (closeUserDetailModal) closeUserDetailModal.onclick = detailClose;
         if (closeDetailModalBtn) closeDetailModalBtn.onclick = detailClose;
-        
+
         window.addEventListener('click', (e) => {
             if (e.target === userDetailModal) detailClose();
         });
@@ -2255,7 +2307,7 @@
                     .select('*')
                     .eq('id', userId)
                     .single();
-                
+
                 if (profErr) throw profErr;
 
                 // 2. Fetch Posts (count and thumbnails)
@@ -2271,30 +2323,30 @@
                 // 3. Populate Modal
                 document.getElementById('detailUserAvatar').src = profile.avatar_url || DEFAULT_AVATAR;
                 document.getElementById('detailUsername').textContent = `@${profile.username}`;
-                
+
                 const roleEl = document.getElementById('detailUserRole');
                 const userRole = profile.role || 'user';
                 roleEl.textContent = userRole.charAt(0).toUpperCase() + userRole.slice(1);
-                
+
                 // Add specific color classes based on role
                 roleEl.className = `role-badge-floating role-${userRole}`;
-                roleEl.style.display = 'block'; 
+                roleEl.style.display = 'block';
 
                 document.getElementById('detailUserEmail').textContent = profile.email || 'N/A';
-                
+
                 // Fix "Invalid Date" issue
                 const joinedDate = profile.created_at ? new Date(profile.created_at) : null;
-                document.getElementById('detailJoinDate').innerHTML = (joinedDate && !isNaN(joinedDate)) 
-                    ? joinedDate.toLocaleDateString() 
+                document.getElementById('detailJoinDate').innerHTML = (joinedDate && !isNaN(joinedDate))
+                    ? joinedDate.toLocaleDateString()
                     : '<span style="color: #9ca3af; font-size: 0.85rem;">Unknown (SQL Required)</span>';
-                
+
                 document.getElementById('detailPostCount').textContent = posts.length;
 
                 // 4. Render Posts Grid
                 const postsGrid = document.getElementById('detailUserPostsGrid');
                 const emptyPlaceholder = document.getElementById('emptyPostsPlaceholder');
                 postsGrid.innerHTML = '';
-                
+
                 if (posts.length === 0) {
                     emptyPlaceholder.style.display = 'flex';
                     postsGrid.style.display = 'none';
@@ -2304,10 +2356,10 @@
                     posts.forEach(post => {
                         const card = document.createElement('div');
                         card.className = 'detail-photo-card fade-in';
-                        
+
                         const img = document.createElement('img');
                         img.src = post.image_url;
-                        
+
                         // Vignette overlay on top of image
                         const vignette = document.createElement('div');
                         vignette.className = 'detail-vignette';
@@ -2316,7 +2368,7 @@
                         delBtn.className = 'btn-detail-delete';
                         delBtn.textContent = 'Delete';
                         delBtn.title = 'Remove post (Admin)';
-                        
+
                         delBtn.onclick = async (e) => {
                             e.stopPropagation();
                             // Directly delete without confirmation as requested
@@ -2328,7 +2380,7 @@
                                     .select();
 
                                 if (error) throw error;
-                                
+
                                 if (!data || data.length === 0) {
                                     showToast('Delete ignored by server (Check RLS policies)', 'error');
                                 } else {
@@ -2343,7 +2395,7 @@
                                 showToast('Failed to delete post: ' + err.message, 'error');
                             }
                         };
-                        
+
                         vignette.appendChild(delBtn);
                         card.appendChild(img);
                         card.appendChild(vignette);
@@ -2353,7 +2405,7 @@
 
                 // 5. Operator Check & Console Toggle (Real-time Verification)
                 const consoleSection = document.querySelector('.admin-console-section');
-                
+
                 // Use a helper to ensure we have the latest role even if session hasn't refreshed
                 const getLatestRole = async () => {
                     const { data: { user } } = await supabase.auth.getUser();
@@ -2364,10 +2416,17 @@
                 };
 
                 const activeRole = await getLatestRole();
-                
-                if (activeRole === 'operator') {
+
+                // Admin, Developer, and Operator can all access the terminal for moderation
+                const canAccessTerminal = ['operator', 'admin', 'developer'].includes(activeRole);
+
+                if (canAccessTerminal) {
                     consoleSection.style.display = 'block';
-                    document.getElementById('consoleHelp').textContent = "Operator Mode: Use commands like '/role admin [id]'";
+                    if (activeRole === 'operator') {
+                        document.getElementById('consoleHelp').innerHTML = `<span style="color: #854d0e">Operator Mode:</span> /role, /unrole, /change, /reset, /delete`;
+                    } else {
+                        document.getElementById('consoleHelp').innerHTML = `<span style="color: #64748b">${activeRole.charAt(0).toUpperCase() + activeRole.slice(1)} Mode:</span> /change, /reset, /delete`;
+                    }
                 } else {
                     consoleSection.style.display = 'none';
                 }
@@ -2375,142 +2434,140 @@
                 // 6. Admin Console Logic Implementation
                 const commandInput = document.getElementById('adminCommandInput');
                 const btnRun = document.getElementById('btnRunCommand');
-                
+
                 commandInput.value = '';
-                
+
                 const handleCommand = async () => {
-                    const cmdInput = commandInput.value.trim();
-                    if (!cmdInput) return;
-                    
-                    const myRole = await getLatestRole();
-                    if (myRole !== 'operator') {
-                        showToast("Access Denied: Operator role required.", "error");
+                    const fullInput = commandInput.value.trim();
+                    if (!fullInput) return;
+
+                    // STRICT RULE: No @ character allowed
+                    if (fullInput.includes('@')) {
+                        showToast("System Restricted: IDs must NOT contain the '@' character.", "error");
+                        commandInput.value = '';
                         return;
                     }
 
-                    const parts = cmdInput.split(/\s+/);
-                    const command = parts[0].toLowerCase();
-                    
-                    async function findUserByUsername(username) {
+                    const myRole = await getLatestRole();
+                    const parts = fullInput.split(/\s+/);
+                    const cmd = parts[0].toLowerCase();
+
+                    // Utility: Find user by exact username
+                    async function lookup(username) {
                         if (!username) return null;
-                        const cleanName = username.replace(/^@/, '');
-                        const { data, error } = await supabase.from('profiles').select('*').eq('username', cleanName).maybeSingle();
-                        if (error) console.error("Lookup Error:", error);
+                        const { data, error } = await supabase.from('profiles').select('*').eq('username', username).maybeSingle();
+                        if (error) console.error("Database Lookup Error:", error);
                         return data;
                     }
 
                     try {
-                        switch (command) {
+                        switch (cmd) {
                             case '/role': {
-                                const newRole = parts[1]?.toLowerCase();
+                                if (myRole !== 'operator') { showToast("Permission Denied: Operator role required.", "error"); break; }
+                                if (parts.length !== 3) { showToast("Strict Syntax: /role [role] [id]", "error"); break; }
+                                
+                                const newRole = parts[1].toLowerCase();
                                 const targetId = parts[2];
-                                const allowed = ['admin', 'developer', 'operator', 'user'];
-                                if (!newRole || !targetId) { showToast("Usage: /role [role] [id]", "error"); break; }
-                                if (allowed.includes(newRole)) {
-                                    const targetUser = await findUserByUsername(targetId);
-                                    if (targetUser) {
-                                        const { data, error } = await supabase.from('profiles').update({ role: newRole }).eq('id', targetUser.id).select();
-                                        if (error) throw error;
-                                        if (data && data.length > 0) {
-                                            showToast(`Success: ${targetUser.username} is now ${newRole}`);
-                                        } else {
-                                            showToast("Failed: RLS Policy blocked the update.", "error");
-                                        }
-                                    } else { showToast(`User ${targetId} not found.`, "error"); }
-                                } else { showToast("Invalid role name.", "error"); }
+                                const validRoles = ['admin', 'developer', 'operator', 'user'];
+                                
+                                if (!validRoles.includes(newRole)) { showToast("Invalid Role defined.", "error"); break; }
+
+                                const user = await lookup(targetId);
+                                if (user) {
+                                    const { data, error } = await supabase.from('profiles').update({ role: newRole }).eq('id', user.id).select();
+                                    if (error) throw error;
+                                    showToast(`Success: Role ${newRole} assigned to ${user.username}`);
+                                } else showToast(`Target Not Found: ${targetId}`, "error");
                                 break;
                             }
+
                             case '/unrole': {
+                                if (myRole !== 'operator') { showToast("Permission Denied: Operator role required.", "error"); break; }
+                                if (parts.length !== 2) { showToast("Strict Syntax: /unrole [id]", "error"); break; }
+                                
                                 const targetId = parts[1];
-                                if (!targetId) { showToast("Usage: /unrole [id]", "error"); break; }
-                                const targetUser = await findUserByUsername(targetId);
-                                if (targetUser) {
-                                    const { data, error } = await supabase.from('profiles').update({ role: 'user' }).eq('id', targetUser.id).select();
+                                const user = await lookup(targetId);
+                                if (user) {
+                                    const { data, error } = await supabase.from('profiles').update({ role: 'user' }).eq('id', user.id).select();
                                     if (error) throw error;
-                                    if (data && data.length > 0) {
-                                        showToast(`Unrolled: ${targetUser.username} is now User`);
-                                    } else {
-                                        showToast("Failed: Permission denied.", "error");
-                                    }
-                                } else { showToast(`User ${targetId} not found.`, "error"); }
+                                    showToast(`Success: ${user.username} is now a regular user.`);
+                                } else showToast(`Target Not Found: ${targetId}`, "error");
                                 break;
                             }
+
                             case '/change': {
-                                const oldId = parts[1];
-                                const newId = parts[3];
-                                if (!oldId || parts[2] !== 'to' || !newId) { showToast("Usage: /change [old] to [new]", "error"); break; }
-                                const targetUser = await findUserByUsername(oldId);
-                                if (targetUser) {
-                                    const { data, error } = await supabase.from('profiles').update({ username: newId.replace(/^@/, '') }).eq('id', targetUser.id).select();
-                                    if (error) throw error;
-                                    if (data && data.length > 0) {
-                                        showToast(`ID Changed: ${oldId} -> ${newId}`);
-                                    } else {
-                                        showToast("Failed: ID change rejected by DB.", "error");
-                                    }
-                                } else { showToast(`User ${oldId} not found.`, "error"); }
-                                break;
-                            }
-                            case '/reset': {
-                                const type = parts[1]?.toLowerCase();
-                                const targetId = parts[2];
-                                const targetUser = await findUserByUsername(targetId);
-                                if (!targetUser) { showToast(`User ${targetId} not found.`, "error"); break; }
-                                let updateData = {};
-                                if (type === 'profile') updateData = { avatar_url: null };
-                                else if (type === 'bio') updateData = { bio: 'Capturing the world through my lens.' };
-                                else if (type === 'pw') {
-                                    const { error } = await supabase.auth.resetPasswordForEmail(targetUser.email);
-                                    if (error) throw error;
-                                    showToast(`PW Reset Sent: ${targetUser.username}`);
-                                    break;
-                                } else {
-                                    showToast("Invalid type: profile, pw, bio", "error");
-                                    break;
+                                if (parts.length !== 4 || parts[2].toLowerCase() !== 'to') { 
+                                    showToast("Strict Syntax: /change [old] to [new]", "error"); 
+                                    break; 
                                 }
                                 
-                                const { data, error } = await supabase.from('profiles').update(updateData).eq('id', targetUser.id).select();
-                                if (error) throw error;
-                                if (data && data.length > 0) showToast(`${type} reset successful.`);
-                                else showToast("Failed: Update not applied.", "error");
+                                const oldId = parts[1];
+                                const newId = parts[3];
+
+                                const user = await lookup(oldId);
+                                if (user) {
+                                    const { data, error } = await supabase.from('profiles').update({ username: newId }).eq('id', user.id).select();
+                                    if (error) throw error;
+                                    showToast(`Success: ${oldId} translated to ${newId}`);
+                                } else showToast(`Target Not Found: ${oldId}`, "error");
                                 break;
                             }
+
+                            case '/reset': {
+                                if (parts.length !== 3) { showToast("Strict Syntax: /reset [profile|bio|pw] [id]", "error"); break; }
+                                
+                                const type = parts[1].toLowerCase();
+                                const targetId = parts[2];
+                                
+                                const user = await lookup(targetId);
+                                if (!user) { showToast(`Target Not Found: ${targetId}`, "error"); break; }
+
+                                if (type === 'pw') {
+                                    const { error } = await supabase.auth.resetPasswordForEmail(user.email);
+                                    if (error) throw error;
+                                    showToast("Security: Password reset email dispatched.");
+                                } else if (type === 'profile') {
+                                    const { error } = await supabase.from('profiles').update({ avatar_url: null }).eq('id', user.id);
+                                    if (error) throw error;
+                                    showToast("Success: Profile picture cleared.");
+                                } else if (type === 'bio') {
+                                    const { error } = await supabase.from('profiles').update({ bio: 'Capturing the world through my lens.' }).eq('id', user.id);
+                                    if (error) throw error;
+                                    showToast("Success: Biography reset to default.");
+                                } else {
+                                    showToast("Invalid Reset Type: Use profile, bio, or pw.", "error");
+                                }
+                                break;
+                            }
+
                             case '/delete': {
+                                if (parts.length !== 2) { showToast("Strict Syntax: /delete [id]", "error"); break; }
                                 const targetId = parts[1];
-                                const targetUser = await findUserByUsername(targetId);
-                                if (targetUser) {
-                                    if (confirm(`Permanently delete user ${targetUser.username}?`)) {
-                                        // Try physical deletion first for cleaner management
-                                        const { error: delErr } = await supabase.from('profiles').delete().eq('id', targetUser.id);
-                                        if (delErr) {
-                                            // fallback to soft delete if physical delete is blocked by foreign keys
-                                            await supabase.from('posts').update({ deleted_at: new Date().toISOString() }).eq('user_id', targetUser.id);
-                                            await supabase.from('profiles').update({ deleted_at: new Date().toISOString() }).eq('id', targetUser.id).select();
-                                            showToast(`User ${targetUser.username} soft-deleted.`);
+                                const user = await lookup(targetId);
+                                if (user) {
+                                    if (confirm(`CRITICAL ACTION: Purge account ${user.username}?\nThis action is logged and irreversible.`)) {
+                                        const { error } = await supabase.from('profiles').delete().eq('id', user.id);
+                                        if (error) {
+                                            await supabase.from('profiles').update({ deleted_at: new Date().toISOString() }).eq('id', user.id);
+                                            showToast(`Account Locked (Soft-Delete applied)`, "info");
                                         } else {
-                                            showToast(`User ${targetUser.username} permanently deleted.`);
+                                            showToast(`Account purged successfully.`);
                                         }
                                     }
-                                } else { showToast(`User ${targetId} not found.`, "error"); }
+                                } else showToast(`Target Not Found: ${targetId}`, "error");
                                 break;
                             }
-                            case '/help':
-                                showToast("/role, /unrole, /change, /reset, /delete", "info");
-                                break;
+
                             default:
-                                showToast(`Unknown command: ${command}`, "error");
+                                showToast(`System: Command not recognized. Use /change, /reset, /delete, /role, or /unrole.`, "error");
                         }
                     } catch (err) {
-                        console.error("Critical Terminal Error:", err);
-                        showToast("Execution Error: " + err.message, "error");
+                        showToast(`System Failure: ${err.message}`, "error");
                     } finally {
                         commandInput.value = '';
-                        await renderAdminUsers(); 
-                        if (userDetailModal.classList.contains('active')) {
-                            const { data: alive } = await supabase.from('profiles').select('id').eq('id', userId).maybeSingle();
-                            if (alive) await showUserDetail(userId);
-                            else userDetailModal.classList.remove('active');
-                        }
+                        await renderAdminUsers();
+                        const activeModalId = userDetailModal.classList.contains('active') ? userDetailModal._currentUserId : null;
+                        if (activeModalId) await showUserDetail(activeModalId);
                     }
                 };
 
@@ -2518,7 +2575,6 @@
                 commandInput.onkeydown = (e) => {
                     if (e.key === 'Enter') handleCommand();
                 };
-                btnRun.onclick = handleCommand;
 
                 userDetailModal.classList.add('active');
             } catch (err) {
@@ -2562,12 +2618,12 @@
                     username = username.split('@')[0];
                 }
                 const displayId = username.startsWith('@') ? username : `@${username}`;
-                
+
                 // Populate Modal
                 document.getElementById('adminDetailPhotoImg').src = photo.image_url;
                 document.getElementById('adminDetailPhotoTitle').value = photo.title || '';
                 document.getElementById('adminDetailPhotoAuthor').textContent = displayId;
-                
+
                 // Date display below author
                 const dateObj = new Date(photo.created_at);
                 const dateStr = dateObj.toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' });
@@ -2577,7 +2633,7 @@
                 const isPub = photo.is_public;
                 document.getElementById('adminVisPublic').checked = isPub;
                 document.getElementById('adminVisPrivate').checked = !isPub;
-                
+
                 const adminToggleBg = document.getElementById('adminToggleBg');
                 if (adminToggleBg) {
                     adminToggleBg.style.transform = isPub ? 'translateX(0)' : 'translateX(100%)';
@@ -2654,30 +2710,29 @@
 
         async function renderAdminPhotos() {
             const list = document.getElementById('adminPhotosList');
-            list.innerHTML = '<tr><td colspan="3" style="text-align:center; padding: 40px;">Loading photos...</td></tr>';
-            
+            list.innerHTML = '<tr><td colspan="4" style="text-align:center; padding: 40px;">Loading photos...</td></tr>';
+
             try {
                 const { data: photos, error } = await supabase.from('posts')
                     .select('*, profiles(username)')
                     .is('deleted_at', null)
                     .order('created_at', { ascending: false });
                 if (error) throw error;
-                
+
                 list.innerHTML = '';
                 if (photos.length === 0) {
-                    list.innerHTML = '<tr><td colspan="3" style="text-align:center; padding: 40px;">No photos found.</td></tr>';
+                    list.innerHTML = '<tr><td colspan="4" style="text-align:center; padding: 40px;">No photos found.</td></tr>';
                     return;
                 }
-                
+
                 photos.forEach(photo => {
                     const tr = document.createElement('tr');
                     const profile = Array.isArray(photo.profiles) ? photo.profiles[0] : (photo.profiles || {});
                     const author = profile.username ? `@${profile.username}` : 'Unknown';
                     const visBadge = photo.is_public ? '<span class="badge badge-public">Public</span>' : '<span class="badge badge-private">Private</span>';
-                    const date = new Date(photo.created_at).toLocaleDateString();
-                    
+
                     tr.innerHTML = `
-                        <td>
+                        <td class="photo-click-cell">
                             <div class="photo-info-cell">
                                 <img src="${photo.image_url}" class="photo-thumb-mini">
                                 <div class="photo-cell-text">
@@ -2686,19 +2741,33 @@
                                 </div>
                             </div>
                         </td>
-                        <td style="font-weight: 500;">${author}</td>
-                        <td style="text-align: center;">${visBadge}</td>
+                        <td class="photo-click-cell" style="font-weight: 500;">${author}</td>
+                        <td class="photo-click-cell" style="text-align: center;">${visBadge}</td>
+                        <td style="text-align: center;">
+                            <button class="btn-table-delete" title="Quick Delete">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg>
+                            </button>
+                        </td>
                     `;
-                    
-                    // Row click for detail
-                    tr.classList.add('clickable-row');
-                    tr.onclick = () => showPhotoDetail(photo.id);
-                    
+
+                    // Specific cell click for detail
+                    tr.querySelectorAll('.photo-click-cell').forEach(cell => {
+                        cell.onclick = () => showPhotoDetail(photo.id);
+                        cell.style.cursor = 'pointer';
+                    });
+
+                    // Quick delete button
+                    const delBtn = tr.querySelector('.btn-table-delete');
+                    delBtn.onclick = (e) => {
+                        e.stopPropagation();
+                        deletePhotoAdmin(photo.id);
+                    };
+
                     list.appendChild(tr);
                 });
             } catch (err) {
                 console.error('Error rendering admin photos:', err);
-                list.innerHTML = `<tr><td colspan="3" style="text-align:center; padding: 40px; color: red;">Error: ${err.message}</td></tr>`;
+                list.innerHTML = `<tr><td colspan="4" style="text-align:center; padding: 40px; color: red;">Error: ${err.message}</td></tr>`;
             }
         }
 
@@ -2709,4 +2778,5 @@
 
     </script>
 </body>
+
 </html>
