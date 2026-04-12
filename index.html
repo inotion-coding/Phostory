@@ -2611,6 +2611,7 @@
                                     const { data, error } = await supabase.from('profiles').update({ role: newRole }).eq('id', user.id).select();
                                     if (error) throw error;
                                     showToast(`Success: Role ${newRole} assigned to ${user.username}`);
+                                    await renderAdminUsers();
                                 } else showToast(`Target Not Found: ${targetId}`, "error");
                                 break;
                             }
@@ -2625,6 +2626,7 @@
                                     const { data, error } = await supabase.from('profiles').update({ role: 'user' }).eq('id', user.id).select();
                                     if (error) throw error;
                                     showToast(`Success: ${user.username} is now a regular user.`);
+                                    await renderAdminUsers();
                                 } else showToast(`Target Not Found: ${targetId}`, "error");
                                 break;
                             }
@@ -2647,6 +2649,7 @@
                                     const { data, error } = await supabase.from('profiles').update({ username: newId }).eq('id', user.id).select();
                                     if (error) throw error;
                                     showToast(`Success: ${oldId} translated to ${newId}`);
+                                    await renderAdminUsers();
                                 } else showToast(`Target Not Found: ${oldId}`, "error");
                                 break;
                             }
@@ -2681,6 +2684,7 @@
                                         const { error } = await supabase.from('profiles').update({ bio: 'Capturing the world through my lens.' }).eq('id', user.id);
                                         if (error) throw error;
                                         showToast("Success: Biography reset to default.");
+                                        await renderAdminUsers();
                                     }
                                 } else {
                                     showToast("Invalid Reset Type: Use profile, bio, or pw.", "error");
@@ -2741,9 +2745,7 @@
                         showToast(`System Failure: ${err.message}`, "error");
                     } finally {
                         commandInput.value = '';
-                        await renderAdminUsers();
-                        const activeModalId = userDetailModal.classList.contains('active') ? userDetailModal._currentUserId : null;
-                        if (activeModalId) await showUserDetail(activeModalId);
+                        // Do not call renderAdminUsers here if already called in command cases
                     }
                 };
 
