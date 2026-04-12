@@ -1630,7 +1630,8 @@ body {
         display: grid;
         grid-template-columns: 1fr 1fr;
         gap: 10px;
-        column-count: auto; /* Disable column-count when in grid mode */
+        align-items: start; /* Prevents landscape items from stretching to vertical height */
+        column-count: auto; 
     }
     .mini-card {
         margin-bottom: 0;
