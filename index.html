@@ -1160,16 +1160,16 @@
                 .eq('id', session.user.id)
                 .single();
 
-            // Create profile link (Clean Format for Copying)
+            // Create profile link
             const profileUsername = profileData?.username || emailPrefix;
             const baseUrl = window.location.origin.replace(/^https?:\/\//, '');
-            const fullLink = `${baseUrl}/${profileUsername}`;
-            document.getElementById('profileLink').value = fullLink;
+            const displayLink = `https://${baseUrl}/${profileUsername}`;
+            document.getElementById('profileLink').value = displayLink;
 
             // Update preview info (Visual Mockup stays professional with https)
             const browserUrl = document.getElementById('browserUrl');
             const previewUsername = document.getElementById('previewUsername');
-            if (browserUrl) browserUrl.textContent = `https://${fullLink}`;
+            if (browserUrl) browserUrl.textContent = displayLink;
             if (previewUsername) previewUsername.textContent = `@${profileUsername}`;
 
             if (profileData) {
@@ -1217,14 +1217,25 @@
         const profileLinkInput = document.getElementById('profileLink');
         if (copyLinkBtn) {
             copyLinkBtn.addEventListener('click', async () => {
+                const textToCopy = profileLinkInput.value.replace(/^https?:\/\//, '');
                 try {
-                    await navigator.clipboard.writeText(profileLinkInput.value);
+                    if (navigator.clipboard && navigator.clipboard.writeText) {
+                        await navigator.clipboard.writeText(textToCopy);
+                    } else {
+                        throw new Error('Clipboard API unavailable');
+                    }
+                    
                     const originalText = copyLinkBtn.textContent;
                     copyLinkBtn.textContent = 'Copied!';
                     setTimeout(() => copyLinkBtn.textContent = originalText, 2000);
                 } catch (err) {
+                    // Fallback: Temporarily change value to copy without https
+                    const originalValue = profileLinkInput.value;
+                    profileLinkInput.value = textToCopy;
                     profileLinkInput.select();
                     document.execCommand('copy');
+                    profileLinkInput.value = originalValue; // Restore visual https
+                    
                     copyLinkBtn.textContent = 'Copied!';
                     setTimeout(() => copyLinkBtn.textContent = 'Copy', 2000);
                 }
