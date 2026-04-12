@@ -29,12 +29,26 @@
     <script type="text/javascript">
         // --- GitHub Pages SPA URL Restoration ---
         (function(l) {
-            if (l.search[1] === 'p' && l.search[2] === '=') {
-                var decoded = l.search.slice(3).split('&').map(function(s) { 
+            var search = l.search;
+            // Check for /?/path or ?p=path
+            if (search[1] === '/' || (search.slice(1, 4) === 'p=' || search.slice(1, 3) === 'p=')) {
+                var path = '';
+                if (search[1] === '/') {
+                    path = search.slice(1);
+                } else {
+                    // find where the path actually starts (after p=)
+                    path = search.slice(search.indexOf('p=') + 2);
+                }
+                
+                var decoded = path.split('&').map(function(s) { 
                     return s.replace(/~and~/g, '&')
                 }).join('?');
+                
+                // Ensure decoded path starts with /
+                if (!decoded.startsWith('/')) decoded = '/' + decoded;
+
                 window.history.replaceState(null, null,
-                    l.pathname.slice(0, -1) + (decoded.startsWith('/') ? decoded : '/' + decoded) + l.hash
+                    l.pathname.slice(0, -1) + decoded + l.hash
                 );
             }
         }(window.location))
@@ -2127,20 +2141,23 @@
 
         // --- SPA Routing / URL Parameter Handling ---
         const urlParamsFromPage = new URLSearchParams(window.location.search);
-        const userFromQuery = urlParamsFromPage.get('user');
         
-        // Check both ?user=ID and clean /ID format
-        let targetUsername = userFromQuery;
+        // Check for ?user=ID, ?p=ID, or clean /ID format
+        let targetUsername = urlParamsFromPage.get('user') || urlParamsFromPage.get('p');
         
         if (!targetUsername) {
-            const pathname = window.location.pathname.replace(/^\/|\/$/g, ''); // Strip leading/trailing slashes
-            // Ensure pathname is a valid username and not a technical file
-            if (pathname && pathname !== 'index.html' && !pathname.includes('.')) {
-                targetUsername = pathname;
+            const pathname = window.location.pathname.replace(/^\/|\/$/g, ''); 
+            // Filter technical files and Phostory base path if on github.io
+            const pathParts = pathname.split('/');
+            const lastPart = pathParts[pathParts.length - 1];
+            
+            if (lastPart && lastPart !== 'index.html' && !lastPart.includes('.')) {
+                targetUsername = lastPart;
             }
         }
 
         if (targetUsername) {
+            console.log('Routing to profile:', targetUsername);
             loadUserProfilePage(targetUsername);
         }
 
