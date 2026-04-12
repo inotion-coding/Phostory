@@ -1615,7 +1615,7 @@ body {
 
 .mini-card img {
     width: 100%;
-    height: auto;
+    aspect-ratio: 1 / 1;
     object-fit: cover;
     transition: transform 0.6s ease;
     display: block;
@@ -1628,10 +1628,10 @@ body {
 @media (max-width: 600px) {
     .mini-masonry {
         column-count: 2;
-        column-gap: 0.8rem;
+        column-gap: 0.6rem;
     }
     .mini-card {
-        margin-bottom: 0.8rem;
+        margin-bottom: 0.6rem;
     }
 }
 
