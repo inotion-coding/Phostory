@@ -2151,8 +2151,13 @@
             const pathParts = pathname.split('/');
             const lastPart = pathParts[pathParts.length - 1];
             
-            if (lastPart && lastPart !== 'index.html' && !lastPart.includes('.')) {
-                targetUsername = lastPart;
+            if (lastPart && lastPart !== 'index.html') {
+                const techExts = ['.html', '.css', '.js', '.png', '.jpg', '.jpeg', '.gif', '.ico', '.json', '.map', '.txt', '.xml'];
+                const isTechFile = techExts.some(ext => lastPart.toLowerCase().endsWith(ext));
+                
+                if (!isTechFile) {
+                    targetUsername = lastPart;
+                }
             }
         }
 
