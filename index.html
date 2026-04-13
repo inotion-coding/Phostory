@@ -11,24 +11,27 @@
 
     <!-- Primary Meta Tags -->
     <meta name="title" content="Phostory">
-    <meta name="description" content="Transform fleeting moments into timeless history. Record and share your visual stories with the world.">
+    <meta name="description"
+        content="Transform fleeting moments into timeless history. Record and share your visual stories with the world.">
 
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://phostory.studio/">
     <meta property="og:title" content="Phostory">
-    <meta property="og:description" content="Transform fleeting moments into timeless history. Record and share your visual stories with the world.">
+    <meta property="og:description"
+        content="Transform fleeting moments into timeless history. Record and share your visual stories with the world.">
     <meta property="og:image" content="https://phostory.studio/phostory_og_image.png">
 
     <!-- Twitter -->
     <meta property="twitter:card" content="summary_large_image">
     <meta property="twitter:url" content="https://phostory.studio/">
     <meta property="twitter:title" content="Phostory">
-    <meta property="twitter:description" content="Transform fleeting moments into timeless history. Record and share your visual stories with the world.">
+    <meta property="twitter:description"
+        content="Transform fleeting moments into timeless history. Record and share your visual stories with the world.">
     <meta property="twitter:image" content="https://phostory.studio/phostory_og_image.png">
     <script type="text/javascript">
         // --- GitHub Pages SPA URL Restoration ---
-        (function(l) {
+        (function (l) {
             var search = l.search;
             // Check for /?/path or ?p=path
             if (search[1] === '/' || (search.slice(1, 4) === 'p=' || search.slice(1, 3) === 'p=')) {
@@ -39,11 +42,11 @@
                     // find where the path actually starts (after p=)
                     path = search.slice(search.indexOf('p=') + 2);
                 }
-                
-                var decoded = path.split('&').map(function(s) { 
+
+                var decoded = path.split('&').map(function (s) {
                     return s.replace(/~and~/g, '&')
                 }).join('?');
-                
+
                 // Ensure decoded path starts with /
                 if (!decoded.startsWith('/')) decoded = '/' + decoded;
 
@@ -55,23 +58,23 @@
     </script>
     <!-- Smart Path Resolver for SPA Routing -->
     <script>
-        (function() {
-            var path = window.location.pathname;
-            // If we are at a deep path (like /username), adjust relative links
-            if (path.replace(/^\/|\/$/g, '').split('/').length > 0 && 
-                !path.endsWith('/') && !path.endsWith('index.html') && path !== '/') {
-                var depth = path.replace(/^\/|\/$/g, '').split('/').length;
-                if (window.location.hostname.includes('github.io')) {
-                    // GitHub Pages subdirectory check
-                    var parts = path.split('/');
-                    if (parts.length > 2) {
-                        document.write('<base href="' + window.location.origin + '/' + parts[1] + '/">');
+            (function () {
+                var path = window.location.pathname;
+                // If we are at a deep path (like /username), adjust relative links
+                if (path.replace(/^\/|\/$/g, '').split('/').length > 0 &&
+                    !path.endsWith('/') && !path.endsWith('index.html') && path !== '/') {
+                    var depth = path.replace(/^\/|\/$/g, '').split('/').length;
+                    if (window.location.hostname.includes('github.io')) {
+                        // GitHub Pages subdirectory check
+                        var parts = path.split('/');
+                        if (parts.length > 2) {
+                            document.write('<base href="' + window.location.origin + '/' + parts[1] + '/">');
+                        }
+                    } else {
+                        document.write('<base href="/">');
                     }
-                } else {
-                    document.write('<base href="/">');
                 }
-            }
-        })();
+            })();
     </script>
     <link rel="stylesheet" href="style.css">
     <!-- Apply Google Fonts Outfit for a polished look -->
@@ -145,7 +148,8 @@
 
                 <p>Phostory is developed under the vision and support of <strong>Geonwoo Yoo</strong>, CEO of
                     <strong>Lab. U</strong>. As an integral part of <strong>Lab. U</strong>, Phostory reflects our
-                    shared commitment to innovation and the preservation of human narratives.</p>
+                    shared commitment to innovation and the preservation of human narratives.
+                </p>
 
                 <div class="about-features">
                     <div class="feature-card">
@@ -1266,7 +1270,7 @@
                     } else {
                         throw new Error('Clipboard API unavailable');
                     }
-                    
+
                     const originalText = copyLinkBtn.textContent;
                     copyLinkBtn.textContent = 'Copied!';
                     setTimeout(() => copyLinkBtn.textContent = originalText, 2000);
@@ -1277,7 +1281,7 @@
                     profileLinkInput.select();
                     document.execCommand('copy');
                     profileLinkInput.value = originalValue; // Restore visual https
-                    
+
                     copyLinkBtn.textContent = 'Copied!';
                     setTimeout(() => copyLinkBtn.textContent = 'Copy', 2000);
                 }
@@ -1625,10 +1629,10 @@
         if (btnConfirmDeleteAccPage) {
             btnConfirmDeleteAccPage.addEventListener('click', async () => {
                 const confirmed = await showConfirmModal(
-                    "Delete Your Account?", 
+                    "Delete Your Account?",
                     "This action is permanent and cannot be undone. All your stories and data will be removed. Proceed?"
                 );
-                
+
                 if (!confirmed) return;
 
                 btnConfirmDeleteAccPage.disabled = true;
@@ -1770,7 +1774,7 @@
                     const { data: fallbackPosts } = await supabase.from('posts').select('*').eq('is_public', true).is('deleted_at', null).order('created_at', { ascending: false });
                     return mapPosts(fallbackPosts || [], new Set());
                 }
-                
+
                 // Fetch likes if user logged in
                 let myLikePostIds = new Set();
                 if (currentUserId) {
@@ -1813,7 +1817,7 @@
 
         async function renderGrid(category = 'All') {
             const currentFilter = category;
-            
+
             // Critical: Reset column count tracker so the renderer is forced to run even if width is unchanged
             if (masonryGrid) masonryGrid._currentColCount = null;
 
@@ -2141,20 +2145,20 @@
 
         // --- SPA Routing / URL Parameter Handling ---
         const urlParamsFromPage = new URLSearchParams(window.location.search);
-        
+
         // Check for ?user=ID, ?p=ID, or clean /ID format
         let targetUsername = urlParamsFromPage.get('user') || urlParamsFromPage.get('p');
-        
+
         if (!targetUsername) {
-            const pathname = window.location.pathname.replace(/^\/|\/$/g, ''); 
+            const pathname = window.location.pathname.replace(/^\/|\/$/g, '');
             // Filter technical files and Phostory base path if on github.io
             const pathParts = pathname.split('/');
             const lastPart = pathParts[pathParts.length - 1];
-            
+
             if (lastPart && lastPart !== 'index.html') {
                 const techExts = ['.html', '.css', '.js', '.png', '.jpg', '.jpeg', '.gif', '.ico', '.json', '.map', '.txt', '.xml'];
                 const isTechFile = techExts.some(ext => lastPart.toLowerCase().endsWith(ext));
-                
+
                 if (!isTechFile) {
                     targetUsername = lastPart;
                 }
@@ -2494,7 +2498,7 @@
 
                         delBtn.onclick = async (e) => {
                             e.stopPropagation();
-                            
+
                             const myRole = await getLatestRole();
                             if (myRole !== 'operator' && isStaff(profile.role)) {
                                 showToast("Access Denied: Administrative Tier Protection.", "error");
@@ -2572,11 +2576,11 @@
                     async function lookup(idOrEmail) {
                         if (!idOrEmail) return null;
                         const cleanId = idOrEmail.replace(/^@/, '');
-                        
+
                         // Try by username
                         let { data: u1 } = await supabase.from('profiles').select('*').eq('username', cleanId).maybeSingle();
                         if (u1) return u1;
-                        
+
                         // Try by email
                         let { data: u2 } = await supabase.from('profiles').select('*').eq('email', idOrEmail).maybeSingle();
                         if (u2) return u2;
@@ -2584,7 +2588,7 @@
                         // Try by raw ID
                         let { data: u3 } = await supabase.from('profiles').select('*').eq('id', idOrEmail).maybeSingle();
                         if (u3) return u3;
-                        
+
                         return null;
                     }
 
@@ -2601,11 +2605,11 @@
                             case '/role': {
                                 if (myRole !== 'operator') { showToast("Permission Denied: Operator role required.", "error"); break; }
                                 if (parts.length !== 3) { showToast("Strict Syntax: /role [role] [id]", "error"); break; }
-                                
+
                                 const newRole = parts[1].toLowerCase();
                                 const targetId = parts[2];
                                 const validRoles = ['admin', 'developer', 'operator', 'official', 'user'];
-                                
+
                                 if (!validRoles.includes(newRole)) { showToast("Invalid Role defined.", "error"); break; }
 
                                 const user = await lookup(targetId);
@@ -2621,7 +2625,7 @@
                             case '/unrole': {
                                 if (myRole !== 'operator') { showToast("Permission Denied: Operator role required.", "error"); break; }
                                 if (parts.length !== 2) { showToast("Strict Syntax: /unrole [id]", "error"); break; }
-                                
+
                                 const targetId = parts[1];
                                 const user = await lookup(targetId);
                                 if (user) {
@@ -2634,11 +2638,11 @@
                             }
 
                             case '/change': {
-                                if (parts.length !== 4 || parts[2].toLowerCase() !== 'to') { 
-                                    showToast("Strict Syntax: /change [old] to [new]", "error"); 
-                                    break; 
+                                if (parts.length !== 4 || parts[2].toLowerCase() !== 'to') {
+                                    showToast("Strict Syntax: /change [old] to [new]", "error");
+                                    break;
                                 }
-                                
+
                                 const oldId = parts[1];
                                 const newId = parts[3];
 
@@ -2658,10 +2662,10 @@
 
                             case '/reset': {
                                 if (parts.length !== 3) { showToast("Strict Syntax: /reset [profile|bio|pw] [id]", "error"); break; }
-                                
+
                                 const type = parts[1].toLowerCase();
                                 const targetId = parts[2];
-                                
+
                                 const user = await lookup(targetId);
                                 if (!user) { showToast(`Target Not Found: ${targetId}`, "error"); break; }
 
@@ -2694,46 +2698,46 @@
                                 break;
                             }
 
-                                case '/delete': {
-                                    if (parts.length !== 2) { showToast("Strict Syntax: /delete [id]", "error"); break; }
-                                    const targetId = parts[1];
-                                    const user = await lookup(targetId);
-                                    if (!user) { showToast(`Target Not Found: ${targetId}`, "error"); break; }
+                            case '/delete': {
+                                if (parts.length !== 2) { showToast("Strict Syntax: /delete [id]", "error"); break; }
+                                const targetId = parts[1];
+                                const user = await lookup(targetId);
+                                if (!user) { showToast(`Target Not Found: ${targetId}`, "error"); break; }
 
-                                    if (isProtected(myRole, user.role)) {
-                                        showToast("Access Denied: Administrative Tier Protection.", "error");
-                                        break;
-                                    }
-
-                                    // Nuclear Purge (Calls backend RPC to wipe Auth + Profiles + Data)
-                                    try {
-                                        // 1. Wipe activity first
-                                        await supabase.from('likes').delete().eq('user_id', user.id);
-                                        await supabase.from('posts').update({ deleted_at: new Date().toISOString() }).eq('user_id', user.id);
-
-                                        // 2. Call the Security Definer Function (Requires the SQL setup I provided)
-                                        // This snaps the finger and wipes the account from Auth and Profiles simultaneously.
-                                        const { error: rpcError } = await supabase.rpc('delete_user_by_admin', { target_id: user.id });
-                                        
-                                        if (rpcError) {
-                                            console.warn("RPC Failed. Attempting frontend-only fallback...", rpcError);
-                                            // Fallback if SQL function hasn't been set up yet
-                                            await supabase.from('profiles').delete().eq('id', user.id);
-                                            await supabase.from('profiles').update({ 
-                                                username: `deleted_${Date.now()}_${user.id.substring(0,4)}`,
-                                                role: 'user'
-                                            }).eq('id', user.id);
-                                            showToast(`Limited Purge: Profile masked. (Did you run the SQL?)`, "warning");
-                                        } else {
-                                            showToast(`Nuclear Purge: ${user.username} fully erased from system.`);
-                                        }
-                                        
-                                        await renderAdminUsers();
-                                    } catch (err) {
-                                        showToast(`Action Failed: ${err.message}`, "error");
-                                    }
+                                if (isProtected(myRole, user.role)) {
+                                    showToast("Access Denied: Administrative Tier Protection.", "error");
                                     break;
                                 }
+
+                                // Nuclear Purge (Calls backend RPC to wipe Auth + Profiles + Data)
+                                try {
+                                    // 1. Wipe activity first
+                                    await supabase.from('likes').delete().eq('user_id', user.id);
+                                    await supabase.from('posts').update({ deleted_at: new Date().toISOString() }).eq('user_id', user.id);
+
+                                    // 2. Call the Security Definer Function (Requires the SQL setup I provided)
+                                    // This snaps the finger and wipes the account from Auth and Profiles simultaneously.
+                                    const { error: rpcError } = await supabase.rpc('delete_user_by_admin', { target_id: user.id });
+
+                                    if (rpcError) {
+                                        console.warn("RPC Failed. Attempting frontend-only fallback...", rpcError);
+                                        // Fallback if SQL function hasn't been set up yet
+                                        await supabase.from('profiles').delete().eq('id', user.id);
+                                        await supabase.from('profiles').update({
+                                            username: `deleted_${Date.now()}_${user.id.substring(0, 4)}`,
+                                            role: 'user'
+                                        }).eq('id', user.id);
+                                        showToast(`Limited Purge: Profile masked. (Did you run the SQL?)`, "warning");
+                                    } else {
+                                        showToast(`Nuclear Purge: ${user.username} fully erased from system.`);
+                                    }
+
+                                    await renderAdminUsers();
+                                } catch (err) {
+                                    showToast(`Action Failed: ${err.message}`, "error");
+                                }
+                                break;
+                            }
 
                             case '/unofficial': {
                                 showToast("Notice: Commands /official and /unofficial are deprecated. Use /role official.", "info");
