@@ -1,0 +1,2321 @@
+import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm'
+
+// 1. Initialize Supabase
+const supabaseUrl = 'https://jlxlccrhwmmrubvgyloi.supabase.co';
+const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImpseGxjY3Jod21tcnVidmd5bG9pIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU3OTc3NDcsImV4cCI6MjA5MTM3Mzc0N30.hnv4A5NFzmMJsq2rrt72hH-cToCAKmqSxhcmaB8eWeg';
+const supabase = createClient(supabaseUrl, supabaseKey);
+
+const DEFAULT_AVATAR = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48cmVjdCB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgZmlsbD0iI2Y4ZmFmYyIvPjxjaXJjbGUgY3g9IjUwIiBjeT0iNDIiIHI9IjE4IiBmaWxsPSIjZTJlOGYwIi8+PHBhdGggZD0iTTUwIDY0QzMyLjMzIDY0IDE4IDczLjY3IDE4IDg0Vjg2SDgyVjg0QzgyIDczLjY3IDY3LjY3IDY0IDUwIDY0WiIgZmlsbD0iI2UyZThmMCIvPjwvc3ZnPg==';
+
+// 1.5. Toast notification function
+function showToast(message, type = 'success') {
+    const container = document.getElementById('toastContainer');
+    const toast = document.createElement('div');
+    toast.className = `toast ${type}`;
+
+    const icon = type === 'success'
+        ? `<svg class="toast-icon" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" /></svg>`
+        : `<svg class="toast-icon" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd" /></svg>`;
+
+    toast.innerHTML = `${icon}<span>${message}</span>`;
+    container.appendChild(toast);
+
+    // Remove after 3 seconds
+    setTimeout(() => {
+        toast.classList.add('out');
+        setTimeout(() => toast.remove(), 400);
+    }, 3000);
+}
+
+// 2. Hamburger menu toggle logic
+const menuToggle = document.getElementById('menuToggle');
+const dropdownMenu = document.getElementById('dropdownMenu');
+
+menuToggle.addEventListener('click', () => {
+    menuToggle.classList.toggle('active');
+    dropdownMenu.classList.toggle('active');
+});
+
+// 3. Modal UI and logic
+const loginModal = document.getElementById('loginModal');
+const closeModalBtn = document.getElementById('closeModal');
+const navLoginBtn = document.getElementById('navLogin');
+
+const authForm = document.getElementById('authForm');
+const idInput = document.getElementById('idInput');
+const idStatus = document.getElementById('idStatus');
+const idInputLabel = document.getElementById('idInputLabel');
+const idInputGroup = document.getElementById('idInputGroup');
+const emailInput = document.getElementById('emailInput');
+const emailInputGroup = document.getElementById('emailInputGroup');
+const passwordInput = document.getElementById('passwordInput');
+
+const toggleAuthMode = document.getElementById('toggleAuthMode');
+const modalTitle = document.getElementById('modalTitle');
+const modalSubtitle = document.querySelector('.modal-subtitle');
+const authSubmitBtn = document.getElementById('authSubmitBtn');
+
+let isLoginMode = true; // true: login, false: signup
+
+// Login button handler
+navLoginBtn.addEventListener('click', async (e) => {
+    e.preventDefault();
+    dropdownMenu.classList.remove('active'); // Close menu
+    menuToggle.classList.remove('active');
+
+    if (navLoginBtn.textContent === 'Logout') {
+        const { error } = await supabase.auth.signOut();
+        if (!error) {
+            navLoginBtn.textContent = 'Login';
+            showToast('Successfully logged out.');
+        }
+    } else {
+        loginModal.classList.add('active');
+    }
+});
+
+// Close modal
+closeModalBtn.addEventListener('click', () => {
+    loginModal.classList.remove('active');
+});
+
+// Close modal on backdrop click
+loginModal.addEventListener('click', (e) => {
+    if (e.target === loginModal) {
+        loginModal.classList.remove('active');
+    }
+});
+
+// Toggle login/signup mode
+toggleAuthMode.addEventListener('click', () => {
+    isLoginMode = !isLoginMode;
+    if (isLoginMode) {
+        modalTitle.textContent = 'Welcome Back';
+        modalSubtitle.textContent = 'Log in to your Phostory account';
+        authSubmitBtn.textContent = 'Login';
+        toggleAuthMode.innerHTML = `Don't have an account? <b>Sign up</b>`;
+
+        // Login mode UI: ID/Email combined, hide Email input
+        idInputLabel.textContent = 'ID or Email';
+        idInput.placeholder = 'Enter your ID or Email';
+        emailInputGroup.style.display = 'none';
+        emailInput.required = false;
+        idStatus.textContent = ''; // Clear status message
+        idStatus.className = 'input-hint'; // Reset class to hide
+    } else {
+        modalTitle.textContent = 'Create an Account';
+        modalSubtitle.textContent = 'Join Phostory to share your moments';
+        authSubmitBtn.textContent = 'Sign Up';
+        toggleAuthMode.innerHTML = `Already have an account? <b>Log in</b>`;
+
+        // Signup mode UI: Show ID and Email separately
+        idInputLabel.textContent = 'ID';
+        idInput.placeholder = 'Enter your ID';
+        emailInputGroup.style.display = 'block';
+        emailInput.required = true;
+        idStatus.textContent = '';
+        idStatus.className = 'input-hint';
+    }
+});
+
+// 3.5. Real-time ID availability check (Signup mode only)
+let checkTimeout;
+idInput.addEventListener('input', () => {
+    if (isLoginMode) return;
+
+    const username = idInput.value.trim().replace(/^@/, '');
+    idStatus.textContent = '';
+    idStatus.className = 'input-hint';
+
+    if (username.length < 3) {
+        if (username.length > 0) {
+            idStatus.textContent = 'ID must be at least 3 characters.';
+            idStatus.classList.add('error');
+        }
+        return;
+    }
+
+    // Character validation: alphanumeric + . + _
+    const regex = /^[a-zA-Z0-9._]+$/;
+    if (!regex.test(username)) {
+        idStatus.textContent = 'Only letters, numbers, dot (.) and underscore (_) are allowed.';
+        idStatus.classList.add('error');
+        return;
+    }
+
+    clearTimeout(checkTimeout);
+    checkTimeout = setTimeout(async () => {
+        try {
+            const { data, error } = await supabase
+                .from('profiles')
+                .select('username')
+                .eq('username', username)
+                .maybeSingle();
+
+            if (error) throw error;
+
+            if (data) {
+                idStatus.textContent = 'This ID is already taken.';
+                idStatus.classList.add('error');
+            } else {
+                idStatus.textContent = 'This ID is available!';
+                idStatus.classList.add('success');
+            }
+        } catch (err) {
+            console.error('ID check error:', err);
+        }
+    }, 500); // 500ms debounce
+});
+
+// Initial state for login mode
+emailInputGroup.style.display = 'none';
+emailInput.required = false;
+idInputLabel.textContent = 'ID or Email';
+idInput.placeholder = 'Enter your ID or Email';
+
+// 4. Supabase auth form submission (Join/Login)
+authForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const identifier = idInput.value.trim();
+    const email = emailInput.value.trim();
+    const password = passwordInput.value.trim();
+
+    // 1. Check if any required fields are empty
+    if (isLoginMode) {
+        if (!identifier || !password) {
+            showToast('Please enter your ID, Email, and Password.', 'error');
+            return;
+        }
+    } else {
+        if (!identifier || !email || !password) {
+            showToast('Please enter your ID, Email, and Password.', 'error');
+            return;
+        }
+    }
+
+    authSubmitBtn.textContent = 'Processing...';
+    authSubmitBtn.disabled = true;
+
+    try {
+        if (isLoginMode) {
+            // Login: handle ID or Email
+            let targetEmail = identifier;
+
+            // If doesn't look like email, search profiles by username
+            if (!identifier.includes('@')) {
+                const { data: profile, error: profileErr } = await supabase
+                    .from('profiles')
+                    .select('email')
+                    .eq('username', identifier.replace(/^@/, ''))
+                    .single();
+
+                if (profileErr || !profile) {
+                    throw new Error('User not found with that ID.');
+                }
+                targetEmail = profile.email;
+            }
+
+            const { error } = await supabase.auth.signInWithPassword({
+                email: targetEmail,
+                password: password,
+            });
+            if (error) throw error;
+            showToast('Successfully logged in!');
+
+        } else {
+            // Signup: check ID formatting and uniqueness
+            const usernameFinal = identifier.trim().replace(/^@/, '');
+            const idRegex = /^[a-zA-Z0-9._]+$/;
+
+            if (usernameFinal.length < 3 || usernameFinal.length > 15) {
+                throw new Error('ID must be between 3 and 15 characters.');
+            }
+            if (!idRegex.test(usernameFinal)) {
+                throw new Error('ID can only contain letters, numbers, dots (.), and underscores (_).');
+            }
+
+            const { data: existingUser } = await supabase
+                .from('profiles')
+                .select('username')
+                .eq('username', usernameFinal)
+                .maybeSingle();
+
+            if (existingUser) {
+                throw new Error('This ID is already taken.');
+            }
+
+            const { data, error } = await supabase.auth.signUp({
+                email: email,
+                password: password,
+            });
+            if (error) throw error;
+
+            if (data.user) {
+                // Create profile with username and email
+                const { error: profileError } = await supabase
+                    .from('profiles')
+                    .upsert({
+                        id: data.user.id,
+                        username: identifier.replace(/^@/, ''),
+                        email: email
+                    });
+                if (profileError) console.error('Profile creation error:', profileError);
+            }
+
+            showToast('Sign up completed successfully!');
+        }
+
+        // Update UI on auth success
+        loginModal.classList.remove('active');
+        navLoginBtn.textContent = 'Logout';
+        authForm.reset();
+
+    } catch (error) {
+        let msg = error.message;
+        const lowerMsg = msg.toLowerCase();
+
+        if (lowerMsg.includes('invalid') || lowerMsg.includes('not found') || lowerMsg.includes('credentials')) {
+            msg = 'Incorrect ID, Email, or Password. Please check again.';
+        } else if (lowerMsg.includes('email') && lowerMsg.includes('phone') || lowerMsg.includes('missing')) {
+            msg = 'Please enter your ID, Email, and Password.';
+        }
+        showToast(msg, 'error');
+    } finally {
+        authSubmitBtn.disabled = false;
+        authSubmitBtn.textContent = isLoginMode ? 'Login' : 'Sign Up';
+    }
+});
+
+// 5. Check user session on reload
+async function checkUser() {
+    const { data: { session } } = await supabase.auth.getSession();
+    const navSettingsBtn = document.getElementById('navSettings');
+    const navAdminBtn = document.getElementById('navAdmin');
+
+    if (session) {
+        navLoginBtn.textContent = 'Logout';
+        if (navSettingsBtn) navSettingsBtn.style.display = 'block';
+
+        // Role-based access check
+        try {
+            const { data: profile } = await supabase.from('profiles').select('role').eq('id', session.user.id).maybeSingle();
+            const userRole = profile?.role || 'user';
+
+            // operator, admin, developer can access Admin Management
+            const hasAdminAccess = ['operator', 'admin', 'developer'].includes(userRole);
+
+            if (hasAdminAccess) {
+                if (navAdminBtn) navAdminBtn.style.display = 'block';
+            } else if (navAdminBtn) {
+                navAdminBtn.style.display = 'none';
+            }
+
+            // Store role in session-like object for quick access
+            window._userRole = userRole;
+        } catch (err) { console.error('Role check error:', err); }
+    } else {
+        navLoginBtn.textContent = 'Login';
+        if (navSettingsBtn) navSettingsBtn.style.display = 'none';
+        if (navAdminBtn) navAdminBtn.style.display = 'none';
+    }
+}
+checkUser();
+
+// Listen for auth state changes
+supabase.auth.onAuthStateChange(() => {
+    checkUser();
+});
+
+// 6. SPA routing logic (Home <-> About Us <-> Make My Phostory view switching)
+const adminView = document.getElementById('adminView');
+const navAboutBtn = document.getElementById('navAbout');
+const navMakeBtn = document.getElementById('navMake');
+const navShareBtn = document.getElementById('navShare');
+const navSettingsBtn = document.getElementById('navSettings');
+const navAdminBtn = document.getElementById('navAdmin');
+const navLogoBtn = document.getElementById('navLogo');
+const homeView = document.getElementById('homeView');
+const aboutView = document.getElementById('aboutView');
+const makeView = document.getElementById('makeView');
+const shareView = document.getElementById('shareView');
+
+function switchView(viewToShow) {
+    // Hide all views
+    if (homeView) homeView.style.display = 'none';
+    if (aboutView) aboutView.style.display = 'none';
+    if (makeView) makeView.style.display = 'none';
+    if (shareView) shareView.style.display = 'none';
+    if (settingsView) settingsView.style.display = 'none';
+    if (adminView) adminView.style.display = 'none';
+    const profilePageView = document.getElementById('profilePageView');
+    if (profilePageView) profilePageView.style.display = 'none';
+
+    // Show selected view
+    if (viewToShow === aboutView || viewToShow === makeView || viewToShow === shareView || viewToShow === settingsView || viewToShow === adminView) {
+        viewToShow.style.display = 'flex';
+    } else if (viewToShow === profilePageView) {
+        viewToShow.style.display = 'block';
+    } else if (homeView) {
+        homeView.style.display = 'block';
+    }
+
+    // Trigger fade-in animation
+    viewToShow.classList.remove('fade-in');
+    void viewToShow.offsetWidth; // Trigger reflow
+    viewToShow.classList.add('fade-in');
+}
+
+navAboutBtn.addEventListener('click', (e) => {
+    e.preventDefault();
+    dropdownMenu.classList.remove('active'); // Close menu on click
+    menuToggle.classList.remove('active');
+    switchView(aboutView);
+});
+
+navMakeBtn.addEventListener('click', async (e) => {
+    e.preventDefault();
+    dropdownMenu.classList.remove('active');
+    menuToggle.classList.remove('active');
+
+    // Check auth before writing
+    const { data: { session } } = await supabase.auth.getSession();
+    if (!session) {
+        showToast('Please login first to upload photos.', 'error');
+        loginModal.classList.add('active');
+        return;
+    }
+
+    switchView(makeView);
+
+    // Fetch my uploads (Make My Phostory dedicated rendering)
+    const makeMiniMasonry = document.getElementById('makeMiniMasonry');
+    if (makeMiniMasonry) {
+        makeMiniMasonry.innerHTML = '<div style="column-span: all; width: 100%; text-align: center; color: #888; font-size: 14px; padding: 20px;">Loading...</div>';
+        const myPhotos = await fetchPosts(session.user.id);
+        makeMiniMasonry.innerHTML = '';
+        if (myPhotos.length === 0) {
+            makeMiniMasonry.innerHTML = '<div style="column-span: all; width: 100%; text-align: center; color: #888; font-size: 14px; padding: 20px;">No posts yet.</div>';
+        } else {
+            myPhotos.forEach(photo => {
+                const miniCard = document.createElement('div');
+                miniCard.className = 'mini-card';
+
+                const statusBadge = photo.is_public
+                    ? `<div class="status-badge public">Public</div>`
+                    : `<div class="status-badge private">Private</div>`;
+
+                miniCard.innerHTML = `
+                    ${statusBadge}
+                    <div style="overflow:hidden; border-radius:16px 16px 0 0;">
+                        <img src="${photo.url}" alt="${photo.title}" loading="lazy">
+                    </div>
+                    <div class="mini-card-title">${photo.title}</div>
+                    <div class="mini-card-actions">
+                        <button class="btn-micro edit-btn">Edit</button>
+                        <button class="btn-micro delete-btn">Delete</button>
+                    </div>
+                `;
+
+                // Edit Title / Visibility logic
+                miniCard.querySelector('.edit-btn').addEventListener('click', async () => {
+                    const result = await showEditModalDialog(photo.title, photo.is_public);
+                    if (result !== null) {
+                        const newTitle = result.newTitle.trim();
+                        const newIsPublic = result.newIsPublic;
+
+                        if (newTitle === '') {
+                            showToast('Please enter a title.', 'error');
+                            return;
+                        }
+
+                        // Show loading state
+                        const editBtn = miniCard.querySelector('.edit-btn');
+                        editBtn.textContent = '...';
+
+                        try {
+                            let finalUrl = photo.url;
+
+                            // If visibility changed: move file
+                            if (newIsPublic !== photo.is_public) {
+                                // 1. Parse existing info
+                                let oldBucket = photo.is_public ? 'public_photos' : 'private_photos';
+                                let newBucket = newIsPublic ? 'public_photos' : 'private_photos';
+                                let filePath = '';
+
+                                if (photo.url.includes(`/${oldBucket}/`)) {
+                                    filePath = photo.url.split(`/${oldBucket}/`)[1].split('?')[0];
+                                }
+
+                                if (filePath) {
+                                    // 1. Download file
+                                    const { data: blob, error: downloadError } = await supabase.storage.from(oldBucket).download(filePath);
+                                    if (downloadError) throw downloadError;
+
+                                    // 2. Upload to new bucket
+                                    const { error: uploadError } = await supabase.storage.from(newBucket).upload(filePath, blob, {
+                                        upsert: true,
+                                        contentType: 'image/jpeg'
+                                    });
+                                    if (uploadError) throw uploadError;
+
+                                    // 3. Generate new URL
+                                    if (newIsPublic) {
+                                        const { data: { publicUrl } } = supabase.storage.from(newBucket).getPublicUrl(filePath);
+                                        finalUrl = publicUrl;
+                                    } else {
+                                        const { data: signedData, error: signedError } = await supabase.storage.from(newBucket).createSignedUrl(filePath, 315360000);
+                                        if (signedError) throw signedError;
+                                        finalUrl = signedData.signedUrl;
+                                    }
+
+                                    // 4. Remove old file
+                                    supabase.storage.from(oldBucket).remove([filePath]);
+                                }
+                            }
+
+                            // 2. Update DB record
+                            const { data, error } = await supabase.from('posts').update({
+                                title: newTitle,
+                                is_public: newIsPublic,
+                                image_url: finalUrl
+                            }).eq('id', photo.id).select();
+
+                            if (error) {
+                                showToast('Error updating: ' + error.message, 'error');
+                            } else if (!data || data.length === 0) {
+                                showToast('Update denied by server.', 'error');
+                            } else {
+                                miniCard.querySelector('.mini-card-title').textContent = newTitle;
+                                miniCard.querySelector('img').src = finalUrl;
+                                photo.title = newTitle;
+                                photo.is_public = newIsPublic;
+                                photo.url = finalUrl;
+                                showToast('Successfully updated and moved.');
+                            }
+                        } catch (err) {
+                            console.error('Migration error:', err);
+                            showToast('Error moving file.', 'error');
+                        } finally {
+                            editBtn.textContent = 'Edit';
+                        }
+                    }
+                });
+
+                // Delete Post logic
+                miniCard.querySelector('.delete-btn').addEventListener('click', async () => {
+                    const isConfirmed = await showConfirm('Are you sure you want to delete this story? (This action cannot be undone)');
+                    if (isConfirmed) {
+                        // Set loading state
+                        const deleteBtn = miniCard.querySelector('.delete-btn');
+                        const originalText = deleteBtn.textContent;
+                        deleteBtn.textContent = '...';
+                        deleteBtn.disabled = true;
+
+                        // 1. Soft-delete from DB (set deleted_at)
+                        // We no longer delete from Storage immediately to allow 7-day retention
+                        const { data, error } = await supabase.from('posts').update({
+                            deleted_at: new Date().toISOString()
+                        }).eq('id', photo.id).select();
+                        if (error) {
+                            showToast('Error deleting post: ' + error.message, 'error');
+                            deleteBtn.textContent = originalText;
+                            deleteBtn.disabled = false;
+                        } else if (!data || data.length === 0) {
+                            showToast('Deletion denied by server!', 'error');
+                            deleteBtn.textContent = originalText;
+                            deleteBtn.disabled = false;
+                        } else {
+                            showToast('Post successfully deleted.');
+                            miniCard.style.opacity = '0';
+                            setTimeout(() => miniCard.remove(), 300);
+                        }
+                    }
+                });
+
+                makeMiniMasonry.appendChild(miniCard);
+            });
+        }
+    }
+});
+
+navShareBtn.addEventListener('click', async (e) => {
+    e.preventDefault();
+    dropdownMenu.classList.remove('active');
+    menuToggle.classList.remove('active');
+
+    const { data: { session } } = await supabase.auth.getSession();
+    if (!session) {
+        showToast('Please login first to view your page.', 'error');
+        loginModal.classList.add('active');
+        return;
+    }
+
+    const emailPrefix = session.user.email.split('@')[0];
+
+    // 1. Get my profile info from 'profiles' table
+    const { data: profileData } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('id', session.user.id)
+        .single();
+
+    // Create profile link
+    const profileUsername = profileData?.username || emailPrefix;
+    const baseUrl = window.location.origin.replace(/^https?:\/\//, '');
+    const displayLink = `https://${baseUrl}/${profileUsername}`;
+    document.getElementById('profileLink').value = displayLink;
+
+    // Update preview info (Visual Mockup stays professional with https)
+    const browserUrl = document.getElementById('browserUrl');
+    const previewUsername = document.getElementById('previewUsername');
+    if (browserUrl) browserUrl.textContent = displayLink;
+    if (previewUsername) previewUsername.textContent = `@${profileUsername}`;
+
+    if (profileData) {
+        if (profileData.username) {
+            const displayUsername = profileData.username.startsWith('@') ? profileData.username : `@${profileData.username}`;
+            if (previewUsername) previewUsername.textContent = displayUsername;
+        }
+        if (profileData.bio) {
+            document.getElementById('editBioInput').value = profileData.bio;
+            document.getElementById('previewBioText').textContent = profileData.bio;
+        }
+        if (profileData.avatar_url) {
+            document.getElementById('editAvatarPreview').src = profileData.avatar_url;
+            document.getElementById('previewAvatarImg').src = profileData.avatar_url;
+        }
+    } else {
+        // Set defaults if no info found
+        document.getElementById('editBioInput').value = 'Capturing the world through my lens.';
+        document.getElementById('previewBioText').textContent = 'Capturing the world through my lens.';
+    }
+
+    switchView(shareView);
+
+    // Mini grid (my posts) rendering
+    const miniMasonry = document.getElementById('miniMasonry');
+    if (miniMasonry) {
+        miniMasonry.innerHTML = '<div style="column-span: all; width: 100%; text-align: center; color: #888; font-size: 14px; padding: 20px;">Loading...</div>';
+        const myPhotos = await fetchPosts(session.user.id);
+        miniMasonry.innerHTML = '';
+        if (myPhotos.length === 0) {
+            miniMasonry.innerHTML = '<div style="column-span: all; width: 100%; text-align: center; color: #888; font-size: 14px; padding: 20px;">No posts yet.</div>';
+        } else {
+            myPhotos.slice(0, 10).forEach(photo => {
+                const miniCard = document.createElement('div');
+                miniCard.className = 'mini-card';
+                miniCard.innerHTML = `<img src="${photo.url}" alt="${photo.title}" loading="lazy">`;
+                miniMasonry.appendChild(miniCard);
+            });
+        }
+    }
+});
+
+// Copy link functionality
+const copyLinkBtn = document.getElementById('copyLinkBtn');
+const profileLinkInput = document.getElementById('profileLink');
+if (copyLinkBtn) {
+    copyLinkBtn.addEventListener('click', async () => {
+        const textToCopy = profileLinkInput.value.replace(/^https?:\/\//, '');
+        try {
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                await navigator.clipboard.writeText(textToCopy);
+            } else {
+                throw new Error('Clipboard API unavailable');
+            }
+
+            const originalText = copyLinkBtn.textContent;
+            copyLinkBtn.textContent = 'Copied!';
+            setTimeout(() => copyLinkBtn.textContent = originalText, 2000);
+        } catch (err) {
+            // Fallback: Temporarily change value to copy without https
+            const originalValue = profileLinkInput.value;
+            profileLinkInput.value = textToCopy;
+            profileLinkInput.select();
+            document.execCommand('copy');
+            profileLinkInput.value = originalValue; // Restore visual https
+
+            copyLinkBtn.textContent = 'Copied!';
+            setTimeout(() => copyLinkBtn.textContent = 'Copy', 2000);
+        }
+    });
+}
+
+// Profile update functionality
+const editAvatarInput = document.getElementById('editAvatarInput');
+const editAvatarPreview = document.getElementById('editAvatarPreview');
+const previewAvatarImg = document.getElementById('previewAvatarImg');
+const editBioInput = document.getElementById('editBioInput');
+const previewBioText = document.getElementById('previewBioText');
+
+if (editAvatarInput) {
+    editAvatarInput.addEventListener('change', (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            // Use createObjectURL for mobile memory efficiency
+            const imageUrl = URL.createObjectURL(file);
+            editAvatarPreview.src = imageUrl;
+            previewAvatarImg.src = imageUrl;
+        }
+    });
+}
+
+if (editBioInput) {
+    editBioInput.addEventListener('input', (e) => {
+        const bioText = e.target.value.trim() === '' ? 'Capturing the world through my lens.' : e.target.value;
+        previewBioText.textContent = bioText;
+    });
+}
+
+const saveProfileBtn = document.getElementById('saveProfileBtn');
+if (saveProfileBtn) {
+    saveProfileBtn.addEventListener('click', async () => {
+        // Change text on save
+        const originalText = saveProfileBtn.textContent;
+        saveProfileBtn.textContent = 'Saving...';
+
+        try {
+            const { data: { session } } = await supabase.auth.getSession();
+            if (!session) {
+                showToast('Please login to save your profile.', 'error');
+                saveProfileBtn.textContent = originalText;
+                return;
+            }
+
+            // 1. Update bio in DB
+            const { error: updateError } = await supabase
+                .from('profiles')
+                .upsert({
+                    id: session.user.id,
+                    bio: editBioInput.value
+                }, { onConflict: 'id' });
+
+            if (updateError) throw updateError;
+
+            // 2. Upload avatar if changed
+            const file = editAvatarInput.files[0];
+            if (file) {
+                let fileExt = file.name.split('.').pop().toLowerCase();
+                if (fileExt === file.name.toLowerCase() || !/^[a-z0-9]+$/.test(fileExt)) {
+                    fileExt = file.type.split('/')[1] || 'jpg';
+                }
+                const fileName = `avatar.${fileExt}`;
+                const filePath = `${session.user.id}/${fileName}`;
+
+                const { error: uploadError } = await supabase.storage
+                    .from('profiles')
+                    .upload(filePath, file, {
+                        cacheControl: '3600',
+                        upsert: true,
+                        contentType: file.type || 'image/jpeg'
+                    });
+
+                if (uploadError) throw uploadError;
+
+                const { data: { publicUrl } } = supabase.storage
+                    .from('profiles')
+                    .getPublicUrl(filePath);
+
+                const cacheBustedUrl = `${publicUrl}?t=${Date.now()}`;
+
+                // Update DB with avatar URL
+                const { error: avatarDbError } = await supabase
+                    .from('profiles')
+                    .update({ avatar_url: cacheBustedUrl })
+                    .eq('id', session.user.id);
+
+                if (avatarDbError) throw avatarDbError;
+
+                editAvatarPreview.src = cacheBustedUrl;
+                previewAvatarImg.src = cacheBustedUrl;
+            }
+
+            // Visual success feedback
+            saveProfileBtn.textContent = 'Saved Successfully!';
+            saveProfileBtn.style.backgroundColor = '#10b981';
+            setTimeout(() => {
+                saveProfileBtn.textContent = 'Save Profile';
+                saveProfileBtn.style.backgroundColor = '';
+            }, 2000);
+        } catch (error) {
+            showToast('Profile save error: ' + error.message, 'error');
+        } finally {
+            saveProfileBtn.textContent = 'Save Profile';
+        }
+    });
+}
+
+navLogoBtn.addEventListener('click', (e) => {
+    e.preventDefault();
+    switchView(homeView);
+});
+
+// Custom prompt/confirm modal logic
+function showEditModalDialog(initialTitle, initialIsPublic) {
+    return new Promise((resolve) => {
+        const editModal = document.getElementById('editModal');
+        const input = document.getElementById('editTitleInput');
+        const saveBtn = document.getElementById('saveEditBtn');
+        const cancelBtn = document.getElementById('cancelEditBtn');
+        const closeBtn = document.getElementById('closeEditModal');
+
+        const visPublic = document.getElementById('editVisPublic');
+        const visPrivate = document.getElementById('editVisPrivate');
+        const editToggleBg = document.getElementById('editToggleBg');
+
+        input.value = initialTitle || '';
+
+        // Initial toggle state
+        const updateToggleVisual = () => {
+            if (visPublic.checked) {
+                editToggleBg.style.transform = 'translateX(0)';
+            } else {
+                editToggleBg.style.transform = 'translateX(100%)';
+            }
+        };
+
+        if (initialIsPublic) {
+            visPublic.checked = true;
+        } else {
+            visPrivate.checked = true;
+        }
+        updateToggleVisual();
+
+        visPublic.addEventListener('change', updateToggleVisual);
+        visPrivate.addEventListener('change', updateToggleVisual);
+
+        editModal.classList.add('active');
+
+        // Focus on open
+        setTimeout(() => input.focus(), 100);
+
+        const cleanup = () => {
+            saveBtn.onclick = null;
+            cancelBtn.onclick = null;
+            closeBtn.onclick = null;
+            visPublic.removeEventListener('change', updateToggleVisual);
+            visPrivate.removeEventListener('change', updateToggleVisual);
+            editModal.classList.remove('active');
+        };
+
+        saveBtn.onclick = () => {
+            cleanup();
+            resolve({ newTitle: input.value, newIsPublic: visPublic.checked });
+        };
+
+        cancelBtn.onclick = () => {
+            cleanup();
+            resolve(null);
+        };
+
+        closeBtn.onclick = () => {
+            cleanup();
+            resolve(null);
+        };
+    });
+}
+
+function showConfirm(message) {
+    return new Promise((resolve) => {
+        const deleteModal = document.getElementById('deleteModal');
+        const confirmBtn = document.getElementById('confirmDeleteBtn');
+        const cancelBtn = document.getElementById('cancelDeleteBtn');
+        const closeBtn = document.getElementById('closeDeleteModal');
+
+        if (deleteModal) {
+            deleteModal.querySelector('.modal-subtitle').textContent = message;
+            deleteModal.classList.add('active');
+        }
+
+        const cleanup = () => {
+            confirmBtn.onclick = null;
+            cancelBtn.onclick = null;
+            closeBtn.onclick = null;
+            if (deleteModal) deleteModal.classList.remove('active');
+        };
+
+        confirmBtn.onclick = () => {
+            cleanup();
+            resolve(true);
+        };
+
+        cancelBtn.onclick = () => {
+            cleanup();
+            resolve(false);
+        };
+
+        closeBtn.onclick = () => {
+            cleanup();
+            resolve(false);
+        };
+    });
+}
+
+// --- Mobile Touch Reveal Logic ---
+// 모바일 터치 기기에서 사진을 탭하면 정보를 보여줌
+document.addEventListener('touchstart', (e) => {
+    const card = e.target.closest('.photo-card');
+
+    // 다른 카드의 터치 상태 해제
+    if (!card) {
+        document.querySelectorAll('.photo-card.touch-active').forEach(c => c.classList.remove('touch-active'));
+        return;
+    }
+
+    // 하트 아이콘 자체를 누른 경우 상태 토글 대신 기능 수행만 보장 (이벤트 전파는 별도 처리됨)
+    if (e.target.closest('.like-btn')) return;
+
+    // 터치한 카드 토글 및 다른 카드 해제
+    if (!card.classList.contains('touch-active')) {
+        document.querySelectorAll('.photo-card.touch-active').forEach(c => c.classList.remove('touch-active'));
+        card.classList.add('touch-active');
+    } else {
+        card.classList.remove('touch-active');
+    }
+}, { passive: true });
+
+// --- Settings Page Logic ---
+const navSettingsBtnPage = document.getElementById('navSettings');
+
+const btnSaveIdPage = document.getElementById('btnSaveIdPage');
+const btnSavePwPage = document.getElementById('btnSavePwPage');
+const btnConfirmDeleteAccPage = document.getElementById('btnConfirmDeleteAccPage');
+
+const newIdInputPage = document.getElementById('newIdInputPage');
+const newIdStatusPage = document.getElementById('newIdStatusPage');
+const newPwInputPage = document.getElementById('newPwInputPage');
+
+if (navSettingsBtnPage) {
+    navSettingsBtnPage.addEventListener('click', (e) => {
+        e.preventDefault();
+        dropdownMenu.classList.remove('active');
+        menuToggle.classList.remove('active');
+        switchView(settingsView);
+    });
+}
+
+// 1. Change ID logic (Updates username in profiles)
+if (btnSaveIdPage) {
+    btnSaveIdPage.addEventListener('click', async () => {
+        const newUsername = newIdInputPage.value.trim().replace(/^@/, '');
+        if (newUsername.length < 3) {
+            showToast('ID must be at least 3 characters.', 'error');
+            return;
+        }
+
+        btnSaveIdPage.disabled = true;
+        btnSaveIdPage.textContent = 'Saving...';
+
+        try {
+            const { data: { session } } = await supabase.auth.getSession();
+            if (!session) throw new Error('Not logged in');
+
+            // Check for uniqueness
+            const { data: existing } = await supabase.from('profiles').select('username').eq('username', newUsername).maybeSingle();
+            if (existing) throw new Error('This ID is already taken.');
+
+            const { error } = await supabase.from('profiles').update({ username: newUsername }).eq('id', session.user.id);
+            if (error) throw error;
+
+            showToast('ID successfully changed! Use this ID for your next login.');
+            newIdInputPage.value = '';
+        } catch (err) {
+            showToast(err.message, 'error');
+        } finally {
+            btnSaveIdPage.disabled = false;
+            btnSaveIdPage.textContent = 'Update My ID';
+        }
+    });
+}
+
+// 2. Change Password logic (Verify old password first)
+if (btnSavePwPage) {
+    btnSavePwPage.addEventListener('click', async () => {
+        const currentPassword = document.getElementById('currentPwInputPage').value.trim();
+        const newPassword = newPwInputPage.value.trim();
+
+        if (!currentPassword) {
+            showToast('Please enter your current password.', 'error');
+            return;
+        }
+        if (newPassword.length < 6) {
+            showToast('New password must be at least 6 characters.', 'error');
+            return;
+        }
+
+        btnSavePwPage.disabled = true;
+        btnSavePwPage.textContent = 'Verifying...';
+
+        try {
+            const { data: { session } } = await supabase.auth.getSession();
+            if (!session) throw new Error('Not logged in');
+
+            // Re-authenticate to verify current password
+            const { error: verifyError } = await supabase.auth.signInWithPassword({
+                email: session.user.email,
+                password: currentPassword,
+            });
+
+            if (verifyError) {
+                throw new Error('Current password is incorrect.');
+            }
+
+            btnSavePwPage.textContent = 'Updating...';
+
+            // Now update to new password
+            const { error: updateError } = await supabase.auth.updateUser({ password: newPassword });
+            if (updateError) throw updateError;
+
+            showToast('Password successfully updated!');
+            document.getElementById('currentPwInputPage').value = '';
+            newPwInputPage.value = '';
+        } catch (err) {
+            showToast(err.message, 'error');
+        } finally {
+            btnSavePwPage.disabled = false;
+            btnSavePwPage.textContent = 'Update My Password';
+        }
+    });
+}
+
+// 3. Delete Account logic (Physical deletion with custom modal)
+if (btnConfirmDeleteAccPage) {
+    btnConfirmDeleteAccPage.addEventListener('click', async () => {
+        const confirmed = await showConfirmModal(
+            "Delete Your Account?",
+            "This action is permanent and cannot be undone. All your stories and data will be removed. Proceed?"
+        );
+
+        if (!confirmed) return;
+
+        btnConfirmDeleteAccPage.disabled = true;
+        btnConfirmDeleteAccPage.textContent = 'Deleting All Data...';
+
+        try {
+            const { data: { session } } = await supabase.auth.getSession();
+            if (!session) throw new Error('Not logged in');
+
+            // 1. Soft-delete all posts from DB
+            const { error: postsErr } = await supabase.from('posts').update({ deleted_at: new Date().toISOString() }).eq('user_id', session.user.id);
+            if (postsErr) throw postsErr;
+
+            // 2. Soft-delete profile from DB
+            const { error: profileErr } = await supabase.from('profiles').update({ deleted_at: new Date().toISOString() }).eq('id', session.user.id);
+            if (profileErr) throw profileErr;
+
+            // 3. Delete Auth User (RPC)
+            const { error: authErr } = await supabase.rpc('delete_user_self');
+
+            if (authErr) {
+                console.error('Auth deletion error:', authErr);
+                await supabase.auth.signOut();
+                showToast('Data deleted, but user account needs manual removal or RPC setup. (Logged out)');
+            } else {
+                await supabase.auth.signOut();
+                showToast('All your data and account have been permanently deleted.');
+            }
+
+            switchView(homeView);
+        } catch (err) {
+            showToast('Deletion error: ' + err.message, 'error');
+        } finally {
+            btnConfirmDeleteAccPage.disabled = false;
+            btnConfirmDeleteAccPage.textContent = 'Delete My Account Permanently';
+        }
+    });
+}
+
+// Unified Confirmation Modal System
+async function showConfirmModal(title, message) {
+    return new Promise((resolve) => {
+        const modal = document.getElementById('accDeleteModal');
+        const titleEl = document.getElementById('accConfirmTitle') || modal?.querySelector('h3');
+        const msgEl = document.getElementById('accConfirmMsg') || modal?.querySelector('p');
+        const confirmBtn = document.getElementById('confirmAccDeleteActionBtn');
+        const cancelBtn = document.getElementById('cancelAccDeleteBtn');
+
+        if (title && titleEl) titleEl.textContent = title;
+        if (message && msgEl) msgEl.textContent = message;
+
+        if (modal) modal.classList.add('active');
+
+        const cleanup = () => {
+            confirmBtn.onclick = null;
+            cancelBtn.onclick = null;
+            if (modal) modal.classList.remove('active');
+        };
+
+        confirmBtn.onclick = () => {
+            cleanup();
+            resolve(true);
+        };
+
+        cancelBtn.onclick = () => {
+            cleanup();
+            resolve(false);
+        };
+    });
+}
+
+// 7. Main page and preview rendering logic (Supabase integration)
+const masonryGrid = document.getElementById('masonryGrid');
+
+// High-res sample dummy data
+function getDummyPhotos(category = 'All') {
+    const count = category === 'All' ? 8 : 4;
+    return Array.from({ length: count }, (_, i) => {
+        const randomHeight = Math.floor(Math.random() * 400) + 600;
+        const seed = category + i + Math.random();
+        const catTitle = category === 'All' ? 'Moments' : category;
+        return {
+            id: String(seed),
+            url: `https://picsum.photos/seed/${seed}/600/${randomHeight}`,
+            title: `${catTitle} ${i + 1}`,
+            author: `Creator_${Math.floor(Math.random() * 100)}`,
+            avatar: DEFAULT_AVATAR
+        };
+    });
+}
+
+// Fetch posts from Supabase
+async function fetchPosts(userId = null, filterMode = 'All') {
+    console.log('Fetching posts Mode:', filterMode);
+    try {
+        // Get current user
+        const { data: { session } } = await supabase.auth.getSession();
+        const currentUserId = session ? session.user.id : null;
+
+        let query;
+
+        if (filterMode === 'Likes') {
+            // [Filter: Liked posts only]
+            if (!currentUserId) return [];
+
+            // 1. Get IDs of posts I've liked
+            const { data: myLikes } = await supabase.from('likes').select('post_id').eq('user_id', currentUserId);
+            if (!myLikes || myLikes.length === 0) return [];
+
+            const likedIds = myLikes.map(lk => lk.post_id);
+
+            // 2. Fetch posts with those IDs
+            query = supabase.from('posts')
+                .select('*, profiles(*)')
+                .in('id', likedIds)
+                .is('deleted_at', null)
+                .order('created_at', { ascending: false });
+
+        } else if (userId) {
+            // [Filter: My posts only]
+            query = supabase.from('posts')
+                .select('*, profiles(*)')
+                .eq('user_id', userId)
+                .is('deleted_at', null)
+                .order('created_at', { ascending: false });
+        } else {
+            // [Filter: Public posts only]
+            query = supabase.from('posts')
+                .select('*, profiles(*)')
+                .eq('is_public', true)
+                .is('deleted_at', null)
+                .order('created_at', { ascending: false });
+        }
+
+        const { data: realPosts, error } = await query;
+        if (error) {
+            console.error('Supabase Query Error:', error);
+            // Fallback to fetch without profiles join if join fails
+            const { data: fallbackPosts } = await supabase.from('posts').select('*').eq('is_public', true).is('deleted_at', null).order('created_at', { ascending: false });
+            return mapPosts(fallbackPosts || [], new Set());
+        }
+
+        // Fetch likes if user logged in
+        let myLikePostIds = new Set();
+        if (currentUserId) {
+            const { data: myCheckLikes } = await supabase.from('likes').select('post_id').eq('user_id', currentUserId);
+            if (myCheckLikes) myCheckLikes.forEach(lk => myLikePostIds.add(lk.post_id));
+        }
+
+        return mapPosts(realPosts, myLikePostIds);
+    } catch (err) {
+        console.error('Critical Fetch error:', err);
+        return [];
+    }
+}
+
+// Separate mapping logic
+function mapPosts(posts, myLikePostIds = new Set()) {
+    if (!posts || !Array.isArray(posts)) return [];
+    return posts.map(post => {
+        // Defensive profile extraction
+        let profile = {};
+        if (post.profiles) {
+            profile = Array.isArray(post.profiles) ? (post.profiles[0] || {}) : post.profiles;
+        }
+
+        const displayAuthor = profile.username ? `@${profile.username.replace(/^@/, '')}` : (post.user_id ? `@user_${post.user_id.substring(0, 6)}` : 'Unknown');
+        const displayAvatar = profile.avatar_url || DEFAULT_AVATAR;
+
+        return {
+            id: post.id,
+            url: post.image_url,
+            title: post.title || 'Untitled',
+            is_public: post.is_public,
+            author: displayAuthor,
+            avatar: displayAvatar,
+            isVerified: profile.role === 'official',
+            isLiked: myLikePostIds.has(post.id)
+        };
+    });
+}
+
+async function renderGrid(category = 'All') {
+    const currentFilter = category;
+
+    // Critical: Reset column count tracker so the renderer is forced to run even if width is unchanged
+    if (masonryGrid) masonryGrid._currentColCount = null;
+
+    if (category === 'Best') {
+        masonryGrid.innerHTML = `
+            <div style="text-align: center; padding: 120px 20px; color: #888; width: 100%;">
+                <h2 style="font-size: 2rem; margin-bottom: 16px; color: #111; letter-spacing: -0.03em; font-weight: 700;">✨ Top Liked is coming soon!</h2>
+                <p style="font-weight: 300; line-height: 1.7; color: #666; max-width: 500px; margin: 0 auto; font-size: 1.05rem;">
+                    Our team is currently refining the algorithm to curate the most loved stories in real-time. 
+                    Please stay tuned for an even more inspiring collection!
+                </p>
+            </div>
+        `;
+        return;
+    }
+
+    const emptyMsg = category === 'Likes' ? 'Your favorite stories will appear here.' : 'Loading stories...';
+    if (masonryGrid) masonryGrid.innerHTML = `<div style="text-align: center; padding: 40px; color: #888; width: 100%;">${emptyMsg}</div>`;
+
+    // Load photos
+    let photos = await fetchPosts(null, category);
+    if (photos.length === 0 && category === 'All') {
+        photos = getDummyPhotos(category);
+    }
+
+    if (masonryGrid) masonryGrid.innerHTML = '';
+    if (photos.length === 0) {
+        const noResultMsg = category === 'Likes' ? "You haven't liked any stories yet. Explore and try clicking the heart to like stories you love!" : "No stories found.";
+        if (masonryGrid) masonryGrid.innerHTML = `<div style="text-align: center; padding: 60px; color: #888; font-weight:300; width: 100%;">${noResultMsg}</div>`;
+        return;
+    }
+
+    // --- Robust Responsive Masonry Logic ---
+    const renderByWidth = () => {
+        const width = window.innerWidth;
+        let colCount = 4;
+        if (width <= 600) colCount = 2;
+        else if (width <= 900) colCount = 3;
+        else if (width <= 1200) colCount = 4;
+        else if (width <= 1600) colCount = 5;
+        else colCount = 6; // 계속해서 늘어남
+
+        // Optimization: ONLY re-render if the column count has actually changed
+        // This prevents white flickers during mobile zooming or small window tweaks
+        if (masonryGrid._currentColCount === colCount) {
+            return;
+        }
+
+        masonryGrid.innerHTML = '';
+        masonryGrid._currentColCount = colCount;
+
+        const columns = [];
+        for (let i = 0; i < colCount; i++) {
+            const col = document.createElement('div');
+            col.className = 'masonry-column';
+            masonryGrid.appendChild(col);
+            columns.push(col);
+        }
+
+        // Distribute photos to fill columns horizontally first (fixes empty space)
+        photos.forEach((photo, index) => {
+            const colIdx = index % colCount;
+            const card = createPhotoCard(photo);
+            columns[colIdx].appendChild(card);
+        });
+    };
+
+    renderByWidth();
+
+    // Store current context for resize handler
+    if (masonryGrid) {
+        masonryGrid._currentPhotos = photos;
+        masonryGrid._currentRenderer = renderByWidth;
+    }
+}
+
+
+
+function createPhotoCard(photo, isOwner = false) {
+    const card = document.createElement('div');
+    card.className = 'photo-card fade-in';
+    const statusBadge = isOwner
+        ? (photo.is_public
+            ? `<div class="status-badge public">Public</div>`
+            : `<div class="status-badge private">Private</div>`)
+        : '';
+    card.innerHTML = `
+        ${statusBadge}
+        <div class="card-image-wrapper">
+            <img src="${photo.url}" alt="${photo.title}" loading="lazy">
+        </div>
+        <div class="glass-overlay">
+            <div class="overlay-content">
+                <h3 class="photo-title">${photo.title}</h3>
+                <div class="photo-meta">
+                    <div class="photographer">
+                        <img src="${photo.avatar}" alt="${photo.author}" class="photographer-avatar">
+                        <span>${photo.author}</span>
+                    </div>
+                    <div class="action-buttons">
+                        <button class="btn-icon like-btn" aria-label="Like" title="Like">
+                            <svg class="heart-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+
+    const likeBtn = card.querySelector('.like-btn');
+    const heartIcon = likeBtn.querySelector('.heart-icon');
+    if (photo.isLiked) {
+        likeBtn.classList.add('active');
+        heartIcon.style.fill = '#ff4b4b';
+        heartIcon.style.stroke = '#ff4b4b';
+    }
+
+    likeBtn.addEventListener('click', async (e) => {
+        e.preventDefault(); e.stopPropagation();
+        const { data: { session } } = await supabase.auth.getSession();
+        if (!session) {
+            showToast('Please login to like stories.', 'error');
+            loginModal.classList.add('active');
+            return;
+        }
+        const isCurrentlyLiked = likeBtn.classList.contains('active');
+        likeBtn.classList.toggle('active');
+        if (!isCurrentlyLiked) {
+            heartIcon.style.fill = '#ff4b4b';
+            heartIcon.style.stroke = '#ff4b4b';
+            likeBtn.style.transform = 'scale(1.2)';
+            setTimeout(() => likeBtn.style.transform = '', 200);
+        } else {
+            heartIcon.style.fill = 'none';
+            heartIcon.style.stroke = 'currentColor';
+        }
+        try {
+            if (!isCurrentlyLiked) {
+                await supabase.from('likes').insert({ user_id: session.user.id, post_id: photo.id });
+            } else {
+                await supabase.from('likes').delete().eq('user_id', session.user.id).eq('post_id', photo.id);
+            }
+        } catch (err) { console.error('Like error:', err); }
+    });
+
+    // Touch interaction for mobile info reveal
+    card.addEventListener('touchstart', (e) => {
+        if (e.target.closest('.like-btn')) return;
+        if (!card.classList.contains('touch-active')) {
+            document.querySelectorAll('.photo-card.touch-active').forEach(c => c.classList.remove('touch-active'));
+            card.classList.add('touch-active');
+        } else {
+            card.classList.remove('touch-active');
+        }
+    }, { passive: true });
+
+    return card;
+}
+
+// Initial render
+renderGrid('All');
+
+// 8. Filter chip logic
+const filterChips = document.querySelectorAll('.chip');
+filterChips.forEach(chip => {
+    chip.addEventListener('click', () => {
+        if (chip.classList.contains('active')) return; // Ignore if already active
+
+        // Deactivate old chip, activate new one
+        document.querySelector('.chip.active')?.classList.remove('active');
+        chip.classList.add('active');
+
+        const categoryName = chip.getAttribute('data-filter');
+
+        // Smooth transition animation
+        if (masonryGrid) {
+            masonryGrid.style.opacity = '0';
+            masonryGrid.style.transition = 'opacity 0.3s ease';
+        }
+
+        setTimeout(() => {
+            renderGrid(categoryName);
+            if (masonryGrid) masonryGrid.style.opacity = '1';
+        }, 300);
+    });
+});
+
+// 9. Make My Phostory features (upload and state switching)
+const makeFormOnPage = document.getElementById('makeForm');
+const photoInputOnPage = document.getElementById('photoInput');
+const photoPreviewOnPage = document.getElementById('photoPreview');
+const uploadPlaceholderOnPage = document.querySelector('.upload-placeholder');
+const makeSubmitBtnOnPage = document.getElementById('makeSubmitBtn');
+const visibilityInputsOnPage = document.querySelectorAll('input[name="visibility"]');
+const toggleBgOnPage = document.querySelector('.toggle-bg');
+
+// Public/Private toggle animation
+if (visibilityInputsOnPage) {
+    visibilityInputsOnPage.forEach(input => {
+        input.addEventListener('change', (e) => {
+            if (e.target.value === 'public') {
+                if (toggleBgOnPage) toggleBgOnPage.style.transform = 'translateX(0)';
+            } else {
+                if (toggleBgOnPage) toggleBgOnPage.style.transform = 'translateX(100%)';
+            }
+        });
+    });
+}
+
+// Image preview
+if (photoInputOnPage) {
+    photoInputOnPage.addEventListener('change', (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            // Use createObjectURL for mobile memory efficiency
+            const imageUrl = URL.createObjectURL(file);
+            if (photoPreviewOnPage) {
+                photoPreviewOnPage.src = imageUrl;
+                photoPreviewOnPage.style.display = 'block';
+            }
+            if (uploadPlaceholderOnPage) uploadPlaceholderOnPage.style.display = 'none';
+        }
+    });
+}
+
+// Form submission (Supabase Storage and DB Insert)
+if (makeFormOnPage) {
+    makeFormOnPage.addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        const { data: { session } } = await supabase.auth.getSession();
+        if (!session) {
+            showToast('Session expired. Please login again.', 'error');
+            return;
+        }
+
+        const title = document.getElementById('postTitle').value;
+        const isPublic = document.querySelector('input[name="visibility"]:checked').value === 'public';
+        const file = photoInputOnPage.files[0];
+
+        if (!file) {
+            showToast('Please select a photo.', 'error');
+            return;
+        }
+
+        if (makeSubmitBtnOnPage) {
+            makeSubmitBtnOnPage.textContent = 'Uploading...';
+            makeSubmitBtnOnPage.disabled = true;
+        }
+
+        try {
+            // 1. Upload image to Supabase Storage
+            let fileExt = file.name.split('.').pop().toLowerCase();
+            if (fileExt === file.name.toLowerCase() || !/^[a-z0-9]+$/.test(fileExt)) {
+                fileExt = file.type.split('/')[1] || 'jpg';
+            }
+            const fileName = `${Date.now()}-${Math.floor(Math.random() * 1000)}.${fileExt}`;
+            const filePath = `${session.user.id}/${fileName}`;
+
+            // Determine bucket based on visibility
+            const targetBucket = isPublic ? 'public_photos' : 'private_photos';
+
+            const { error: uploadError, data } = await supabase.storage
+                .from(targetBucket)
+                .upload(filePath, file, {
+                    cacheControl: '3600',
+                    upsert: false,
+                    contentType: file.type || 'image/jpeg'
+                });
+
+            if (uploadError) throw uploadError;
+
+            // 2. Get the uploaded file's URL
+            let finalUrl = '';
+            if (isPublic) {
+                const { data: { publicUrl } } = supabase.storage.from(targetBucket).getPublicUrl(filePath);
+                finalUrl = publicUrl;
+            } else {
+                // Assign a 10-year signed URL for private bucket storage
+                const { data: signedData, error: signedError } = await supabase.storage.from(targetBucket).createSignedUrl(filePath, 315360000);
+                if (signedError) throw signedError;
+                finalUrl = signedData.signedUrl;
+            }
+
+            // 3. Insert record into database (table: 'posts')
+            const { error: dbError } = await supabase
+                .from('posts')
+                .insert([
+                    {
+                        user_id: session.user.id,
+                        title: title,
+                        image_url: finalUrl,
+                        is_public: isPublic,
+                        // (Optional) Add author_name here if you added it to the posts table
+                    }
+                ]);
+
+            if (dbError) throw dbError;
+
+            showToast('Post successfully published!');
+
+            // Reset form and go home
+            makeFormOnPage.reset();
+            if (photoPreviewOnPage) photoPreviewOnPage.style.display = 'none';
+            if (uploadPlaceholderOnPage) uploadPlaceholderOnPage.style.display = 'flex';
+            if (toggleBgOnPage) toggleBgOnPage.style.transform = 'translateX(0)';
+            switchView(homeView);
+
+        } catch (error) {
+            console.error('Upload error:', error);
+            // Friendly error message for missing buckets/tables
+            if (error.message.includes('Bucket not found') || error.message.includes('relation "public.posts" does not exist')) {
+                showToast('Developer notice: Set up storage buckets and tables. (Check console)', 'error');
+            } else {
+                showToast('Error during upload: ' + error.message, 'error');
+            }
+        } finally {
+            if (makeSubmitBtnOnPage) {
+                makeSubmitBtnOnPage.disabled = false;
+                makeSubmitBtnOnPage.textContent = 'Publish Post';
+            }
+        }
+    });
+}
+
+// --- SPA Routing / URL Parameter Handling ---
+const urlParamsFromPage = new URLSearchParams(window.location.search);
+
+// Check for ?user=ID, ?p=ID, or clean /ID format
+let targetUsername = urlParamsFromPage.get('user') || urlParamsFromPage.get('p');
+
+if (!targetUsername) {
+    const pathname = window.location.pathname.replace(/^\/|\/$/g, '');
+    // Filter technical files and Phostory base path if on github.io
+    const pathParts = pathname.split('/');
+    const lastPart = pathParts[pathParts.length - 1];
+
+    if (lastPart && lastPart !== 'index.html') {
+        const techExts = ['.html', '.css', '.js', '.png', '.jpg', '.jpeg', '.gif', '.ico', '.json', '.map', '.txt', '.xml'];
+        const isTechFile = techExts.some(ext => lastPart.toLowerCase().endsWith(ext));
+
+        if (!isTechFile) {
+            targetUsername = lastPart;
+        }
+    }
+}
+
+if (targetUsername) {
+    console.log('Routing to profile:', targetUsername);
+    loadUserProfilePage(targetUsername);
+}
+
+async function loadUserProfilePage(username) {
+    const profilePageView = document.getElementById('profilePageView');
+    const realProfileAvatar = document.getElementById('realProfileAvatar');
+    const realProfileUsername = document.getElementById('realProfileUsername');
+    const realProfileBio = document.getElementById('realProfileBio');
+    const realProfileGrid = document.getElementById('realProfileGrid');
+
+    switchView(profilePageView);
+
+    if (realProfileUsername) realProfileUsername.textContent = `@${username}`;
+    if (realProfileBio) realProfileBio.textContent = '';
+    if (realProfileGrid) realProfileGrid.innerHTML = '<div style="column-span: all; width: 100%; text-align: center; color: #888; padding: 60px 20px;">Fetching user data...</div>';
+
+    // 1. Fetch user profile by username
+    const { data: profileList, error: profileErr } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('username', username.replace(/^@/, ''));
+
+    if (profileErr || !profileList || profileList.length === 0) {
+        if (realProfileGrid) realProfileGrid.innerHTML = '<div style="column-span: all; width: 100%; text-align: center; color: #888; padding: 60px 20px;">User not found.</div>';
+        return;
+    }
+
+    const targetProfile = profileList[0];
+    if (realProfileUsername) realProfileUsername.textContent = `@${targetProfile.username}`;
+    if (realProfileBio) realProfileBio.textContent = targetProfile.bio || 'Capturing the world through my lens.';
+    if (targetProfile.avatar_url && realProfileAvatar) realProfileAvatar.src = targetProfile.avatar_url;
+
+    // 2. Check if current visitor is the owner and check liked posts
+    let isMyProfile = false;
+    let myLikePostIds = new Set();
+    const { data: { session } } = await supabase.auth.getSession();
+
+    if (session) {
+        if (session.user.id === targetProfile.id) isMyProfile = true;
+
+        const { data: myCheckLikes } = await supabase.from('likes')
+            .select('post_id')
+            .eq('user_id', session.user.id);
+        if (myCheckLikes) myCheckLikes.forEach(lk => myLikePostIds.add(lk.post_id));
+    }
+
+    // 3. Load posts with profile info for consistent author display
+    let postQuery = supabase.from('posts')
+        .select('*, profiles(username, avatar_url, role)')
+        .eq('user_id', targetProfile.id)
+        .is('deleted_at', null)
+        .order('created_at', { ascending: false });
+
+    const { data: rawUserPosts, error: postErr } = await postQuery;
+    if (realProfileGrid) realProfileGrid.innerHTML = '';
+
+    if (postErr || !rawUserPosts || rawUserPosts.length === 0) {
+        if (realProfileGrid) realProfileGrid.innerHTML = '<div style="column-span: all; width: 100%; text-align: center; color: #888; padding: 60px 20px;">No posts yet.</div>';
+        return;
+    }
+
+    const photos = mapPosts(rawUserPosts, myLikePostIds);
+
+    if (realProfileGrid) {
+        const renderProfileGrid = () => {
+            const width = window.innerWidth;
+            let colCount = 4;
+            if (width <= 600) colCount = 2;
+            else if (width <= 900) colCount = 3;
+            else colCount = 4;
+
+            // Optimization: Skip if colCount is same (prevents zoom flicker)
+            if (realProfileGrid._currentColCount === colCount) return;
+
+            realProfileGrid.innerHTML = '';
+            realProfileGrid._currentColCount = colCount;
+            const columns = [];
+            for (let i = 0; i < colCount; i++) {
+                const col = document.createElement('div');
+                col.className = 'masonry-column';
+                realProfileGrid.appendChild(col);
+                columns.push(col);
+            }
+
+            photos.forEach((photo, index) => {
+                const colIdx = index % colCount;
+                const card = createPhotoCard(photo, isMyProfile);
+                columns[colIdx].appendChild(card);
+            });
+
+            // Store current column count to avoid redundant re-renders
+            realProfileGrid._currentColCount = colCount;
+        };
+
+        renderProfileGrid();
+
+        // Bind to resize and store ref
+        realProfileGrid._currentRenderer = renderProfileGrid;
+        realProfileGrid._currentPhotos = photos;
+    }
+}
+
+// Global Resize Handler for both Home and Profile grids
+// Optimized for zoom and mobile scroll Performance
+let resizeTimeout;
+window.addEventListener('resize', () => {
+    clearTimeout(resizeTimeout);
+    resizeTimeout = setTimeout(() => {
+        // Update Home Grid if active
+        const homeGrid = document.getElementById('masonryGrid');
+        if (homeGrid && homeGrid._currentRenderer && homeGrid._currentPhotos) {
+            homeGrid._currentRenderer();
+        }
+        // Update Profile Grid if active
+        const profileGrid = document.getElementById('realProfileGrid');
+        if (profileGrid && profileGrid._currentRenderer && profileGrid._currentPhotos) {
+            // Profile grid logic also needs the "same col count" check for optimization
+            profileGrid._currentRenderer();
+        }
+    }, 100); // 100ms debounce
+});
+
+// Admin Page Navigation
+if (navAdminBtn) {
+    navAdminBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        dropdownMenu.classList.remove('active');
+        menuToggle.classList.remove('active');
+        switchView(adminView);
+        renderAdminUsers();
+    });
+}
+
+// Admin Tab Logic
+const adminTabs = document.querySelectorAll('.admin-tab');
+adminTabs.forEach(tab => {
+    tab.addEventListener('click', () => {
+        const target = tab.getAttribute('data-tab');
+
+        // Update active tab visual
+        adminTabs.forEach(t => t.classList.remove('active'));
+        tab.classList.add('active');
+
+        // Show/hide content
+        document.getElementById('adminUsersPane').style.display = target === 'users' ? 'block' : 'none';
+        document.getElementById('adminPhotosPane').style.display = target === 'photos' ? 'block' : 'none';
+
+        if (target === 'users') renderAdminUsers();
+        else renderAdminPhotos();
+    });
+});
+
+async function renderAdminUsers() {
+    const list = document.getElementById('adminUsersList');
+    list.innerHTML = '<tr><td colspan="3" style="text-align:center; padding: 40px;">Loading users...</td></tr>';
+
+    try {
+        // Filter out both blocked and deleted temporary usernames
+        const { data: users, error } = await supabase
+            .from('profiles')
+            .select('*')
+            .not('username', 'ilike', 'blocked_%')
+            .not('username', 'ilike', 'deleted_%');
+        if (error) throw error;
+
+        // Priority Sorting: Operator (0), Admin (1), Developer (2), Official (3), User (4)
+        const rolePriority = { 'operator': 0, 'admin': 1, 'developer': 2, 'official': 3, 'user': 4 };
+        users.sort((a, b) => {
+            const pA = rolePriority[a.role] ?? 4;
+            const pB = rolePriority[b.role] ?? 4;
+            if (pA !== pB) return pA - pB;
+            // Secondary sort: username
+            return (a.username || '').localeCompare(b.username || '');
+        });
+
+        // 2. Fetch non-deleted posts for all users to get counts
+        const { data: allPosts, error: postsErr } = await supabase.from('posts').select('user_id').is('deleted_at', null);
+        if (postsErr) throw postsErr;
+
+        // 3. Map post counts
+        const postCounts = allPosts.reduce((acc, post) => {
+            acc[post.user_id] = (acc[post.user_id] || 0) + 1;
+            return acc;
+        }, {});
+
+        list.innerHTML = '';
+        if (users.length === 0) {
+            list.innerHTML = '<tr><td colspan="3" style="text-align:center; padding: 40px;">No users found.</td></tr>';
+            return;
+        }
+
+        users.forEach(user => {
+            const tr = document.createElement('tr');
+
+            let roleLabel = 'User';
+            let roleClass = 'badge-user';
+
+            if (user.role === 'operator') { roleLabel = 'Operator'; roleClass = 'badge-operator'; }
+            else if (user.role === 'admin') { roleLabel = 'Admin'; roleClass = 'badge-admin'; }
+            else if (user.role === 'developer') { roleLabel = 'Developer'; roleClass = 'badge-developer'; }
+            else if (user.role === 'official') { roleLabel = 'Official'; roleClass = 'badge-official'; }
+
+            const roleBadge = `<span class="badge ${roleClass}">${roleLabel}</span>`;
+            const avatar = user.avatar_url || DEFAULT_AVATAR;
+            const count = postCounts[user.id] || 0;
+
+            tr.innerHTML = `
+                <td>
+                    <div class="user-info-cell">
+                        <img src="${avatar}" class="user-avatar-mini">
+                        <div class="user-details">
+                            <span class="user-username">@${user.username}</span>
+                            <span class="user-email-small">${user.email}</span>
+                        </div>
+                    </div>
+                </td>
+                <td style="text-align: center;">${roleBadge}</td>
+                <td style="text-align: center;">
+                    <span class="post-count-badge">${count}</span>
+                </td>
+            `;
+
+            // Row click for detail
+            tr.addEventListener('click', () => {
+                showUserDetail(user.id);
+            });
+
+            list.appendChild(tr);
+        });
+    } catch (err) {
+        list.innerHTML = `<tr><td colspan="3" style="text-align:center; padding: 40px; color: #ef4444;">Error: ${err.message}</td></tr>`;
+    }
+}
+
+// --- User Detail Modal Logic ---
+const userDetailModal = document.getElementById('userDetailModal');
+const closeUserDetailModal = document.getElementById('closeUserDetailModal');
+const closeDetailModalBtn = document.getElementById('closeDetailModalBtn');
+
+const detailClose = () => {
+    userDetailModal.classList.remove('active');
+};
+
+if (closeUserDetailModal) closeUserDetailModal.onclick = detailClose;
+if (closeDetailModalBtn) closeDetailModalBtn.onclick = detailClose;
+
+window.addEventListener('click', (e) => {
+    if (e.target === userDetailModal) detailClose();
+});
+
+const isStaff = (role) => ['admin', 'developer', 'operator'].includes(role);
+const getLatestRole = async () => {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return 'user';
+    const { data: prof } = await supabase.from('profiles').select('role').eq('id', user.id).maybeSingle();
+    window._userRole = prof?.role || 'user';
+    return window._userRole;
+};
+
+async function showUserDetail(userId) {
+    try {
+        // 1. Fetch Profile info
+        const { data: profile, error: profErr } = await supabase
+            .from('profiles')
+            .select('*')
+            .eq('id', userId)
+            .single();
+
+        if (profErr) throw profErr;
+
+        // 2. Fetch Posts (count and thumbnails)
+        const { data: posts, error: postsErr } = await supabase
+            .from('posts')
+            .select('*')
+            .eq('user_id', userId)
+            .is('deleted_at', null)
+            .order('created_at', { ascending: false });
+
+        if (postsErr) throw postsErr;
+
+        // 3. Populate Modal
+        document.getElementById('detailUserAvatar').src = profile.avatar_url || DEFAULT_AVATAR;
+        document.getElementById('detailUsername').textContent = `@${profile.username}`;
+
+        const roleEl = document.getElementById('detailUserRole');
+        const userRole = profile.role || 'user';
+        roleEl.textContent = userRole.charAt(0).toUpperCase() + userRole.slice(1);
+
+        // Add specific color classes based on role
+        roleEl.className = `role-badge-floating role-${userRole}`;
+        roleEl.style.display = 'block';
+
+        document.getElementById('detailUserEmail').textContent = profile.email || 'N/A';
+
+        // Fix "Invalid Date" issue
+        const joinedDate = profile.created_at ? new Date(profile.created_at) : null;
+        document.getElementById('detailJoinDate').innerHTML = (joinedDate && !isNaN(joinedDate))
+            ? joinedDate.toLocaleDateString()
+            : '<span style="color: #9ca3af; font-size: 0.85rem;">Unknown (SQL Required)</span>';
+
+        document.getElementById('detailPostCount').textContent = posts.length;
+
+        // 4. Render Posts Grid
+        const postsGrid = document.getElementById('detailUserPostsGrid');
+        const emptyPlaceholder = document.getElementById('emptyPostsPlaceholder');
+        postsGrid.innerHTML = '';
+
+        if (posts.length === 0) {
+            emptyPlaceholder.style.display = 'flex';
+            postsGrid.style.display = 'none';
+        } else {
+            emptyPlaceholder.style.display = 'none';
+            postsGrid.style.display = 'block'; // Or masonry root if preferred
+            posts.forEach(post => {
+                const card = document.createElement('div');
+                card.className = 'detail-photo-card fade-in';
+
+                const img = document.createElement('img');
+                img.src = post.image_url;
+
+                // Vignette overlay on top of image
+                const vignette = document.createElement('div');
+                vignette.className = 'detail-vignette';
+
+                const delBtn = document.createElement('button');
+                delBtn.className = 'btn-detail-delete';
+                delBtn.textContent = 'Delete';
+                delBtn.title = 'Remove post (Admin)';
+
+                delBtn.onclick = async (e) => {
+                    e.stopPropagation();
+
+                    const myRole = await getLatestRole();
+                    if (myRole !== 'operator' && isStaff(profile.role)) {
+                        showToast("Access Denied: Administrative Tier Protection.", "error");
+                        return;
+                    }
+
+                    try {
+                        const { data, error } = await supabase
+                            .from('posts')
+                            .update({ deleted_at: new Date().toISOString() })
+                            .eq('id', post.id)
+                            .select();
+
+                        if (error) throw error;
+                        if (!data || data.length === 0) {
+                            showToast('Delete ignored by server (Check RLS policies)', 'error');
+                        } else {
+                            showToast('Post deleted successfully');
+                            showUserDetail(userId);
+                            renderAdminUsers();
+                        }
+                    } catch (err) {
+                        console.error('Delete error:', err);
+                        showToast('Failed to delete post: ' + err.message, 'error');
+                    }
+                };
+
+                vignette.appendChild(delBtn);
+                card.appendChild(img);
+                card.appendChild(vignette);
+                postsGrid.appendChild(card);
+            });
+        }
+
+        // 5. Operator Check & Console Toggle (Real-time Verification)
+        const consoleSection = document.querySelector('.admin-console-section');
+
+        const activeRole = await getLatestRole();
+
+        // Admin, Developer, and Operator can all access the terminal for moderation
+        const canAccessTerminal = ['operator', 'admin', 'developer'].includes(activeRole);
+
+        if (canAccessTerminal) {
+            consoleSection.style.display = 'block';
+            if (activeRole === 'operator') {
+                document.getElementById('consoleHelp').innerHTML = `<span style="color: #854d0e">Operator Mode:</span> /role, /unrole, /change, /reset, /delete, /official, /unofficial`;
+            } else {
+                document.getElementById('consoleHelp').innerHTML = `<span style="color: #64748b">${activeRole.charAt(0).toUpperCase() + activeRole.slice(1)} Mode:</span> /change, /reset, /delete`;
+            }
+        } else {
+            consoleSection.style.display = 'none';
+        }
+
+        // 6. Admin Console Logic Implementation
+        const commandInput = document.getElementById('adminCommandInput');
+        const btnRun = document.getElementById('btnRunCommand');
+
+        commandInput.value = '';
+
+        const handleCommand = async () => {
+            const fullInput = commandInput.value.trim();
+            if (!fullInput) return;
+
+            // STRICT RULE: No @ character allowed
+            if (fullInput.includes('@')) {
+                showToast("System Restricted: IDs must NOT contain the '@' character.", "error");
+                commandInput.value = '';
+                return;
+            }
+            const myRole = await getLatestRole();
+            const parts = fullInput.split(/\s+/);
+            const cmd = parts[0].toLowerCase();
+
+            // Utility: Find user by exact username, email, or ID
+            async function lookup(idOrEmail) {
+                if (!idOrEmail) return null;
+                const cleanId = idOrEmail.replace(/^@/, '');
+
+                // Try by username
+                let { data: u1 } = await supabase.from('profiles').select('*').eq('username', cleanId).maybeSingle();
+                if (u1) return u1;
+
+                // Try by email
+                let { data: u2 } = await supabase.from('profiles').select('*').eq('email', idOrEmail).maybeSingle();
+                if (u2) return u2;
+
+                // Try by raw ID
+                let { data: u3 } = await supabase.from('profiles').select('*').eq('id', idOrEmail).maybeSingle();
+                if (u3) return u3;
+
+                return null;
+            }
+
+            // Security Helper: Absolute Protection for Operator, Mutual for Staff
+            const isProtected = (myRole, targetRole) => {
+                if (myRole === 'operator') return false; // Operator can do anything
+                if (targetRole === 'operator') return true; // Only Operator can touch Operator
+                if (isStaff(myRole) && (targetRole === 'admin' || targetRole === 'developer')) return true;
+                return false;
+            };
+
+            try {
+                switch (cmd) {
+                    case '/role': {
+                        if (myRole !== 'operator') { showToast("Permission Denied: Operator role required.", "error"); break; }
+                        if (parts.length !== 3) { showToast("Strict Syntax: /role [role] [id]", "error"); break; }
+
+                        const newRole = parts[1].toLowerCase();
+                        const targetId = parts[2];
+                        const validRoles = ['admin', 'developer', 'operator', 'official', 'user'];
+
+                        if (!validRoles.includes(newRole)) { showToast("Invalid Role defined.", "error"); break; }
+
+                        const user = await lookup(targetId);
+                        if (user) {
+                            const { data, error } = await supabase.from('profiles').update({ role: newRole }).eq('id', user.id).select();
+                            if (error) throw error;
+                            showToast(`Success: Role ${newRole} assigned to ${user.username}`);
+                            await renderAdminUsers();
+                        } else showToast(`Target Not Found: ${targetId}`, "error");
+                        break;
+                    }
+
+                    case '/unrole': {
+                        if (myRole !== 'operator') { showToast("Permission Denied: Operator role required.", "error"); break; }
+                        if (parts.length !== 2) { showToast("Strict Syntax: /unrole [id]", "error"); break; }
+
+                        const targetId = parts[1];
+                        const user = await lookup(targetId);
+                        if (user) {
+                            const { data, error } = await supabase.from('profiles').update({ role: 'user' }).eq('id', user.id).select();
+                            if (error) throw error;
+                            showToast(`Success: ${user.username} is now a regular user.`);
+                            await renderAdminUsers();
+                        } else showToast(`Target Not Found: ${targetId}`, "error");
+                        break;
+                    }
+
+                    case '/change': {
+                        if (parts.length !== 4 || parts[2].toLowerCase() !== 'to') {
+                            showToast("Strict Syntax: /change [old] to [new]", "error");
+                            break;
+                        }
+
+                        const oldId = parts[1];
+                        const newId = parts[3];
+
+                        const user = await lookup(oldId);
+                        if (user) {
+                            if (isProtected(myRole, user.role)) {
+                                showToast("Access Denied: Administrative Tier Protection.", "error");
+                                break;
+                            }
+                            const { data, error } = await supabase.from('profiles').update({ username: newId }).eq('id', user.id).select();
+                            if (error) throw error;
+                            showToast(`Success: ${oldId} translated to ${newId}`);
+                            await renderAdminUsers();
+                        } else showToast(`Target Not Found: ${oldId}`, "error");
+                        break;
+                    }
+
+                    case '/reset': {
+                        if (parts.length !== 3) { showToast("Strict Syntax: /reset [profile|bio|pw] [id]", "error"); break; }
+
+                        const type = parts[1].toLowerCase();
+                        const targetId = parts[2];
+
+                        const user = await lookup(targetId);
+                        if (!user) { showToast(`Target Not Found: ${targetId}`, "error"); break; }
+
+                        if (type === 'pw') {
+                            if (myRole !== 'operator' && user.role === 'operator') {
+                                showToast("Access Denied: Operator Protection Active.", "error");
+                                break;
+                            }
+                            const { error } = await supabase.auth.resetPasswordForEmail(user.email);
+                            if (error) throw error;
+                            showToast("Security: Password reset email dispatched.");
+                        } else if (type === 'profile' || type === 'bio') {
+                            if (isProtected(myRole, user.role)) {
+                                showToast("Access Denied: Administrative Tier Protection.", "error");
+                                break;
+                            }
+                            if (type === 'profile') {
+                                const { error } = await supabase.from('profiles').update({ avatar_url: null }).eq('id', user.id);
+                                if (error) throw error;
+                                showToast("Success: Profile picture cleared.");
+                            } else {
+                                const { error } = await supabase.from('profiles').update({ bio: 'Capturing the world through my lens.' }).eq('id', user.id);
+                                if (error) throw error;
+                                showToast("Success: Biography reset to default.");
+                                await renderAdminUsers();
+                            }
+                        } else {
+                            showToast("Invalid Reset Type: Use profile, bio, or pw.", "error");
+                        }
+                        break;
+                    }
+
+                    case '/delete': {
+                        if (parts.length !== 2) { showToast("Strict Syntax: /delete [id]", "error"); break; }
+                        const targetId = parts[1];
+                        const user = await lookup(targetId);
+                        if (!user) { showToast(`Target Not Found: ${targetId}`, "error"); break; }
+
+                        if (isProtected(myRole, user.role)) {
+                            showToast("Access Denied: Administrative Tier Protection.", "error");
+                            break;
+                        }
+
+                        // Nuclear Purge (Calls backend RPC to wipe Auth + Profiles + Data)
+                        try {
+                            // 1. Wipe activity first
+                            await supabase.from('likes').delete().eq('user_id', user.id);
+                            await supabase.from('posts').update({ deleted_at: new Date().toISOString() }).eq('user_id', user.id);
+
+                            // 2. Call the Security Definer Function (Requires the SQL setup I provided)
+                            // This snaps the finger and wipes the account from Auth and Profiles simultaneously.
+                            const { error: rpcError } = await supabase.rpc('delete_user_by_admin', { target_id: user.id });
+
+                            if (rpcError) {
+                                console.warn("RPC Failed. Attempting frontend-only fallback...", rpcError);
+                                // Fallback if SQL function hasn't been set up yet
+                                await supabase.from('profiles').delete().eq('id', user.id);
+                                await supabase.from('profiles').update({
+                                    username: `deleted_${Date.now()}_${user.id.substring(0, 4)}`,
+                                    role: 'user'
+                                }).eq('id', user.id);
+                                showToast(`Limited Purge: Profile masked. (Did you run the SQL?)`, "warning");
+                            } else {
+                                showToast(`Nuclear Purge: ${user.username} fully erased from system.`);
+                            }
+
+                            await renderAdminUsers();
+                        } catch (err) {
+                            showToast(`Action Failed: ${err.message}`, "error");
+                        }
+                        break;
+                    }
+
+                    case '/unofficial': {
+                        showToast("Notice: Commands /official and /unofficial are deprecated. Use /role official.", "info");
+                        break;
+                    }
+
+                    default:
+                        showToast(`System: Command not recognized. Use /change, /reset, /delete, /role, or /unrole.`, "error");
+                }
+            } catch (err) {
+                showToast(`System Failure: ${err.message}`, "error");
+            } finally {
+                commandInput.value = '';
+                // Do not call renderAdminUsers here if already called in command cases
+            }
+        };
+
+        btnRun.onclick = handleCommand;
+        commandInput.onkeydown = (e) => {
+            if (e.key === 'Enter') handleCommand();
+        };
+
+        userDetailModal.classList.add('active');
+    } catch (err) {
+        console.error('Detail fetch error:', err);
+        showToast('Error loading user details: ' + err.message, 'error');
+    }
+}
+
+
+
+// --- Photo Detail Modal Logic ---
+const photoDetailModal = document.getElementById('photoDetailModal');
+const closePhotoDetailModal = document.getElementById('closePhotoDetailModal');
+const btnSavePhotoAdmin = document.getElementById('btnSavePhotoAdmin');
+const btnDeletePhotoAdmin = document.getElementById('btnDeletePhotoAdmin');
+
+const photoDetailClose = () => {
+    photoDetailModal.classList.remove('active');
+};
+
+if (closePhotoDetailModal) closePhotoDetailModal.onclick = photoDetailClose;
+
+window.addEventListener('click', (e) => {
+    if (e.target === photoDetailModal) photoDetailClose();
+});
+
+async function showPhotoDetail(photoId) {
+    try {
+        const { data: photo, error } = await supabase
+            .from('posts')
+            .select('*, profiles(*)')
+            .eq('id', photoId)
+            .single();
+
+        if (error) throw error;
+
+        const profile = Array.isArray(photo.profiles) ? photo.profiles[0] : (photo.profiles || {});
+        let username = profile.username || 'Unknown Author';
+        // If username is an email (contains @ and .), strip the @... part
+        if (username.includes('@') && username.includes('.')) {
+            username = username.split('@')[0];
+        }
+        const displayId = username.startsWith('@') ? username : `@${username}`;
+
+        // Populate Modal
+        document.getElementById('adminDetailPhotoImg').src = photo.image_url;
+        document.getElementById('adminDetailPhotoTitle').value = photo.title || '';
+        document.getElementById('adminDetailPhotoAuthor').innerHTML = `${displayId}`;
+
+        // Date display below author
+        const dateObj = new Date(photo.created_at);
+        const dateStr = dateObj.toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' });
+        document.getElementById('adminDetailPhotoDate').textContent = `Published on ${dateStr}`;
+
+        // Set Visibility Toggle
+        const isPub = photo.is_public;
+        document.getElementById('adminVisPublic').checked = isPub;
+        document.getElementById('adminVisPrivate').checked = !isPub;
+
+        const adminToggleBg = document.getElementById('adminToggleBg');
+        if (adminToggleBg) {
+            adminToggleBg.style.transform = isPub ? 'translateX(0)' : 'translateX(100%)';
+        }
+
+        // Setup Toggle Listener for Admin Modal
+        const adminVisRadios = document.querySelectorAll('input[name="adminVisibility"]');
+        adminVisRadios.forEach(radio => {
+            radio.onchange = (e) => {
+                if (adminToggleBg) {
+                    adminToggleBg.style.transform = (e.target.value === 'true') ? 'translateX(0)' : 'translateX(100%)';
+                }
+            };
+        });
+
+        // Actions
+        btnSavePhotoAdmin.onclick = () => updatePhotoAdmin(photoId, profile.role || 'user');
+        btnDeletePhotoAdmin.onclick = () => deletePhotoAdmin(photoId, profile.role || 'user');
+
+        photoDetailModal.classList.add('active');
+    } catch (err) {
+        console.error('Error fetching photo detail:', err);
+        showToast('Failed to load photo details');
+    }
+}
+
+async function updatePhotoAdmin(photoId, targetRole) {
+    const myRole = await getLatestRole();
+    if (myRole !== 'operator' && isStaff(targetRole)) {
+        showToast("Access Denied: Administrative Tier Protection.", "error");
+        return;
+    }
+
+    const title = document.getElementById('adminDetailPhotoTitle').value.trim();
+    const isPublic = document.querySelector('input[name="adminVisibility"]:checked').value === 'true';
+
+    try {
+        const { data, error } = await supabase
+            .from('posts')
+            .update({ title, is_public: isPublic })
+            .eq('id', photoId)
+            .select();
+
+        if (error) throw error;
+
+        if (!data || data.length === 0) {
+            showToast('Update ignored by server (Check RLS policies)', 'error');
+        } else {
+            showToast('Photo updated successfully');
+            photoDetailClose();
+            renderAdminPhotos(); // Refresh list
+        }
+    } catch (err) {
+        showToast('Update failed: ' + err.message, 'error');
+    }
+}
+
+async function deletePhotoAdmin(photoId, targetRole) {
+    const myRole = await getLatestRole();
+    if (myRole !== 'operator' && isStaff(targetRole)) {
+        showToast("Access Denied: Administrative Tier Protection.", "error");
+        return;
+    }
+
+    try {
+        const { data, error } = await supabase
+            .from('posts')
+            .update({ deleted_at: new Date().toISOString() })
+            .eq('id', photoId)
+            .select();
+
+        if (error) throw error;
+
+        if (!data || data.length === 0) {
+            showToast('Delete ignored by server (Check RLS policies)', 'error');
+        } else {
+            showToast('Photo deleted successfully');
+            photoDetailClose();
+            renderAdminPhotos(); // Refresh list
+        }
+    } catch (err) {
+        showToast('Delete failed: ' + err.message, 'error');
+    }
+}
+
+async function renderAdminPhotos() {
+    const list = document.getElementById('adminPhotosList');
+    list.innerHTML = '<tr><td colspan="4" style="text-align:center; padding: 40px;">Loading photos...</td></tr>';
+
+    try {
+        const { data: photos, error } = await supabase.from('posts')
+            .select('*, profiles(*)')
+            .is('deleted_at', null)
+            .order('created_at', { ascending: false });
+        if (error) throw error;
+
+        list.innerHTML = '';
+        if (photos.length === 0) {
+            list.innerHTML = '<tr><td colspan="4" style="text-align:center; padding: 40px;">No photos found.</td></tr>';
+            return;
+        }
+
+        photos.forEach(photo => {
+            const tr = document.createElement('tr');
+            const profile = Array.isArray(photo.profiles) ? photo.profiles[0] : (photo.profiles || {});
+            const author = profile.username ? `@${profile.username}` : 'Unknown';
+            const visBadge = photo.is_public ? '<span class="badge badge-public">Public</span>' : '<span class="badge badge-private">Private</span>';
+
+            tr.innerHTML = `
+                <td class="photo-click-cell">
+                    <div class="photo-info-cell">
+                        <img src="${photo.image_url}" class="photo-thumb-mini">
+                        <div class="photo-cell-text">
+                            <span class="photo-title-main">${photo.title || 'Untitled Post'}</span>
+                            <span class="photo-id-sub">#${photo.id}</span>
+                        </div>
+                    </div>
+                </td>
+                <td class="photo-click-cell" style="font-weight: 500;">${author}</td>
+                <td class="photo-click-cell" style="text-align: center;">${visBadge}</td>
+                <td style="text-align: center;">
+                    <button class="btn-table-delete" title="Quick Delete">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg>
+                    </button>
+                </td>
+            `;
+
+            // Specific cell click for detail
+            tr.querySelectorAll('.photo-click-cell').forEach(cell => {
+                cell.onclick = () => showPhotoDetail(photo.id);
+                cell.style.cursor = 'pointer';
+            });
+
+            // Quick delete button
+            const delBtn = tr.querySelector('.btn-table-delete');
+            delBtn.onclick = (e) => {
+                e.stopPropagation();
+                deletePhotoAdmin(photo.id, profile.role || 'user');
+            };
+
+            list.appendChild(tr);
+        });
+    } catch (err) {
+        console.error('Error rendering admin photos:', err);
+        list.innerHTML = `<tr><td colspan="4" style="text-align:center; padding: 40px; color: red;">Error: ${err.message}</td></tr>`;
+    }
+}
+

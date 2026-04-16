@@ -1,6 +1,6 @@
 # Phostory Product Specification & Structure Log
 
-This document provides a comprehensive overview of the Phostory web application's current architecture, features, and technical specifications. It is designed to serve as a complete reference for any future development or debugging.
+This document provides a comprehensive overview of the Phostory web application's current architecture, features, and technical specifications. It is designed to serve as a complete reference for any future development or debugging, especially when using AI coding assistants.
 
 ---
 
@@ -14,100 +14,87 @@ Phostory is a modern Single Page Application (SPA) built with a minimalist, high
 ---
 
 ## 2. File Structure
-- `index.html`: The structural backbone containing all view containers (Home, About, Make, Share, Profile, Settings) and the application logic (inline script).
+- `index.html`: The structural backbone containing all view containers (Home, About, Make, Share, Profile, Settings). It references `script.js` as a module.
+- `script.js`: **[CORE LOGIC]** Contains all application logic, including Supabase client initialization, authentication handlers, SPA routing (`switchView`), and the Masonry Grid engine.
 - `style.css`: The central design system containing glassmorphism effects, responsive grid logic, and micro-animations.
-- `DEVELOPMENT_LOG.md`: Historical record of session changes.
+- `404.html`: Essential for GitHub Pages hosting; handles redirection for SPA deep links.
+- `DEVELOPMENT_LOG.md`: Historical record of development milestones and significant refactors.
 - `STRUCTURE_LOG.md`: This document (Technical & Functional reference).
 
 ---
 
 ## 3. UI/UX Map (Views)
-The application dynamically switches between views using a `switchView()` system.
+The application dynamically switches between views using a `switchView()` system defined in `script.js`.
 
 ### A. Navigation & Header
 - **Logo**: Clicking returns user to Home.
-- **Hamburger Menu**: Dropdown navigation for all features.
+- **Hamburger Menu**: Dropdown navigation for all features (`id="menuToggle"`, `id="dropdownMenu"`).
 
 ### B. Home View (`#homeView`)
-- **Discovery Grid**: Infinite/Masonry layout for public photos.
+- **Discovery Grid**: Infinite/Masonry layout for public photos (`id="masonryGrid"`).
 - **Filter Chips**: 
     - `All Stories`: Default public view.
-    - `My Likes`: Posts the current user has liked.
-    - `Top Liked`: (Placeholder) Aimed at trending content.
+    - `My Likes`: Posts liked by the current authenticated user.
+    - `Best`: (Top Liked) Trending content.
 
 ### C. About Us View (`#aboutView`)
 - Brand story and mission statement for Phostory.
 
 ### D. Make My Phostory (`#makeView`)
 - **Upload Form**: Title, Image upload (drag/drop), Visibility toggle (Public/Private).
-- **My Uploads List**: Mini masonry grid to manage personal posts (Edit/Delete).
+- **My Uploads List**: Mini masonry grid to manage personal posts with Edit/Delete capabilities.
 
 ### E. Share My Phostory (`#shareView`)
-- **Profile Link**: Generated unique URL (`?user=username`) for sharing.
+- **Profile Link**: Copyable link using clean URL routing (e.g., `phostory.studio/username`).
 - **Profile Customization**: Bio editing and Avatar upload.
-- **Public Preview**: Real-time mockup of how others see the profile.
+- **Public Preview**: Live mockup of the user's public profile page.
 
 ### G. Settings View (`#settingsView`)
-- **Account Management**: Update @ID (username), Change Password.
+- **Account Management**: Change unique @username and Update Password.
 - **Danger Zone**: Permanent account deletion.
 
 ### H. Public Profile View (`#profilePageView`)
-- Dynamic view triggered by `?user=` URL parameter. Displays public/private posts depending on access.
+- Dynamic view triggered by the URL path or params. Displays user-specific photo collections.
 
 ---
 
 ## 4. Feature Specifications
 
 ### 🔑 Authentication
-- **ID-Based Login**: Users can sign up and sign in using a unique @username or email.
-- **Real-time Check**: Automatically checks if a username is available during signup.
+- **ID-Based Ecosystem**: Users register with a unique @username. Auth logic in `script.js` manages both ID and email-based login flows.
+- **Role Management**: Supports roles like `operator`, `admin`, and `user` for management features.
 
 ### 🖼️ Content Management
-- **Masonry Grid**: Responsive multi-column layout that scales horizontally (2 to 6+ columns).
+- **Responsive Masonry**: Adaptive grid that redistributes items based on viewport width (2 to 6+ columns).
 - **Visibility Control**: 
-    - `Public`: Visible on the main home discovery grid.
-    - `Private`: Visible only on the user's profile/share link.
-- **Post Interaction**: Like/Unlike persistent states saved to DB.
-- **Edit/Delete**: Complete CRUD functionality for user posts.
+    - `Public`: Appear in the global discovery feed.
+    - `Private`: Appear only on the personal share link.
+- **Interactions**: Persistent "Like" system with optimistic UI updates.
 
 ### 📱 Mobile Optimization
-- **Responsive Design**: Adapts from mobile (2 columns) to desktop (multi-column).
-- **Touch Interaction**: Photo cards reveal metadata (Title, Author, Like) on tap.
+- **Flicker-Free Grid**: Specialized handling for mobile browser UI changes (address bar resizing) to prevent unintentional layout jumps.
+- **Reveal on Tap**: Photo metadata is revealed via touch interactions on mobile.
 
 ---
 
 ## 5. Backend & Database Schema (Supabase)
 
 ### 📊 Tables
-- **`profiles`**:
-    - `id` (UUID, primary key)
-    - `username` (Text, unique)
-    - `email` (Text)
-    - `bio` (Text)
-    - `avatar_url` (Text)
-- **`posts`**:
-    - `id` (BigInt, primary key)
-    - `user_id` (UUID, FK to profiles)
-    - `title` (Text)
-    - `image_url` (Text)
-    - `is_public` (Boolean)
-    - `created_at` (Timestamp)
-- **`likes`**:
-    - `id` (BigInt, primary key)
-    - `user_id` (UUID)
-    - `post_id` (BigInt)
+- **`profiles`**: User metadata, usernames, bios, and avatar references.
+- **`posts`**: Photographic content, titles, and visibility settings.
+- **`likes`**: Junction table for user-post interactions.
 
 ### 📁 Storage Buckets
-- `public_photos`: Storage for posts set to public visibility.
-- `private_photos`: Storage for posts set to private visibility.
-- `profiles`: Storage for user avatar images.
+- `public_photos`: Post images with public access.
+- `private_photos`: Post images restricted to certain views.
+- `profiles`: User-uploaded profile pictures.
 
 ---
 
 ## 6. Technical Configuration
 - **Supabase URL**: `https://jlxlccrhwmmrubvgyloi.supabase.co`
-- **Supabase Key**: `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...` (Anon Key)
-- **External Assets**:
-    - Google Fonts: `Outfit` (300, 600)
-    - Dummy Images: `picsum.photos`
-    - Dummy Avatars: `pravatar.cc`
+- **External Assets**: Google Fonts (Outfit), Supabase JS SDK (ESM).
+- **Routing**: Employs a hybrid of URL search params and pathname restoration for GitHub Pages compatibility.
+
+---
+*Last Updated: 2026-04-16*
