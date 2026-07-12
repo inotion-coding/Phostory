@@ -4,6 +4,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Security: Content Security Policy (defense-in-depth vs XSS/injection).
+         Static host (GitHub Pages) can't set HTTP headers, so this is applied via meta.
+         Allow-list: Supabase (REST/Realtime/Storage), jsDelivr (Supabase SDK), Google Fonts.
+         NOTE: 'unsafe-inline' on script-src remains only because index.html has inline
+         bootstrap scripts; move those to an external file to drop it and fully harden CSP.
+         frame-ancestors / X-Frame-Options require real headers (use a proxy like Cloudflare). -->
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data: blob: https:; connect-src 'self' https://jlxlccrhwmmrubvgyloi.supabase.co wss://jlxlccrhwmmrubvgyloi.supabase.co; object-src 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests">
+    <meta name="referrer" content="strict-origin-when-cross-origin">
+
     <title>Phostory</title>
 
     <!-- Canonical URL -->

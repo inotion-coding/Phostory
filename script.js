@@ -7,6 +7,32 @@ const supabase = createClient(supabaseUrl, supabaseKey);
 
 const DEFAULT_AVATAR = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48cmVjdCB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgZmlsbD0iI2Y4ZmFmYyIvPjxjaXJjbGUgY3g9IjUwIiBjeT0iNDIiIHI9IjE4IiBmaWxsPSIjZTJlOGYwIi8+PHBhdGggZD0iTTUwIDY0QzMyLjMzIDY0IDE4IDczLjY3IDE4IDg0Vjg2SDgyVjg0QzgyIDczLjY3IDY3LjY3IDY0IDUwIDY0WiIgZmlsbD0iI2UyZThmMCIvPjwvc3ZnPg==';
 
+// 1.2. Security: HTML escaping to prevent XSS when injecting user-controlled
+// data into innerHTML (titles, usernames, bios, error messages, etc.)
+function escapeHtml(value) {
+    if (value === null || value === undefined) return '';
+    return String(value)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+}
+
+// 1.3. Security: sanitize URLs before placing them in src/href attributes.
+// Blocks javascript:, data:text/html and other script-capable schemes while
+// still allowing http(s), blob and image data URIs used for avatars/photos.
+function safeUrl(value, fallback = '') {
+    if (!value) return fallback;
+    const trimmed = String(value).trim();
+    // Allow safe image data URIs (used for default avatar) but reject data:text/html etc.
+    if (/^data:image\//i.test(trimmed)) return trimmed;
+    if (/^(https?:|blob:)/i.test(trimmed)) return trimmed;
+    // Relative paths (no scheme) are fine
+    if (/^[^a-z0-9+.-]*[./]/i.test(trimmed) || !/^[a-z][a-z0-9+.-]*:/i.test(trimmed)) return trimmed;
+    return fallback;
+}
+
 // 1.5. Toast notification function
 function showToast(message, type = 'success') {
     const container = document.getElementById('toastContainer');
@@ -17,7 +43,7 @@ function showToast(message, type = 'success') {
         ? `<svg class="toast-icon" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" /></svg>`
         : `<svg class="toast-icon" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd" /></svg>`;
 
-    toast.innerHTML = `${icon}<span>${message}</span>`;
+    toast.innerHTML = `${icon}<span>${escapeHtml(message)}</span>`;
     container.appendChild(toast);
 
     // Remove after 3 seconds
@@ -407,9 +433,9 @@ navMakeBtn.addEventListener('click', async (e) => {
                 miniCard.innerHTML = `
                     ${statusBadge}
                     <div style="overflow:hidden; border-radius:16px 16px 0 0;">
-                        <img src="${photo.url}" alt="${photo.title}" loading="lazy">
+                        <img src="${safeUrl(photo.url)}" alt="${escapeHtml(photo.title)}" loading="lazy">
                     </div>
-                    <div class="mini-card-title">${photo.title}</div>
+                    <div class="mini-card-title">${escapeHtml(photo.title)}</div>
                     <div class="mini-card-actions">
                         <button class="btn-micro edit-btn">Edit</button>
                         <button class="btn-micro delete-btn">Delete</button>
@@ -553,9 +579,10 @@ navShareBtn.addEventListener('click', async (e) => {
     const emailPrefix = session.user.email.split('@')[0];
 
     // 1. Get my profile info from 'profiles' table
+    // Security: select only the columns this view uses.
     const { data: profileData } = await supabase
         .from('profiles')
-        .select('*')
+        .select('id, username, bio, avatar_url, role')
         .eq('id', session.user.id)
         .single();
 
@@ -604,7 +631,7 @@ navShareBtn.addEventListener('click', async (e) => {
             myPhotos.slice(0, 10).forEach(photo => {
                 const miniCard = document.createElement('div');
                 miniCard.className = 'mini-card';
-                miniCard.innerHTML = `<img src="${photo.url}" alt="${photo.title}" loading="lazy">`;
+                miniCard.innerHTML = `<img src="${safeUrl(photo.url)}" alt="${escapeHtml(photo.title)}" loading="lazy">`;
                 miniMasonry.appendChild(miniCard);
             });
         }
@@ -1260,15 +1287,15 @@ function createPhotoCard(photo, isOwner = false) {
     card.innerHTML = `
         ${statusBadge}
         <div class="card-image-wrapper">
-            <img src="${photo.url}" alt="${photo.title}" loading="lazy">
+            <img src="${safeUrl(photo.url)}" alt="${escapeHtml(photo.title)}" loading="lazy">
         </div>
         <div class="glass-overlay">
             <div class="overlay-content">
-                <h3 class="photo-title">${photo.title}</h3>
+                <h3 class="photo-title">${escapeHtml(photo.title)}</h3>
                 <div class="photo-meta">
                     <div class="photographer">
-                        <img src="${photo.avatar}" alt="${photo.author}" class="photographer-avatar">
-                        <span>${photo.author}</span>
+                        <img src="${safeUrl(photo.avatar, DEFAULT_AVATAR)}" alt="${escapeHtml(photo.author)}" class="photographer-avatar">
+                        <span>${escapeHtml(photo.author)}</span>
                     </div>
                     <div class="action-buttons">
                         <button class="btn-icon like-btn" aria-label="Like" title="Like">
@@ -1537,9 +1564,11 @@ async function loadUserProfilePage(username) {
     if (realProfileGrid) realProfileGrid.innerHTML = '<div style="column-span: all; width: 100%; text-align: center; color: #888; padding: 60px 20px;">Fetching user data...</div>';
 
     // 1. Fetch user profile by username
+    // Security: only select public-safe columns. Never pull email/private
+    // fields into a page any visitor can load. (see #3 in security audit)
     const { data: profileList, error: profileErr } = await supabase
         .from('profiles')
-        .select('*')
+        .select('id, username, bio, avatar_url, role')
         .eq('username', username.replace(/^@/, ''));
 
     if (profileErr || !profileList || profileList.length === 0) {
@@ -1729,10 +1758,10 @@ async function renderAdminUsers() {
             tr.innerHTML = `
                 <td>
                     <div class="user-info-cell">
-                        <img src="${avatar}" class="user-avatar-mini">
+                        <img src="${safeUrl(avatar, DEFAULT_AVATAR)}" class="user-avatar-mini">
                         <div class="user-details">
-                            <span class="user-username">@${user.username}</span>
-                            <span class="user-email-small">${user.email}</span>
+                            <span class="user-username">@${escapeHtml(user.username)}</span>
+                            <span class="user-email-small">${escapeHtml(user.email)}</span>
                         </div>
                     </div>
                 </td>
@@ -1750,7 +1779,8 @@ async function renderAdminUsers() {
             list.appendChild(tr);
         });
     } catch (err) {
-        list.innerHTML = `<tr><td colspan="3" style="text-align:center; padding: 40px; color: #ef4444;">Error: ${err.message}</td></tr>`;
+        console.error('renderAdminUsers failed:', err);
+        list.innerHTML = `<tr><td colspan="3" style="text-align:center; padding: 40px; color: #ef4444;">Error: ${escapeHtml(err.message)}</td></tr>`;
     }
 }
 
@@ -2159,7 +2189,7 @@ async function showPhotoDetail(photoId) {
         // Populate Modal
         document.getElementById('adminDetailPhotoImg').src = photo.image_url;
         document.getElementById('adminDetailPhotoTitle').value = photo.title || '';
-        document.getElementById('adminDetailPhotoAuthor').innerHTML = `${displayId}`;
+        document.getElementById('adminDetailPhotoAuthor').textContent = displayId;
 
         // Date display below author
         const dateObj = new Date(photo.created_at);
@@ -2282,14 +2312,14 @@ async function renderAdminPhotos() {
             tr.innerHTML = `
                 <td class="photo-click-cell">
                     <div class="photo-info-cell">
-                        <img src="${photo.image_url}" class="photo-thumb-mini">
+                        <img src="${safeUrl(photo.image_url)}" class="photo-thumb-mini">
                         <div class="photo-cell-text">
-                            <span class="photo-title-main">${photo.title || 'Untitled Post'}</span>
-                            <span class="photo-id-sub">#${photo.id}</span>
+                            <span class="photo-title-main">${escapeHtml(photo.title || 'Untitled Post')}</span>
+                            <span class="photo-id-sub">#${escapeHtml(photo.id)}</span>
                         </div>
                     </div>
                 </td>
-                <td class="photo-click-cell" style="font-weight: 500;">${author}</td>
+                <td class="photo-click-cell" style="font-weight: 500;">${escapeHtml(author)}</td>
                 <td class="photo-click-cell" style="text-align: center;">${visBadge}</td>
                 <td style="text-align: center;">
                     <button class="btn-table-delete" title="Quick Delete">
@@ -2315,7 +2345,8 @@ async function renderAdminPhotos() {
         });
     } catch (err) {
         console.error('Error rendering admin photos:', err);
-        list.innerHTML = `<tr><td colspan="4" style="text-align:center; padding: 40px; color: red;">Error: ${err.message}</td></tr>`;
+        console.error('renderAdminPhotos failed:', err);
+        list.innerHTML = `<tr><td colspan="4" style="text-align:center; padding: 40px; color: red;">Error: ${escapeHtml(err.message)}</td></tr>`;
     }
 }
 

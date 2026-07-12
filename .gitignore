@@ -1,0 +1,51 @@
+# ============================================================
+#  Phostory .gitignore — 시크릿이 실수로 커밋되는 것을 방지
+# ============================================================
+#  ⚠️ 중요: 이 프로젝트는 순수 정적 사이트라 Supabase "anon key"는
+#  브라우저(script.js)에 노출될 수밖에 없습니다. 그건 정상이며,
+#  진짜 방어선은 Supabase RLS 입니다 (supabase_rls_policies.sql 적용).
+#  아래 목록은 "service_role 키·비밀번호·개인키" 같은 진짜 시크릿이
+#  향후 실수로 올라가지 않도록 막는 용도입니다.
+# ------------------------------------------------------------
+
+# 환경변수 / 시크릿 (절대 커밋 금지)
+.env
+.env.*
+!.env.example
+*.local
+
+# 개인키 / 인증서 / 자격증명
+*.pem
+*.key
+*.p12
+*.pfx
+*.cer
+id_rsa*
+*service_role*
+*credentials*
+*secret.*
+serviceAccount*.json
+
+# Supabase 로컬 (도입 시)
+supabase/.branches
+supabase/.temp
+supabase/.env
+
+# 의존성 / 빌드 산출물 (향후 도구 도입 대비)
+node_modules/
+dist/
+build/
+.cache/
+.parcel-cache/
+
+# OS / 에디터
+.DS_Store
+Thumbs.db
+desktop.ini
+.idea/
+*.swp
+
+# 로그 / 임시
+*.log
+*.tmp
+scratchpad/
