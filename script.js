@@ -1,4 +1,7 @@
-import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm'
+// Security: pin the exact SDK version (not the floating @2 tag) so a
+// compromised/auto-published upstream release can't silently reach users.
+// Bump this deliberately after reviewing release notes. (supply-chain, #17)
+import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.110.3/+esm'
 
 // 1. Initialize Supabase
 const supabaseUrl = 'https://jlxlccrhwmmrubvgyloi.supabase.co';
@@ -31,6 +34,22 @@ function safeUrl(value, fallback = '') {
     // Relative paths (no scheme) are fine
     if (/^[^a-z0-9+.-]*[./]/i.test(trimmed) || !/^[a-z][a-z0-9+.-]*:/i.test(trimmed)) return trimmed;
     return fallback;
+}
+
+// 1.4. Security: validate uploaded image files (size + MIME allow-list).
+// Client-side check is the first-line defense (blocks oversized files, wrong
+// types, and script-carrying SVGs). Enforce hard limits in Supabase Storage
+// bucket policies as well — a determined attacker can spoof file.type.
+function validateImageFile(file, maxMB = 10) {
+    if (!file) return { ok: false, msg: 'No file selected.' };
+    const allowed = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
+    if (!allowed.includes(file.type)) {
+        return { ok: false, msg: 'Only JPG, PNG, WebP, or GIF images are allowed.' };
+    }
+    if (file.size > maxMB * 1024 * 1024) {
+        return { ok: false, msg: `Image is too large (max ${maxMB}MB).` };
+    }
+    return { ok: true };
 }
 
 // 1.5. Toast notification function
@@ -722,6 +741,12 @@ if (saveProfileBtn) {
             // 2. Upload avatar if changed
             const file = editAvatarInput.files[0];
             if (file) {
+                const v = validateImageFile(file, 5);
+                if (!v.ok) {
+                    showToast(v.msg, 'error');
+                    saveProfileBtn.textContent = originalText;
+                    return;
+                }
                 let fileExt = file.name.split('.').pop().toLowerCase();
                 if (fileExt === file.name.toLowerCase() || !/^[a-z0-9]+$/.test(fileExt)) {
                     fileExt = file.type.split('/')[1] || 'jpg';
@@ -1440,6 +1465,12 @@ if (makeFormOnPage) {
 
         if (!file) {
             showToast('Please select a photo.', 'error');
+            return;
+        }
+
+        const imgCheck = validateImageFile(file, 10);
+        if (!imgCheck.ok) {
+            showToast(imgCheck.msg, 'error');
             return;
         }
 
