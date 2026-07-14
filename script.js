@@ -248,16 +248,15 @@ authForm.addEventListener('submit', async (e) => {
 
             // If doesn't look like email, search profiles by username
             if (!identifier.includes('@')) {
-                const { data: profile, error: profileErr } = await supabase
-                    .from('profiles')
-                    .select('email')
-                    .eq('username', identifier.replace(/^@/, ''))
-                    .single();
+                // Security: resolve username→email via SECURITY DEFINER RPC so the
+                // email column can be locked down from direct REST reads. (#3)
+                const { data: loginEmail, error: profileErr } = await supabase
+                    .rpc('get_login_email', { p_username: identifier.replace(/^@/, '') });
 
-                if (profileErr || !profile) {
+                if (profileErr || !loginEmail) {
                     throw new Error('User not found with that ID.');
                 }
-                targetEmail = profile.email;
+                targetEmail = loginEmail;
             }
 
             const { error } = await supabase.auth.signInWithPassword({
@@ -1737,13 +1736,13 @@ async function renderAdminUsers() {
     list.innerHTML = '<tr><td colspan="3" style="text-align:center; padding: 40px;">Loading users...</td></tr>';
 
     try {
-        // Filter out both blocked and deleted temporary usernames
-        const { data: users, error } = await supabase
-            .from('profiles')
-            .select('*')
-            .not('username', 'ilike', 'blocked_%')
-            .not('username', 'ilike', 'deleted_%');
+        // Security: staff-only RPC (returns setof profiles incl. email) so the
+        // email column can be locked from direct REST reads. (#3/#5)
+        const { data: rawUsers, error } = await supabase.rpc('admin_list_users');
         if (error) throw error;
+        // Filter out blocked and deleted temporary usernames (RPC returns all non-deleted)
+        const users = (rawUsers || []).filter(u =>
+            !/^blocked_/i.test(u.username || '') && !/^deleted_/i.test(u.username || ''));
 
         // Priority Sorting: Operator (0), Admin (1), Developer (2), Official (3), User (4)
         const rolePriority = { 'operator': 0, 'admin': 1, 'developer': 2, 'official': 3, 'user': 4 };
@@ -1842,14 +1841,13 @@ const getLatestRole = async () => {
 
 async function showUserDetail(userId) {
     try {
-        // 1. Fetch Profile info
-        const { data: profile, error: profErr } = await supabase
-            .from('profiles')
-            .select('*')
-            .eq('id', userId)
-            .single();
+        // 1. Fetch Profile info via staff-only RPC (returns setof profiles incl. email)
+        const { data: profileRows, error: profErr } = await supabase
+            .rpc('admin_get_user', { target_id: userId });
 
         if (profErr) throw profErr;
+        const profile = profileRows && profileRows[0];
+        if (!profile) throw new Error('User not found');
 
         // 2. Fetch Posts (count and thumbnails)
         const { data: posts, error: postsErr } = await supabase
@@ -1989,20 +1987,15 @@ async function showUserDetail(userId) {
             // Utility: Find user by exact username, email, or ID
             async function lookup(idOrEmail) {
                 if (!idOrEmail) return null;
-                const cleanId = idOrEmail.replace(/^@/, '');
-
-                // Try by username
-                let { data: u1 } = await supabase.from('profiles').select('*').eq('username', cleanId).maybeSingle();
-                if (u1) return u1;
-
-                // Try by email
-                let { data: u2 } = await supabase.from('profiles').select('*').eq('email', idOrEmail).maybeSingle();
-                if (u2) return u2;
-
-                // Try by raw ID
-                let { data: u3 } = await supabase.from('profiles').select('*').eq('id', idOrEmail).maybeSingle();
-                if (u3) return u3;
-
+                // Security: staff-only RPC matches username / email / id server-side. (#3)
+                const { data: found } = await supabase.rpc('admin_find_user', { q: idOrEmail });
+                if (found && found.length) {
+                    const clean = idOrEmail.replace(/^@/, '');
+                    return found.find(u => u.username === clean)
+                        || found.find(u => u.email === idOrEmail)
+                        || found.find(u => u.id === idOrEmail)
+                        || found[0];
+                }
                 return null;
             }
 
@@ -2323,7 +2316,7 @@ async function renderAdminPhotos() {
 
     try {
         const { data: photos, error } = await supabase.from('posts')
-            .select('*, profiles(*)')
+            .select('*, profiles(username, avatar_url, role)')
             .is('deleted_at', null)
             .order('created_at', { ascending: false });
         if (error) throw error;
